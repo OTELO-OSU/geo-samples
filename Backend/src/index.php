@@ -26,13 +26,12 @@ $app->post('/get_poi_sort', function (Request $req,Response $responseSlim) {
     return $response;
 });
 
-$app->post('/get_poi_data', function (Request $req,Response $responseSlim) {
-	$id  = $req->getparam('idpoi');
-	$id = str_replace(' ', '', $id);
+$app->post('/get_poi_type_data', function (Request $req,Response $responseSlim) {
+	$json  = $req->getparam('json');
 	$request = new RequestApi();
-	$response = $request->Request_poi_data($id);
+	$response = $request->Request_data_with_sort($json);
 	$responseSlim->withHeader('Content-Type', 'application/json');
-    return $response;
+    //return $response;
 });
 
 $app->get('/download_poi_data/{name}', function (Request $req,Response $responseSlim,$args) {

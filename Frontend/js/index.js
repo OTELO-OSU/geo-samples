@@ -104,7 +104,7 @@ APP.modules.map = (function() {
                         $('.pusher').removeClass('dimmed');
                     }, 200);
                     $('.ui.sidebar.right').empty();
-                    $('.ui.sidebar.right').append('<div class="ui styled accordion"> <div class="active title"> <i class="dropdown icon"></i> ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + ' </div> <div class="active content"> <h3>' + k.TITLE + '</h3><p> Description: ' + k.SUPPLEMENTARY_FIELDS.DESCRIPTION + '<br> Sample Name: ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + '<br> Alteration degree: ' + k.SUPPLEMENTARY_FIELDS.ALTERATION_DEGREE + '<br> Lithology: ' + k.SUPPLEMENTARY_FIELDS.LITHOLOGY + '<br> Direction1: ' + k.SUPPLEMENTARY_FIELDS.DIRECTION1 + '<br> Direction2: ' + k.SUPPLEMENTARY_FIELDS.DIRECTION2 + '<br> Direction3: ' + k.SUPPLEMENTARY_FIELDS.DIRECTION3 + '<br> Latitude: ' + k.SAMPLING_POINT[0].LATITUDE + ' Longitude: ' + k.SAMPLING_POINT[0].LONGITUDE + '</p></div> <div class="title"> <i class="dropdown icon"></i> View data </div> <div class="content">' + measurements + ' </div></div>')
+                    $('.ui.sidebar.right').append('<div class="ui styled accordion"> <div class="active title"> <i class="dropdown icon"></i> ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + ' </div> <div class="active content"> <h3>' +  k.TITLE.substr(0, k.TITLE.lastIndexOf("_")) + '</h3><p> Description: ' + k.SUPPLEMENTARY_FIELDS.DESCRIPTION + '<br> Sample Name: ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + '<br> Alteration degree: ' + k.SUPPLEMENTARY_FIELDS.ALTERATION_DEGREE + '<br> Lithology: ' + k.SUPPLEMENTARY_FIELDS.LITHOLOGY + '<br> Direction1: ' + k.SUPPLEMENTARY_FIELDS.DIRECTION1 + '<br> Direction2: ' + k.SUPPLEMENTARY_FIELDS.DIRECTION2 + '<br> Direction3: ' + k.SUPPLEMENTARY_FIELDS.DIRECTION3 + '<br> Latitude: ' + k.SAMPLING_POINT[0].LATITUDE + ' Longitude: ' + k.SAMPLING_POINT[0].LONGITUDE + '</p></div> <div class="title"> <i class="dropdown icon"></i> View data </div> <div class="content">' + measurements + ' </div></div>')
                     $('.ui.accordion').accordion();
                     $('.item.measurement_abbreviation').on('click', function(e) {
                         mesure = $(this).text();
@@ -143,7 +143,7 @@ APP.modules.map = (function() {
             }
             if (all == true) {
                 $('.control').empty();
-                $('.control').append('<h1>Sort result</h1>')
+                $('.control').append('<h1>Sort results</h1>')
                 for (key in lithology) {
                     item = '<div class="item">' + key + '</div>';
                     lithology += item;
@@ -249,6 +249,16 @@ APP.modules.service = (function() {
                 APP.modules.map.affichagePoi(data, false,updatedate,updatemesure);
             });
         },
+         getdata: function(json) {
+            $.post("/Backend/src/index.php/get_poi_type_data", {
+                json: json
+            }, function(data) {
+                        $("#preview").empty();
+                        $("#preview").append(data);
+                        $(".actions a").remove();
+                        $(".actions").append(' <a href="/Backend/src/index.php/download_poi_data/' + name + '"><div class="ui green  button">Download</div></a>')            });
+                        $('.ui.modal.preview').modal('show');
+        },
         searchlithologyanddateandmesure: function(lithology, mesure,mindate,maxdate) {
             obj = {
                 "lithology": lithology,
@@ -258,6 +268,8 @@ APP.modules.service = (function() {
             };
             json = JSON.stringify(obj);
             APP.modules.service.getpoisorted(json,false,false);
+            APP.modules.service.getdata(json);
+
         },
         searchlithology: function(lithology) {
             obj = {
@@ -276,9 +288,9 @@ APP.modules.service = (function() {
             };
             json = JSON.stringify(obj);
             APP.modules.service.getpoisorted(json,false,true);
+        },
 
 
-        }
     }
 })();
 

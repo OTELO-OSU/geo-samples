@@ -75,6 +75,95 @@ class RequestController
 		}
 
 
+		/**
+     *  Methode de requetes vers elasticsearch
+     *
+     * 
+     */
+	function Request_data_with_sort($sort){
+		$lithology='';
+		$mesure='';
+		$sort=json_decode($sort,TRUE);
+		if ($sort['lithology']) {
+			$lithology="INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY:".$sort['lithology']."%20AND%20";
+		}
+		if ($sort['mindate'] and $sort['maxdate']) {
+			$date='INTRO.SAMPLING_DATE:[' . $sort['mindate'] . '%20TO%20' . $sort['maxdate'] . ']%20AND%20';
+		}
+		if ($sort['mesure']) {
+			$mesure='INTRO.MEASUREMENT.ABBREVIATION:"'.$sort['mesure'].'"%20AND%20';
+		}
+		$config=self::ConfigFile();
+		$url=$config['ESHOST'].'/'.$config['INDEX_NAME']."/_search?q=".$lithology.$mesure.$date."type=petrophysics&size=10000";
+		$postcontent='{ "_source": { 
+            "includes": [ "DATA","INTRO.MEASUREMENT.ABBREVIATION" ] 
+             }}';
+		$curlopt=array(CURLOPT_RETURNTRANSFER => true,
+			  CURLOPT_ENCODING => "",
+			  CURLOPT_PORT => $config['ESPORT'],
+			  CURLOPT_MAXREDIRS => 10,
+			  CURLOPT_TIMEOUT => 30,
+			  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+			  CURLOPT_CUSTOMREQUEST => "POST",
+			  CURLOPT_POSTFIELDS => $postcontent);
+		$response=self::Curlrequest($url,$curlopt);
+		$response=json_decode($response,TRUE);
+		$response=$response['hits']['hits'];
+		$responses=array();
+		$finalcsv=array();
+		$finalcsvuniq=array();
+  echo '<link rel="stylesheet" type="text/css" href="/Frontend/css/semantic/dist/semantic.min.css">';
+                echo '    <link rel="stylesheet" type="text/css" href="/Frontend/css/style.css">  
+        
+';
+			
+                echo "<div class='' ui grid container'  style='overflow-x:auto'><table style='width:700px; height:500px;' class='ui compact unstackable table'></div>";	
+                foreach ($response as $key => $value) {
+                if (strtoupper($sort['mesure'])==strtoupper($value['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION'])) {	
+				
+			$file=$value['_source']['DATA']['FILES'][0]['ORIGINAL_DATA_URL'];
+			$folder=explode('_',strtoupper($value['_source']['DATA']['FILES'][0]['DATA_URL']));
+			$name=$value['_source']['DATA']['FILES'][0]['DATA_URL'];
+			$file_parts = pathinfo($file);
+		        if ($file_parts['extension']=="xlsx") {
+		        	$CSV_FOLDER = $config["CSV_FOLDER"];
+					$file=$CSV_FOLDER.$folder[0].'_'.$folder[1]."/".$name;
+		        }
+				$csv = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+								$finalcsv[]=$csv;
+              }
+			}
+				foreach ($finalcsv as $key => $value) {
+					foreach ($value as $key => $value) {
+				$finalcsvuniq[]=$value;
+					}
+				}
+				$finalcsvuniq=array_unique($finalcsvuniq);
+				foreach ($finalcsvuniq as $key => $value) {
+							$value=str_getcsv($value);
+        echo "<tr>";
+        foreach ($value as $cell) {
+                echo "<td>" . htmlspecialchars($cell) . "</td>";
+        }
+        echo "</tr>\n";
+						
+				}
+echo "\n</table></body></html>";
+
+              	
+              
+
+            
+            
+           
+			
+				
+
+		//$responses=$return;
+		
+		//$responses=json_encode($responses);
+		//return $responses;
+		}
 
 		/**
      *  Methode de requetes vers elasticsearch
@@ -114,7 +203,7 @@ class RequestController
 		$responses=array();
 		$return=array();
 		foreach ($response as $key => $value) {
-			
+		if (strtoupper($sort['mesure'])==strtoupper($value['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION'])) {	
 				if (!$return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]) {	
 					$return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_DATE']=$value['_source']['INTRO']['SAMPLING_DATE'];
 					$return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SUPPLEMENTARY_FIELDS']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS'];
@@ -128,6 +217,7 @@ class RequestController
 				$return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['MEASUREMENT'][]=$value['_source']['INTRO']['MEASUREMENT'];
 
 		$responses=$return;
+		}
 		}
 		$responses=json_encode($responses);
 		return $responses;
