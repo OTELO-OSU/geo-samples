@@ -1,10 +1,32 @@
 
 
 #map {
-    height: 100vh;
+    height: 90vh;
     width: 100%;
 }
 
 .ui.right.sidebar {
     width: 380px;
+}
+
+.ui.left.sidebar {
+    width: 380px;
+}
+
+
+
+.control{ margin-left: 3%; margin-top: 20vh;}
+
+.ui.selection.dropdown{
+  width:100%; 
+  margin-bottom:  15px;
+}
+
+.control .input{
+  margin-top: 8%;
+  margin-bottom: 10%;
+}
+
+.message{
+  position: relative;
 }

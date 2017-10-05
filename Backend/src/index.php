@@ -18,6 +18,14 @@ $app->get('/get_all_poi', function (Request $req,Response $responseSlim) {
     return $response;
 });
 
+$app->post('/get_poi_sort', function (Request $req,Response $responseSlim) {
+	$request = new RequestApi();
+	$json  = $req->getparam('json');
+	$response = $request->Request_poi_with_sort($json);
+	$responseSlim->withHeader('Content-Type', 'application/json');
+    return $response;
+});
+
 $app->post('/get_poi_data', function (Request $req,Response $responseSlim) {
 	$id  = $req->getparam('idpoi');
 	$id = str_replace(' ', '', $id);

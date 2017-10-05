@@ -55,6 +55,65 @@ class RequestController
 		$responses=array();
 		$return=array();
 		foreach ($response as $key => $value) {
+
+				if (!$return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]) {	
+					$return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_DATE']=$value['_source']['INTRO']['SAMPLING_DATE'];
+					$return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SUPPLEMENTARY_FIELDS']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS'];
+					$return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['TITLE']=$value['_source']['INTRO']['TITLE'];
+					$return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_POINT']=$value['_source']['INTRO']['SAMPLING_POINT'];
+
+
+
+				}
+			
+				$return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['MEASUREMENT'][]=$value['_source']['INTRO']['MEASUREMENT'];
+
+		$responses=$return;
+		}
+		$responses=json_encode($responses);
+		return $responses;
+		}
+
+
+
+		/**
+     *  Methode de requetes vers elasticsearch
+     *
+     * 
+     */
+	function Request_poi_with_sort($sort){
+		$lithology='';
+		$mesure='';
+		$sort=json_decode($sort,TRUE);
+		if ($sort['lithology']) {
+			$lithology="INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY:".$sort['lithology']."%20AND%20";
+		}
+		if ($sort['mindate'] and $sort['maxdate']) {
+			$mesure='INTRO.SAMPLING_DATE:[' . $sort['mindate'] . '%20TO%20' . $sort['maxdate'] . ']%20AND%20';
+		}
+		if ($sort['mesure']) {
+			$mesure='INTRO.MEASUREMENT.ABBREVIATION:"'.$sort['mesure'].'"%20AND%20';
+		}
+		$config=self::ConfigFile();
+		$url=$config['ESHOST'].'/'.$config['INDEX_NAME']."/_search?q=".$lithology.$mesure."type=petrophysics&size=10000";
+		$postcontent='{ "_source": { 
+            "includes": [ "INTRO.SAMPLING_DATE","INTRO.TITLE","INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY","INTRO.SUPPLEMENTARY_FIELDS.DESCRIPTION","INTRO.SUPPLEMENTARY_FIELDS.SAMPLE_NAME","INTRO.SUPPLEMENTARY_FIELDS.ALTERATION_DEGREE","INTRO.SUPPLEMENTARY_FIELDS.DIRECTION1","INTRO.SUPPLEMENTARY_FIELDS.DIRECTION2","INTRO.SUPPLEMENTARY_FIELDS.DIRECTION3",
+            "INTRO.SAMPLING_DATE","INTRO.SAMPLING_POINT","INTRO.MEASUREMENT" ] 
+             }}';
+		$curlopt=array(CURLOPT_RETURNTRANSFER => true,
+			  CURLOPT_ENCODING => "",
+			  CURLOPT_PORT => $config['ESPORT'],
+			  CURLOPT_MAXREDIRS => 10,
+			  CURLOPT_TIMEOUT => 30,
+			  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+			  CURLOPT_CUSTOMREQUEST => "POST",
+			  CURLOPT_POSTFIELDS => $postcontent);
+		$response=self::Curlrequest($url,$curlopt);
+		$response=json_decode($response,TRUE);
+		$response=$response['hits']['hits'];
+		$responses=array();
+		$return=array();
+		foreach ($response as $key => $value) {
 			
 				if (!$return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]) {	
 					$return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_DATE']=$value['_source']['INTRO']['SAMPLING_DATE'];
