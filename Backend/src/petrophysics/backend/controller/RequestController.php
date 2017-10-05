@@ -89,13 +89,13 @@ class RequestController
 			$lithology="INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY:".$sort['lithology']."%20AND%20";
 		}
 		if ($sort['mindate'] and $sort['maxdate']) {
-			$mesure='INTRO.SAMPLING_DATE:[' . $sort['mindate'] . '%20TO%20' . $sort['maxdate'] . ']%20AND%20';
+			$date='INTRO.SAMPLING_DATE:[' . $sort['mindate'] . '%20TO%20' . $sort['maxdate'] . ']%20AND%20';
 		}
 		if ($sort['mesure']) {
 			$mesure='INTRO.MEASUREMENT.ABBREVIATION:"'.$sort['mesure'].'"%20AND%20';
 		}
 		$config=self::ConfigFile();
-		$url=$config['ESHOST'].'/'.$config['INDEX_NAME']."/_search?q=".$lithology.$mesure."type=petrophysics&size=10000";
+		$url=$config['ESHOST'].'/'.$config['INDEX_NAME']."/_search?q=".$lithology.$mesure.$date."type=petrophysics&size=10000";
 		$postcontent='{ "_source": { 
             "includes": [ "INTRO.SAMPLING_DATE","INTRO.TITLE","INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY","INTRO.SUPPLEMENTARY_FIELDS.DESCRIPTION","INTRO.SUPPLEMENTARY_FIELDS.SAMPLE_NAME","INTRO.SUPPLEMENTARY_FIELDS.ALTERATION_DEGREE","INTRO.SUPPLEMENTARY_FIELDS.DIRECTION1","INTRO.SUPPLEMENTARY_FIELDS.DIRECTION2","INTRO.SUPPLEMENTARY_FIELDS.DIRECTION3",
             "INTRO.SAMPLING_DATE","INTRO.SAMPLING_POINT","INTRO.MEASUREMENT" ] 

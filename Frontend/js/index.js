@@ -48,7 +48,7 @@ APP.modules.map = (function() {
          * methode d'affichage
          * @param data
          */
-        affichagePoi: function(data, all,updatedate) {
+        affichagePoi: function(data, all,updatedate,updatemesure) {
             data = JSON.parse(data);
             if (data==null || data.length==0) {
                 $('.message').append('<div class="ui container"><div class="column"><div class="ui negative message">  <div class="header"> No data found </div> <p>Please try again later </p></div></div></div>');
@@ -155,13 +155,16 @@ APP.modules.map = (function() {
             $('.control .dates').remove();
             date = '<div class="dates"><div class="ui input"><input  type="text" name="mindate" value="' + minDate + '"></div><div class="ui input"><input class="ui input" type="text"   name="maxdate" value="' + maxDate + '"></div></div>';
             append += date;
-                
+           
             }
-            measurement_abbreviation = '<div class="ui one column"><div class="ui selection dropdown measurement_abbreviation"><input type="hidden" name="measurement_abbreviation"> <i class="dropdown icon"></i><div class="default text">Select a mesure</div><div class="menu">' + measurement_abbreviation + ' </div></div></div>';
-            append += measurement_abbreviation;
+
+            if (updatemesure==true) {
+                 $('.control .measurement_abbreviation').remove();
+                measurement_abbreviation = '<div class="ui one column"><div class="ui selection dropdown measurement_abbreviation"><input type="hidden" name="measurement_abbreviation"> <i class="dropdown icon"></i><div class="default text">Select a mesure</div><div class="menu">' + measurement_abbreviation + ' </div></div></div>';
+                append += measurement_abbreviation;
+            }
 
             $('.control button').remove();
-            $('.control .measurement_abbreviation').remove();
             $('.control').append(append);
             $( ".control .dates input" ).datepicker({
                 minDate: new Date(minDate),
@@ -170,9 +173,9 @@ APP.modules.map = (function() {
             });
             
 
-
+            $('input[name=measurement_abbreviation]').unbind('change');
             $("input[name='measurement_abbreviation']").on('change', function(e) {
-                APP.modules.service.create_request($("input[name='lithology']")[0].value, $("input[name='measurement_abbreviation']")[0].value);
+                APP.modules.service.searchlithologyanddateandmesure($("input[name='lithology']")[0].value, $("input[name='measurement_abbreviation']")[0].value,$('input[name=mindate]')[0].value,$('input[name=maxdate]')[0].value);
 
             })
           
@@ -202,7 +205,8 @@ APP.modules.map = (function() {
 
             });
             $('.ui.dropdown.measurement_abbreviation').dropdown();
-
+            $('input[name=mindate]').unbind('change');
+            $('input[name=maxdate]').unbind('change');
             $('input[name=mindate]').on('change', function(e) {
             APP.modules.service.searchlithologyanddate($('input[name=lithology]')[0].value,$('input[name=mindate]')[0].value,$('input[name=maxdate]')[0].value);
             })
@@ -235,30 +239,32 @@ APP.modules.service = (function() {
     return {
         getallpoi: function() {
             $.get("/Backend/src/index.php/get_all_poi", function(data) {
-                APP.modules.map.affichagePoi(data, true,true);
+                APP.modules.map.affichagePoi(data, true,true,true);
             });
         },
-        getpoisorted: function(json,updatedate) {
+        getpoisorted: function(json,updatedate,updatemesure) {
             $.post("/Backend/src/index.php/get_poi_sort", {
                 json: json
             }, function(data) {
-                APP.modules.map.affichagePoi(data, false,updatedate);
+                APP.modules.map.affichagePoi(data, false,updatedate,updatemesure);
             });
         },
-        create_request: function(lithology, mesure) {
+        searchlithologyanddateandmesure: function(lithology, mesure,mindate,maxdate) {
             obj = {
                 "lithology": lithology,
-                'mesure': mesure
+                'mesure': mesure,
+                "mindate" : mindate,
+                "maxdate": maxdate
             };
             json = JSON.stringify(obj);
-            APP.modules.service.getpoisorted(json,true);
+            APP.modules.service.getpoisorted(json,false,false);
         },
         searchlithology: function(lithology) {
             obj = {
                 "lithology": lithology
             };
             json = JSON.stringify(obj);
-            APP.modules.service.getpoisorted(json,true);
+            APP.modules.service.getpoisorted(json,true,true);
 
 
         },
@@ -269,7 +275,7 @@ APP.modules.service = (function() {
                 "maxdate": maxdate
             };
             json = JSON.stringify(obj);
-            APP.modules.service.getpoisorted(json,false);
+            APP.modules.service.getpoisorted(json,false,true);
 
 
         }
