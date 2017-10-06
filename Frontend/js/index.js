@@ -255,6 +255,7 @@ APP.modules.map = (function() {
                 APP.group.addTo(map);
                 bounds = APP.group.getBounds();
                 map.fitBounds(bounds);
+                map.setZoom(11);
 
             }
 
