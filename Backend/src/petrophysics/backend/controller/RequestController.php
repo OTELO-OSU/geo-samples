@@ -101,8 +101,12 @@ class RequestController
         if ($sort['mesure']) {
             $mesure = 'INTRO.MEASUREMENT.ABBREVIATION:"' . $sort['mesure'] . '"%20AND%20';
         }
+        if ($sort['lat'] and $sort['lng']) {
+        	$geo='INTRO.SAMPLING_POINT.LONGITUDE:['.$sort['lat']['lat1'].'%20TO%20'.$sort['lat']['lat2'].']%20AND%20INTRO.SAMPLING_POINT.LATITUDE:['.$sort['lat']['lat1'].'%20TO%20'.$sort['lat']['lat1'].']';
+        }
+
         $config       = self::ConfigFile();
-        $url          = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology . $mesure . $date . "type=petrophysics&size=10000";
+        $url          = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology . $mesure . $date .$geo. "type=petrophysics&size=10000";
         $postcontent  = '{ "_source": { 
             "includes": [ "DATA","INTRO.MEASUREMENT.ABBREVIATION" ] 
              }}';
@@ -250,6 +254,9 @@ class RequestController
         if ($sort['mesure']) {
             $mesure = 'INTRO.MEASUREMENT.ABBREVIATION:"' . $sort['mesure'] . '"%20AND%20';
         }
+         /*if ($sort['lat'] and $sort['lon']) {
+        	$geo='INTRO.SAMPLING_POINT.LONGITUDE:['.abs($sort['lat']['lat1']).'%20TO%20'.abs($sort['lat']['lat2']).']%20AND%20INTRO.SAMPLING_POINT.LATITUDE:['.abs($sort['lon']['lon1']).'%20TO%20'.abs($sort['lon']['lon2']).']';
+        }*/
         $config      = self::ConfigFile();
         $url         = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology . $mesure . $date . "type=petrophysics&size=10000";
         $postcontent = '{ "_source": { 
@@ -272,7 +279,9 @@ class RequestController
         $responses   = array();
         $return      = array();
         foreach ($response as $key => $value) {
-            if (strtoupper($sort['mesure']) == strtoupper($value['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION']) OR $sort['mesure'] == null) {
+        	$longitude=(float)$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE'];
+        	$latitude=(float)$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'];
+            if ((strtoupper($sort['mesure']) == strtoupper($value['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION']) OR $sort['mesure'] == null)AND (($latitude>=$sort['lat']['lat1'])&&$latitude<$sort['lat']['lat2'])&&($longitude>=$sort['lon']['lon2']&&$longitude<$sort['lon']['lon1'])OR $sort['lat'] == null OR $sort['lon'] == null) {
                 if (!$return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]) {
                     $return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_DATE']        = $value['_source']['INTRO']['SAMPLING_DATE'];
                     $return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SUPPLEMENTARY_FIELDS'] = $value['_source']['INTRO']['SUPPLEMENTARY_FIELDS'];

@@ -22,7 +22,7 @@ APP.modules.map = (function() {
      *  @var map : carte (objet Leaflet)
      *  @var markers : ensemble des marqueurs de la carte
      */
-    var map, markers;
+    var map, markers,areaSelect;
 
     return {
 
@@ -41,23 +41,35 @@ APP.modules.map = (function() {
                 attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
 
-            //map.on('click', APP.modules.affichage.closePanel);
+            $(document).keydown(function(event){
+                if(event.which=="17")
+                         areaSelect = L.areaSelect({width:300, height:300});
+                        areaSelect.addTo(map);
+            });
+            $(document).keyup(function(event){
+                if(event.which=="17")
+                 bounds=areaSelect.getBounds();
+                APP.modules.service.searchlithologyanddateandmesure($("input[name='lithology']")[0].value, $("input[name='measurement_abbreviation']")[0].value, $('input[name=mindate]')[0].value, $('input[name=maxdate]')[0].value,bounds['_southWest']['lat'],bounds['_northEast']['lat'],bounds['_northEast']['lng'],bounds['_southWest']['lng']);
+
+                areaSelect.remove();
+                delete areaSelect;
+            });
         },
 
         /**
          * methode d'affichage
          * @param data
          */
-        affichagePoi: function(data, all, updatedate, updatemesure) {
+        affichagePoi: function(data, all, updatedate, updatemesure,updatelithology) {
             data = JSON.parse(data);
             $('.message').empty();
-            if (data == null || data.length == 0) {
-                $('.message').append('<div class="ui container"><div class="column"><div class="ui negative message">  <div class="header"> No data found </div> <p>Please try again later </p></div></div></div>');
-            } else {
                 if (APP.group != null) {
 
                     APP.group.clearLayers();
                 }
+            if (data == null || data.length == 0) {
+                $('.message').append('<div class="ui container"><div class="column"><div class="ui negative message">  <div class="header"> No data found </div> <p>Please try again later or with others filters</p></div></div></div>');
+            } else {
                 var markers = []
                 markers._popup = "";
                 markers._popup._content = ""
@@ -88,7 +100,7 @@ APP.modules.map = (function() {
                     var firstProj = '+proj=lcc +lat_1=49 +lat_2=44 +lat_0=46.5 +lon_0=3 +x_0=700000 +y_0=6600000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs';
                     var secondProj = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ';
                     var latlng = proj4(firstProj, secondProj, [k.LONGITUDE, k.LATITUDE]);
-                    var marker = L.marker([long, lat]);
+                    var marker = L.marker([lat, long]);
                     marker.bindPopup(k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME);
                     marker.on('click', function(e) {
                         measurements = '';
@@ -153,6 +165,19 @@ APP.modules.map = (function() {
                     lithology = '<div class="ui one column"><div class="ui selection dropdown lithology"><input type="hidden" name="lithology"> <i class="dropdown icon"></i><div class="default text">All</div><div class="menu">' + lithology + ' </div></div></div>';
                     append += lithology;
                 }
+                 if (updatelithology == true) {
+                   
+                    $('.control .lithology').remove();
+                     for (key in lithology) {
+                        item = '<div class="item">' + key + '</div>';
+                        lithology += item;
+                    }
+                    lithology = '<div class="ui one column"><div class="ui selection dropdown lithology"><input type="hidden" name="lithology"> <i class="dropdown icon"></i><div class="default text">All</div><div class="menu">' + lithology + ' </div></div></div>';
+                    append += lithology;
+
+                }
+
+
                 if (updatedate == true) {
                     $('.control button').remove();
                     $('.control .dates').remove();
@@ -245,11 +270,11 @@ APP.modules.service = (function() {
                 APP.modules.map.affichagePoi(data, true, true, true);
             });
         },
-        getpoisorted: function(json, updatedate, updatemesure) {
+        getpoisorted: function(json, updatedate, updatemesure,updatelithology) {
             $.post("/Backend/src/index.php/get_poi_sort", {
                 json: json
             }, function(data) {
-                APP.modules.map.affichagePoi(data, false, updatedate, updatemesure);
+                APP.modules.map.affichagePoi(data, false, updatedate, updatemesure,updatelithology);
             });
         },
         getdata: function(json) {
@@ -286,15 +311,22 @@ APP.modules.service = (function() {
 
             });
         },
-        searchlithologyanddateandmesure: function(lithology, mesure, mindate, maxdate) {
+        searchlithologyanddateandmesure: function(lithology, mesure, mindate, maxdate,lat1,lat2,lon1,lon2) {
             obj = {
                 "lithology": lithology,
                 'mesure': mesure,
                 "mindate": mindate,
-                "maxdate": maxdate
+                "maxdate": maxdate,
+                "lat":{ "lat1":lat1,"lat2":lat2},
+                 "lon":{ "lon1":lon1,"lon2":lon2},
+
             };
             json = JSON.stringify(obj);
-            APP.modules.service.getpoisorted(json, false, false);
+            if (lat1&&lat2&&lon1&&lon2) {
+            APP.modules.service.getpoisorted(json, true, true,true);
+            }else{
+            APP.modules.service.getpoisorted(json, false, false,false);
+            }
             APP.modules.service.getdata(json);
             $('.control .button').remove();
             $('.control').append('<div class="ui button">Preview CSV for ' + mesure.toUpperCase() + '</div>')
