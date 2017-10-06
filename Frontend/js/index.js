@@ -88,12 +88,16 @@ APP.modules.map = (function() {
                 var creationdate = [];
                 lithology['all'] = 'all';
                 var measurement_abbreviation = [];
+                var measurement_nature = [];
                 array.forEach(function(k, v) {
                     lithology[k.SUPPLEMENTARY_FIELDS.LITHOLOGY] = (k.SUPPLEMENTARY_FIELDS.LITHOLOGY);
                     creationdate.push(k.SAMPLING_DATE[0]);
                     k.MEASUREMENT.forEach(function(k, v) {
                         measurement_abbreviation[k[0].ABBREVIATION] = (k[0].ABBREVIATION);
+                        measurement_nature[k[0].ABBREVIATION] = (k[0].NATURE)
                     });
+                    console.log(measurement_abbreviation);
+                    console.log(measurement_nature);
 
                     var long = k.SAMPLING_POINT[0].LONGITUDE.replace(/\s+/g, '');
                     var lat = k.SAMPLING_POINT[0].LATITUDE.replace(/\s+/g, '');
@@ -105,7 +109,7 @@ APP.modules.map = (function() {
                     marker.on('click', function(e) {
                         measurements = '';
                         k.MEASUREMENT.forEach(function(k, v) {
-                            measurement = ' <div class="item measurement_abbreviation" value="' + k[0].ABBREVIATION + '"> <div class="content"> <div class="header">' + k[0].ABBREVIATION + '</div> </div> </div>'
+                            measurement = ' <div class="item measurement_abbreviation" ><input type="hidden" value="'+k[0].ABBREVIATION+'"> <div class="content"> <div class="header">' + k[0].ABBREVIATION +'</div><div>'+k[0].NATURE+'</div> </div> </div>'
                             measurements += measurement;
                         });
                         measurements = '<div class="ui middle aligned selection list">' + measurements + '</div>'
@@ -119,7 +123,7 @@ APP.modules.map = (function() {
                         $('.ui.sidebar.right').append('<div class="ui styled accordion"> <div class="active title"> <i class="dropdown icon"></i> ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + ' </div> <div class="active content"> <h3>' + k.TITLE.substr(0, k.TITLE.lastIndexOf("_")) + '</h3><p> Description: ' + k.SUPPLEMENTARY_FIELDS.DESCRIPTION + '<br> Sample Name: ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + '<br> Alteration degree: ' + k.SUPPLEMENTARY_FIELDS.ALTERATION_DEGREE + '<br> Lithology: ' + k.SUPPLEMENTARY_FIELDS.LITHOLOGY + '<br> Direction1: ' + k.SUPPLEMENTARY_FIELDS.DIRECTION1 + '<br> Direction2: ' + k.SUPPLEMENTARY_FIELDS.DIRECTION2 + '<br> Direction3: ' + k.SUPPLEMENTARY_FIELDS.DIRECTION3 + '<br> Latitude: ' + k.SAMPLING_POINT[0].LATITUDE + ' Longitude: ' + k.SAMPLING_POINT[0].LONGITUDE + '</p></div> <div class="title"> <i class="dropdown icon"></i> View data </div> <div class="content">' + measurements + ' </div></div>')
                         $('.ui.accordion').accordion();
                         $('.item.measurement_abbreviation').on('click', function(e) {
-                            mesure = $(this).text();
+                            mesure = $(this).children()[0].value;
                             mesure = mesure.replace("/ /g", "");
                             name = k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + "_" + mesure;
                             name = name.replace("/ /g", "");
@@ -151,7 +155,7 @@ APP.modules.map = (function() {
                     return a > b ? a : b;
                 });
                 for (key in measurement_abbreviation) {
-                    item = '<div class="item">' + key + '</div>';
+                    item = '<div class="item" title="'+measurement_nature[key]+'">' + key + '</div>';
                     measurement_abbreviation += item;
                 }
                 if (all == true) {
