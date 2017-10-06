@@ -273,7 +273,7 @@ APP.modules.service = (function() {
                 var pom = document.createElement('a');
                 pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(data));
                 json = JSON.parse(json);
-                pom.setAttribute('download', json.mesure + '.csv');
+                pom.setAttribute('download', json.mesure+'_'+json.lithology+'_'+json.mindate+'_'+json.maxdate+ '.csv');
 
                 if (document.createEvent) {
                     var event = document.createEvent('MouseEvents');
