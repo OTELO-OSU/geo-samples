@@ -44,7 +44,7 @@ class RequestController
         $url         = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?type=petrophysics&size=10000";
         $postcontent = '{ "_source": { 
             "includes": [ "INTRO.SAMPLING_DATE","INTRO.TITLE","INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY","INTRO.SUPPLEMENTARY_FIELDS.DESCRIPTION","INTRO.SUPPLEMENTARY_FIELDS.SAMPLE_NAME","INTRO.SUPPLEMENTARY_FIELDS.ALTERATION_DEGREE","INTRO.SUPPLEMENTARY_FIELDS.DIRECTION1","INTRO.SUPPLEMENTARY_FIELDS.DIRECTION2","INTRO.SUPPLEMENTARY_FIELDS.DIRECTION3",
-            "INTRO.SAMPLING_DATE","INTRO.SAMPLING_POINT","INTRO.MEASUREMENT" ] 
+            "INTRO.SAMPLING_DATE","INTRO.SAMPLING_POINT","INTRO.MEASUREMENT","DATA.FILES" ] 
              }}';
         $curlopt     = array(
             CURLOPT_RETURNTRANSFER => true,
@@ -62,21 +62,26 @@ class RequestController
         $responses   = array();
         $return      = array();
         foreach ($response as $key => $value) {
-            
+            	$current=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME'];
             if (!$return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]) {
                 $return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_DATE']        = $value['_source']['INTRO']['SAMPLING_DATE'];
                 $return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SUPPLEMENTARY_FIELDS'] = $value['_source']['INTRO']['SUPPLEMENTARY_FIELDS'];
                 $return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['TITLE']                = $value['_source']['INTRO']['TITLE'];
                 $return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_POINT']       = $value['_source']['INTRO']['SAMPLING_POINT'];
                 
-                
-                
+
+            foreach ($value['_source']['DATA']['FILES'] as $key => $file) {
+            	 if(exif_imagetype($file['ORIGINAL_DATA_URL'])){ 
+            		$return[$current]['PICTURES'][$key]=$file;
+            	 }
+            }
             }
             
             $return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['MEASUREMENT'][] = $value['_source']['INTRO']['MEASUREMENT'];
             
-            $responses = $return;
+            
         }
+               $responses = $return;
         $responses = json_encode($responses);
         return $responses;
     }
@@ -107,6 +112,7 @@ class RequestController
 
         $config       = self::ConfigFile();
         $url          = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology . $mesure . $date .$geo. "type=petrophysics&size=10000";
+
         $postcontent  = '{ "_source": { 
             "includes": [ "DATA","INTRO.MEASUREMENT.ABBREVIATION" ] 
              }}';
@@ -183,6 +189,7 @@ class RequestController
         }
         $config       = self::ConfigFile();
         $url          = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology . $mesure . $date . "type=petrophysics&size=10000";
+
         $postcontent  = '{ "_source": { 
             "includes": [ "DATA","INTRO.MEASUREMENT.ABBREVIATION" ] 
              }}';
@@ -261,7 +268,7 @@ class RequestController
         $url         = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology . $mesure . $date . "type=petrophysics&size=10000";
         $postcontent = '{ "_source": { 
             "includes": [ "INTRO.SAMPLING_DATE","INTRO.TITLE","INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY","INTRO.SUPPLEMENTARY_FIELDS.DESCRIPTION","INTRO.SUPPLEMENTARY_FIELDS.SAMPLE_NAME","INTRO.SUPPLEMENTARY_FIELDS.ALTERATION_DEGREE","INTRO.SUPPLEMENTARY_FIELDS.DIRECTION1","INTRO.SUPPLEMENTARY_FIELDS.DIRECTION2","INTRO.SUPPLEMENTARY_FIELDS.DIRECTION3",
-            "INTRO.SAMPLING_DATE","INTRO.SAMPLING_POINT","INTRO.MEASUREMENT" ] 
+            "INTRO.SAMPLING_DATE","INTRO.SAMPLING_POINT","INTRO.MEASUREMENT","DATA.FILES" ] 
              }}';
         $curlopt     = array(
             CURLOPT_RETURNTRANSFER => true,
@@ -283,17 +290,22 @@ class RequestController
         	$latitude=(float)$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'];
             if ((strtoupper($sort['mesure']) == strtoupper($value['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION']) OR $sort['mesure'] == null)AND (($latitude>=$sort['lat']['lat1'])&&$latitude<$sort['lat']['lat2'])&&($longitude>=$sort['lon']['lon2']&&$longitude<$sort['lon']['lon1'])OR $sort['lat'] == null OR $sort['lon'] == null) {
                 if (!$return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]) {
+                	$current=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME'];
                     $return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_DATE']        = $value['_source']['INTRO']['SAMPLING_DATE'];
                     $return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SUPPLEMENTARY_FIELDS'] = $value['_source']['INTRO']['SUPPLEMENTARY_FIELDS'];
                     $return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['TITLE']                = $value['_source']['INTRO']['TITLE'];
                     $return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_POINT']       = $value['_source']['INTRO']['SAMPLING_POINT'];
                     
-                    
+                     foreach ($value['_source']['DATA']['FILES'] as $key => $file) {
+            	 if(exif_imagetype($file['ORIGINAL_DATA_URL'])){ 
+            		$return[$current]['PICTURES'][$key]=$file;
+            	 }
+            }
                     
                 }
                 
                 $return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['MEASUREMENT'][] = $value['_source']['INTRO']['MEASUREMENT'];
-                
+                  
                 $responses = $return;
             }
         }
@@ -328,6 +340,34 @@ class RequestController
             return $response;
         }
     }
+
+
+
+    function Request_poi_img($id,$picturename)
+    {
+        $explode    = explode('_', $id);
+        $config     = self::ConfigFile();
+        $url        = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . '/_search?q=(INTRO.MEASUREMENT.ABBREVIATION:"' . $explode[1] . '"%20AND%20INTRO.SUPPLEMENTARY_FIELDS.SAMPLE_NAME:"' . $explode[0] . '")&type=petrophysics';
+        $curlopt    = array(
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_PORT => $config['ESPORT'],
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "GET"
+        );
+        $response   = self::Curlrequest($url, $curlopt);
+        $response   = json_decode($response, TRUE);
+        	foreach ($response['hits']['hits'][0]['_source']['DATA']['FILES'] as $key => $value) {
+        		
+        		if ($value['DATA_URL']==$picturename) {
+            		$response = $value['ORIGINAL_DATA_URL'];
+        		}
+        		
+        }
+            		return $response;
+    }
     
     /**
      * Download a file
@@ -348,6 +388,36 @@ class RequestController
         }
         exit;
     }
+
+
+    function preview_img($path){
+    	$mime=pathinfo($path);
+    	$mime=$mime['extension'];
+    	if ($mime == 'png') {
+                $readfile = readfile($path);
+                $mime     = "image/png";
+                header('Content-Type:  ' . $mime);
+            } elseif ($mime == 'jpg') {
+                $readfile = readfile($path);
+                $mime     = "image/jpg";
+                header('Content-Type:  ' . $mime);
+            } elseif ($mime == 'gif') {
+                $readfile = readfile($path);
+                $mime     = "image/gif";
+                header('Content-Type:  ' . $mime);
+            }
+            else {
+                echo "<h1>Cannot preview file</h1> <p>Sorry, we are unfortunately not able to preview this file.<p>";
+                $readfile = false;
+                header('Content-Type:  text/html');
+            }
+             if ($readfile == false) {
+                return false;
+            } else {
+                return $mime;
+            }
+    }
+
     
     /**
      * Preview a file

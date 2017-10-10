@@ -100,8 +100,7 @@ APP.modules.map = (function() {
                         measurement_abbreviation[k[0].ABBREVIATION] = (k[0].ABBREVIATION);
                         measurement_nature[k[0].ABBREVIATION] = (k[0].NATURE)
                     });
-                    console.log(measurement_abbreviation);
-                    console.log(measurement_nature);
+                    
 
                     var long = k.SAMPLING_POINT[0].LONGITUDE.replace(/\s+/g, '');
                     var lat = k.SAMPLING_POINT[0].LATITUDE.replace(/\s+/g, '');
@@ -117,6 +116,15 @@ APP.modules.map = (function() {
                             measurements += measurement;
                         });
                         measurements = '<div class="ui middle aligned selection list">' + measurements + '</div>'
+                         pictures = '';
+                        for (key in k.PICTURES) {
+                            console.log(k.PICTURES[key])
+                            picture = ' <div class="item pictures" ><input type="hidden" value="'+k.PICTURES[key].DATA_URL+'"> <div class="content"><img src="'+k.PICTURES[key].ORIGINAL_DATA_URL+'"</img> <div class="header">' + k.PICTURES[key].DATA_URL +'</div></div> </div>'
+                            pictures += picture;
+                        }
+
+                        
+                        pictures = '<div class="ui middle aligned selection list">' + pictures + '</div>'
                         setTimeout(function() {
                             $('.ui.sidebar.right').sidebar('setting', 'transition', 'overlay').sidebar('show');
                         }, 50);
@@ -124,7 +132,7 @@ APP.modules.map = (function() {
                             $('.pusher').removeClass('dimmed');
                         }, 200);
                         $('.ui.sidebar.right').empty();
-                        $('.ui.sidebar.right').append('<div class="ui styled accordion"> <div class="active title"> <i class="dropdown icon"></i> ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + ' </div> <div class="active content"> <h3>' + k.TITLE.substr(0, k.TITLE.lastIndexOf("_")) + '</h3><p> Description: ' + k.SUPPLEMENTARY_FIELDS.DESCRIPTION + '<br> Sample Name: ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + '<br> Alteration degree: ' + k.SUPPLEMENTARY_FIELDS.ALTERATION_DEGREE + '<br> Lithology: ' + k.SUPPLEMENTARY_FIELDS.LITHOLOGY + '<br> Direction1: ' + k.SUPPLEMENTARY_FIELDS.DIRECTION1 + '<br> Direction2: ' + k.SUPPLEMENTARY_FIELDS.DIRECTION2 + '<br> Direction3: ' + k.SUPPLEMENTARY_FIELDS.DIRECTION3 + '<br> Latitude: ' + k.SAMPLING_POINT[0].LATITUDE + ' Longitude: ' + k.SAMPLING_POINT[0].LONGITUDE + '</p></div> <div class="title"> <i class="dropdown icon"></i> View data </div> <div class="content">' + measurements + ' </div></div>')
+                        $('.ui.sidebar.right').append('<div class="ui styled accordion"> <div class="active title"> <i class="dropdown icon"></i> ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + ' </div> <div class="active content"> <h3>' + k.TITLE.substr(0, k.TITLE.lastIndexOf("_")) + '</h3><p> Description: ' + k.SUPPLEMENTARY_FIELDS.DESCRIPTION + '<br> Sample Name: ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + '<br> Alteration degree: ' + k.SUPPLEMENTARY_FIELDS.ALTERATION_DEGREE + '<br> Lithology: ' + k.SUPPLEMENTARY_FIELDS.LITHOLOGY + '<br> Direction1: ' + k.SUPPLEMENTARY_FIELDS.DIRECTION1 + '<br> Direction2: ' + k.SUPPLEMENTARY_FIELDS.DIRECTION2 + '<br> Direction3: ' + k.SUPPLEMENTARY_FIELDS.DIRECTION3 + '<br> Latitude: ' + k.SAMPLING_POINT[0].LATITUDE + ' Longitude: ' + k.SAMPLING_POINT[0].LONGITUDE + '</p></div> <div class="title"> <i class="dropdown icon"></i> Data </div> <div class="content">' + measurements + ' </div><div class="title"> <i class="dropdown icon"></i> Pictures </div> <div class="content">'+pictures+' </div></div>')
                         $('.ui.accordion').accordion();
                         $('.item.measurement_abbreviation').on('click', function(e) {
                             mesure = $(this).children()[0].value;
@@ -136,6 +144,18 @@ APP.modules.map = (function() {
                             $(".actions a").remove();
                             $(".actions .download").remove();
                             $(".actions").append(' <a href="/Backend/src/index.php/download_poi_data/' + name + '"><div class="ui green  button">Download</div></a>')
+                            $('.ui.modal.preview').modal('show');
+
+                        });
+                        $('.item.pictures').on('click', function(e) {
+                            picture = $(this).children()[0].value;
+                            name = k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME ;
+                            name = name.replace("/ /g", "");
+                            $("#preview").empty();
+                            $("#preview").append('<iframe src="/Backend/src/index.php/preview_img/' + name +'/'+ picture+ '" style="width:100%; height:550px;" frameborder="0"></iframe>');
+                            $(".actions a").remove();
+                            $(".actions .download").remove();
+                            $(".actions").append(' <a href="/Backend/src/index.php/download_img/'+name+'/' + picture + '"><div class="ui green  button">Download</div></a>')
                             $('.ui.modal.preview').modal('show');
 
                         });

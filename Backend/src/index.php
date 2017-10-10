@@ -56,6 +56,31 @@ $app->get('/download_poi_data/{name}', function (Request $req,Response $response
 });
 
 
+$app->get('/download_img/{name}/{picturename}', function (Request $req,Response $responseSlim,$args) {
+	$name = $args['name'];
+	$picture = $args['picturename'];
+	$request = new RequestApi();
+	$path = $request->Request_poi_img($name,$picture);
+	$download = $request->download($path);
+	 if ($download == NULL or $download == false) {
+       return $responseSlim->withStatus(403);
+    }
+});
+
+$app->get('/preview_img/{name}/{picturename}', function (Request $req,Response $responseSlim,$args) {
+	$name = $args['name'];
+	$picture = $args['picturename'];
+	$request = new RequestApi();
+	$path = $request->Request_poi_img($name,$picture);
+	$download = $request->preview_img($path);
+	 if ($download == NULL or $download == false) {
+       return $responseSlim->withStatus(403);
+    }
+    return $responseSlim->withHeader('Content-type', $download);
+
+});
+
+
 $app->get('/preview_poi_data/{name}', function (Request $req,Response $responseSlim,$args) {
 	$name = $args['name'];
 	$name = str_replace(' ', '', $name);
