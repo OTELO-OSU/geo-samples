@@ -117,14 +117,17 @@ APP.modules.map = (function() {
                         });
                         measurements = '<div class="ui middle aligned selection list">' + measurements + '</div>'
                          pictures = '';
+                         if(k.PICTURES){
                         for (key in k.PICTURES) {
-                            console.log(k.PICTURES[key])
                             picture = ' <div class="item pictures" ><input type="hidden" value="'+k.PICTURES[key].DATA_URL+'"> <div class="content"><img src="'+k.PICTURES[key].ORIGINAL_DATA_URL+'"</img> <div class="header">' + k.PICTURES[key].DATA_URL +'</div></div> </div>'
                             pictures += picture;
                         }
+                            
+                        pictures = '<div class="ui middle aligned selection list">' + pictures + '</div>'
+                        pictures='<div class="title"> <i class="dropdown icon"></i> Pictures </div> <div class="content">'+pictures+' </div>';
+                         }
 
                         
-                        pictures = '<div class="ui middle aligned selection list">' + pictures + '</div>'
                         setTimeout(function() {
                             $('.ui.sidebar.right').sidebar('setting', 'transition', 'overlay').sidebar('show');
                         }, 50);
@@ -132,7 +135,7 @@ APP.modules.map = (function() {
                             $('.pusher').removeClass('dimmed');
                         }, 200);
                         $('.ui.sidebar.right').empty();
-                        $('.ui.sidebar.right').append('<div class="ui styled accordion"> <div class="active title"> <i class="dropdown icon"></i> ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + ' </div> <div class="active content"> <h3>' + k.TITLE.substr(0, k.TITLE.lastIndexOf("_")) + '</h3><p> Description: ' + k.SUPPLEMENTARY_FIELDS.DESCRIPTION + '<br> Sample Name: ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + '<br> Alteration degree: ' + k.SUPPLEMENTARY_FIELDS.ALTERATION_DEGREE + '<br> Lithology: ' + k.SUPPLEMENTARY_FIELDS.LITHOLOGY + '<br> Direction1: ' + k.SUPPLEMENTARY_FIELDS.DIRECTION1 + '<br> Direction2: ' + k.SUPPLEMENTARY_FIELDS.DIRECTION2 + '<br> Direction3: ' + k.SUPPLEMENTARY_FIELDS.DIRECTION3 + '<br> Latitude: ' + k.SAMPLING_POINT[0].LATITUDE + ' Longitude: ' + k.SAMPLING_POINT[0].LONGITUDE + '</p></div> <div class="title"> <i class="dropdown icon"></i> Data </div> <div class="content">' + measurements + ' </div><div class="title"> <i class="dropdown icon"></i> Pictures </div> <div class="content">'+pictures+' </div></div>')
+                        $('.ui.sidebar.right').append('<div class="ui styled accordion"> <div class="active title"> <i class="dropdown icon"></i> ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + ' </div> <div class="active content"> <h3>' + k.TITLE.substr(0, k.TITLE.lastIndexOf("_")) + '</h3><p> Description: ' + k.SUPPLEMENTARY_FIELDS.DESCRIPTION + '<br> Sample Name: ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + '<br> Alteration degree: ' + k.SUPPLEMENTARY_FIELDS.ALTERATION_DEGREE + '<br> Lithology: ' + k.SUPPLEMENTARY_FIELDS.LITHOLOGY + '<br> Direction1: ' + k.SUPPLEMENTARY_FIELDS.DIRECTION1 + '<br> Direction2: ' + k.SUPPLEMENTARY_FIELDS.DIRECTION2 + '<br> Direction3: ' + k.SUPPLEMENTARY_FIELDS.DIRECTION3 + '<br> Latitude: ' + k.SAMPLING_POINT[0].LATITUDE + ' Longitude: ' + k.SAMPLING_POINT[0].LONGITUDE + '</p></div> <div class="title"> <i class="dropdown icon"></i> Data </div> <div class="content">' + measurements + ' </div>'+pictures+'</div>')
                         $('.ui.accordion').accordion();
                         $('.item.measurement_abbreviation').on('click', function(e) {
                             mesure = $(this).children()[0].value;
