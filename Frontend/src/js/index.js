@@ -135,7 +135,11 @@ APP.modules.map = (function() {
                             $('.pusher').removeClass('dimmed');
                         }, 200);
                         $('.ui.sidebar.right').empty();
-                        $('.ui.sidebar.right').append('<div class="ui styled accordion"> <div class="active title"> <i class="dropdown icon"></i> ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + ' </div> <div class="active content"> <h3>' + k.TITLE.substr(0, k.TITLE.lastIndexOf("_")) + '</h3><p> Description: ' + k.SUPPLEMENTARY_FIELDS.DESCRIPTION + '<br> Sample Name: ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + '<br> Alteration degree: ' + k.SUPPLEMENTARY_FIELDS.ALTERATION_DEGREE + '<br> Lithology: ' + k.SUPPLEMENTARY_FIELDS.LITHOLOGY + '<br> Direction1: ' + k.SUPPLEMENTARY_FIELDS.DIRECTION1 + '<br> Direction2: ' + k.SUPPLEMENTARY_FIELDS.DIRECTION2 + '<br> Direction3: ' + k.SUPPLEMENTARY_FIELDS.DIRECTION3 + '<br> Latitude: ' + k.SAMPLING_POINT[0].LATITUDE + ' Longitude: ' + k.SAMPLING_POINT[0].LONGITUDE + '</p></div> <div class="title"> <i class="dropdown icon"></i> Data </div> <div class="content">' + measurements + ' </div>'+pictures+'</div>')
+                        referent='';
+                        if (k.SUPPLEMENTARY_FIELDS.NAME_REFERENT) {
+                            referent='<br> Referent Name: ' + k.SUPPLEMENTARY_FIELDS.NAME_REFERENT +'<br> Referent First name: ' + k.SUPPLEMENTARY_FIELDS.FIRST_NAME_REFERENT ; 
+                        }
+                        $('.ui.sidebar.right').append('<div class="ui styled accordion"> <div class="active title"> <i class="dropdown icon"></i> ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + ' </div> <div class="active content"> <h3>' + k.TITLE.substr(0, k.TITLE.lastIndexOf("_")) + '</h3><p> Description: ' + k.SUPPLEMENTARY_FIELDS.DESCRIPTION + '<br> Sample Name: ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + '<br> Alteration degree: ' + k.SUPPLEMENTARY_FIELDS.ALTERATION_DEGREE +referent+'<br> Lithology: ' + k.SUPPLEMENTARY_FIELDS.LITHOLOGY + '<br> Latitude: ' + k.SAMPLING_POINT[0].LATITUDE + ' Longitude: ' + k.SAMPLING_POINT[0].LONGITUDE + '</p></div> <div class="title"> <i class="dropdown icon"></i> Data </div> <div class="content">' + measurements + ' </div>'+pictures+'</div>')
                         $('.ui.accordion').accordion();
                         $('.item.measurement_abbreviation').on('click', function(e) {
                             mesure = $(this).children()[0].value;
