@@ -117,10 +117,19 @@ APP.modules.map = (function() {
                         });
                         measurements = '<div class="ui middle aligned selection list">' + measurements + '</div>'
                          pictures = '';
+                         picturemetas='';
                          if(k.PICTURES){
                         for (key in k.PICTURES) {
-                            picture = ' <div class="item pictures" ><input type="hidden" value="'+k.PICTURES[key].DATA_URL+'"> <div class="content"><img src="'+k.PICTURES[key].ORIGINAL_DATA_URL+'"</img> <div class="header">' + k.PICTURES[key].DATA_URL +'</div></div> </div>'
-                            pictures += picture;
+                            picture=k.PICTURES[key].DATA_URL;
+                            name = k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME ;
+                            if ((new RegExp('_OUTCROP')).test(picture) || (new RegExp('_SAMPLE')).test(picture) ) {
+                                picturemeta='<div class="item pictures" ><input type="hidden" value="'+k.PICTURES[key].DATA_URL+'"> <div class="content picture" > <img class="ui fluid image" src="/Backend/src/index.php/preview_img/' + name +'/'+ picture+ '""</img><div class="header">' + k.PICTURES[key].DATA_URL +'</div></div></div>';
+                                picturemetas+=picturemeta;
+                            }
+                            else{
+                                picture = ' <div class="item pictures" ><input type="hidden" value="'+k.PICTURES[key].DATA_URL+'"> <div class="content"> <div class="header">' + k.PICTURES[key].DATA_URL +'</div></div> </div>'
+                                pictures += picture;   
+                            }
                         }
                             
                         pictures = '<div class="ui middle aligned selection list">' + pictures + '</div>'
@@ -139,7 +148,7 @@ APP.modules.map = (function() {
                         if (k.SUPPLEMENTARY_FIELDS.NAME_REFERENT) {
                             referent='<br> Referent Name: ' + k.SUPPLEMENTARY_FIELDS.NAME_REFERENT +'<br> Referent First name: ' + k.SUPPLEMENTARY_FIELDS.FIRST_NAME_REFERENT ; 
                         }
-                        $('.ui.sidebar.right').append('<div class="ui styled accordion"> <div class="active title"> <i class="dropdown icon"></i> ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + ' </div> <div class="active content"> <h3>' + k.TITLE.substr(0, k.TITLE.lastIndexOf("_")) + '</h3><p> Description: ' + k.SUPPLEMENTARY_FIELDS.DESCRIPTION + '<br> Sample Name: ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + '<br> Alteration degree: ' + k.SUPPLEMENTARY_FIELDS.ALTERATION_DEGREE +referent+'<br> Lithology: ' + k.SUPPLEMENTARY_FIELDS.LITHOLOGY + '<br> Latitude: ' + k.SAMPLING_POINT[0].LATITUDE + ' Longitude: ' + k.SAMPLING_POINT[0].LONGITUDE + '</p></div> <div class="title"> <i class="dropdown icon"></i> Data </div> <div class="content">' + measurements + ' </div>'+pictures+'</div>')
+                        $('.ui.sidebar.right').append('<div class="ui styled accordion"> <div class="active title"> <i class="dropdown icon"></i> ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + ' </div> <div class="active content"> <h3>' + k.TITLE.substr(0, k.TITLE.lastIndexOf("_")) + '</h3><p> Description: ' + k.SUPPLEMENTARY_FIELDS.DESCRIPTION + '<br> Sample Name: ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + '<br> Alteration degree: ' + k.SUPPLEMENTARY_FIELDS.ALTERATION_DEGREE +referent+'<br> Lithology: ' + k.SUPPLEMENTARY_FIELDS.LITHOLOGY + '<br> Latitude: ' + k.SAMPLING_POINT[0].LATITUDE + ' Longitude: ' + k.SAMPLING_POINT[0].LONGITUDE + '</p>'+picturemetas+'</div> <div class="title"> <i class="dropdown icon"></i> Data </div> <div class="content">' + measurements + ' </div>'+pictures+'</div>')
                         $('.ui.accordion').accordion();
                         $('.item.measurement_abbreviation').on('click', function(e) {
                             mesure = $(this).children()[0].value;

@@ -30,3 +30,7 @@
 .message{
   position: relative;
 }
+
+.picture{
+	cursor: pointer;
+}
