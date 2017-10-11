@@ -6,11 +6,11 @@
 }
 
 .ui.right.sidebar {
-    width: 380px;
+    width: 380px!important;
 }
 
 .ui.left.sidebar {
-    width: 380px;
+    width: 380px!important;
 }
 
 
