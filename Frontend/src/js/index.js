@@ -22,7 +22,7 @@ APP.modules.map = (function() {
      *  @var map : carte (objet Leaflet)
      *  @var markers : ensemble des marqueurs de la carte
      */
-    var map, markers,areaSelect;
+    var map, markers, areaSelect;
 
     return {
 
@@ -41,21 +41,24 @@ APP.modules.map = (function() {
                 attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
 
-            $(document).keydown(function(event){
-                if(event.which=="17"){
-                    areaSelect = L.areaSelect({width:300, height:300});
+            $(document).keydown(function(event) {
+                if (event.which == "17") {
+                    areaSelect = L.areaSelect({
+                        width: 300,
+                        height: 300
+                    });
                     areaSelect.addTo(map);
-                    
+
                 }
             });
-            $(document).keyup(function(event){
-                if(event.which=="17"){
-                    
-                 bounds=areaSelect.getBounds();
-                APP.modules.service.searchlithologyanddateandmesure($("input[name='lithology']")[0].value, $("input[name='measurement_abbreviation']")[0].value, $('input[name=mindate]')[0].value, $('input[name=maxdate]')[0].value,bounds['_southWest']['lat'],bounds['_northEast']['lat'],bounds['_northEast']['lng'],bounds['_southWest']['lng']);
+            $(document).keyup(function(event) {
+                if (event.which == "17") {
 
-                areaSelect.remove();
-                delete areaSelect;
+                    bounds = areaSelect.getBounds();
+                    APP.modules.service.searchlithologyanddateandmesure($("input[name='lithology']")[0].value, $("input[name='measurement_abbreviation']")[0].value, $('input[name=mindate]')[0].value, $('input[name=maxdate]')[0].value, bounds['_southWest']['lat'], bounds['_northEast']['lat'], bounds['_northEast']['lng'], bounds['_southWest']['lng']);
+
+                    areaSelect.remove();
+                    delete areaSelect;
                 }
             });
         },
@@ -64,13 +67,13 @@ APP.modules.map = (function() {
          * methode d'affichage
          * @param data
          */
-        affichagePoi: function(data, all, updatedate, updatemesure,updatelithology) {
+        affichagePoi: function(data, all, updatedate, updatemesure, updatelithology) {
             data = JSON.parse(data);
             $('.message').empty();
-                if (APP.group != null) {
+            if (APP.group != null) {
 
-                    APP.group.clearLayers();
-                }
+                APP.group.clearLayers();
+            }
             if (data == null || data.length == 0) {
                 $('.message').append('<div class="ui container"><div class="column"><div class="ui negative message">  <div class="header"> No data found </div> <p>Please try again later or with others filters</p></div></div></div>');
             } else {
@@ -100,7 +103,7 @@ APP.modules.map = (function() {
                         measurement_abbreviation[k[0].ABBREVIATION] = (k[0].ABBREVIATION);
                         measurement_nature[k[0].ABBREVIATION] = (k[0].NATURE)
                     });
-                    
+
 
                     var long = k.SAMPLING_POINT[0].LONGITUDE.replace(/\s+/g, '');
                     var lat = k.SAMPLING_POINT[0].LATITUDE.replace(/\s+/g, '');
@@ -111,32 +114,52 @@ APP.modules.map = (function() {
                     marker.bindPopup(k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME);
                     marker.on('click', function(e) {
                         measurements = '';
-                        k.MEASUREMENT.forEach(function(k, v) {
-                            measurement = ' <div class="item measurement_abbreviation" ><input type="hidden" value="'+k[0].ABBREVIATION+'"> <div class="content"> <div class="header">' + k[0].ABBREVIATION +'</div><div>'+k[0].NATURE+'</div> </div> </div>'
-                            measurements += measurement;
-                        });
-                        measurements = '<div class="ui middle aligned selection list">' + measurements + '</div>'
-                         pictures = '';
-                         picturemetas='';
-                         if(k.PICTURES){
-                        for (key in k.PICTURES) {
-                            picture=k.PICTURES[key].DATA_URL;
-                            name = k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME ;
-                            if ((new RegExp('_OUTCROP')).test(picture) || (new RegExp('_SAMPLE')).test(picture) ) {
-                                picturemeta='<div class="item pictures" ><input type="hidden" value="'+k.PICTURES[key].DATA_URL+'"> <div class="content picture" > <img class="ui fluid image" src="/Backend/src/index.php/preview_img/' + name +'/'+ picture+ '""</img><div class="header">' + k.PICTURES[key].DATA_URL +'</div></div></div>';
-                                picturemetas+=picturemeta;
+                        rawdatas = '';
+                        if (k.MEASUREMENT) {
+                            k.MEASUREMENT.forEach(function(k, v) {
+                                if ((new RegExp('_RAW')).test(k[0].ABBREVIATION)) {
+                                    rawdata = ' <div class="item measurement_abbreviation" ><input type="hidden" value="' + k[0].ABBREVIATION + '"> <div class="content"> <div class="header">' + k[0].ABBREVIATION + '</div><div>' + k[0].NATURE + '</div> </div> </div>'
+                                    rawdatas += rawdata;
+                                } else {
+                                    measurement = ' <div class="item measurement_abbreviation" ><input type="hidden" value="' + k[0].ABBREVIATION + '"> <div class="content"> <div class="header">' + k[0].ABBREVIATION + '</div><div>' + k[0].NATURE + '</div> </div> </div>'
+                                    measurements += measurement;
+                                }
+                            });
+                            if (measurements != '') {
+                                measurements = '<div class="ui middle aligned selection list">' + measurements + '</div>'
                             }
-                            else{
-                                picture = ' <div class="item pictures" ><input type="hidden" value="'+k.PICTURES[key].DATA_URL+'"> <div class="content"> <div class="header">' + k.PICTURES[key].DATA_URL +'</div></div> </div>'
-                                pictures += picture;   
+                            if (rawdatas != '') {
+                                rawdatas = '<div class="ui middle aligned selection list">' + rawdatas + '</div>'
                             }
                         }
-                            
-                        pictures = '<div class="ui middle aligned selection list">' + pictures + '</div>'
-                        pictures='<div class="title"> <i class="dropdown icon"></i> Pictures </div> <div class="content">'+pictures+' </div>';
-                         }
+                        if (measurements != '') {
+                            measurements = '<div class="title"> <i class="dropdown icon"></i> Data </div> <div class="content">' + measurements + ' </div>'
 
-                        
+                        }
+
+                        if (rawdatas != '') {
+                            rawdatas = '<div class="title"> <i class="dropdown icon"></i> Raw data </div> <div class="content">' + rawdatas + ' </div>';
+                        }
+                        pictures = '';
+                        picturemetas = '';
+                        if (k.PICTURES) {
+                            for (key in k.PICTURES) {
+                                picture = k.PICTURES[key].DATA_URL;
+                                name = k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME;
+                                if ((new RegExp('_OUTCROP')).test(picture) || (new RegExp('_SAMPLE')).test(picture)) {
+                                    picturemeta = '<div class="item pictures" ><input type="hidden" value="' + k.PICTURES[key].DATA_URL + '"> <div class="content picture" > <img class="ui fluid image" src="/Backend/src/index.php/preview_img/' + name + '/' + picture + '""</img><div class="header">' + k.PICTURES[key].DATA_URL + '</div></div></div>';
+                                    picturemetas += picturemeta;
+                                } else {
+                                    picture = ' <div class="item pictures" ><input type="hidden" value="' + k.PICTURES[key].DATA_URL + '"> <div class="content"> <div class="header">' + k.PICTURES[key].DATA_URL + '</div></div> </div>'
+                                    pictures += picture;
+                                }
+                            }
+                            picturemetas = '<div class="ui middle aligned selection list">' + picturemetas + '</div>';
+                            pictures = '<div class="ui middle aligned selection list">' + pictures + '</div>';
+                            pictures = '<div class="title"> <i class="dropdown icon"></i> Pictures </div> <div class="content">' + pictures + ' </div>';
+                        }
+
+
                         setTimeout(function() {
                             $('.ui.sidebar.right').sidebar('setting', 'transition', 'overlay').sidebar('show');
                         }, 50);
@@ -144,11 +167,11 @@ APP.modules.map = (function() {
                             $('.pusher').removeClass('dimmed');
                         }, 200);
                         $('.ui.sidebar.right').empty();
-                        referent='';
+                        referent = '';
                         if (k.SUPPLEMENTARY_FIELDS.NAME_REFERENT) {
-                            referent='<br> Referent Name: ' + k.SUPPLEMENTARY_FIELDS.NAME_REFERENT +'<br> Referent First name: ' + k.SUPPLEMENTARY_FIELDS.FIRST_NAME_REFERENT ; 
+                            referent = '<br> Referent Name: ' + k.SUPPLEMENTARY_FIELDS.NAME_REFERENT + '<br> Referent First name: ' + k.SUPPLEMENTARY_FIELDS.FIRST_NAME_REFERENT;
                         }
-                        $('.ui.sidebar.right').append('<div class="ui styled accordion"> <div class="active title"> <i class="dropdown icon"></i> ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + ' </div> <div class="active content"> <h3>' + k.TITLE.substr(0, k.TITLE.lastIndexOf("_")) + '</h3><p> Description: ' + k.SUPPLEMENTARY_FIELDS.DESCRIPTION + '<br> Sample Name: ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + '<br> Alteration degree: ' + k.SUPPLEMENTARY_FIELDS.ALTERATION_DEGREE +referent+'<br> Lithology: ' + k.SUPPLEMENTARY_FIELDS.LITHOLOGY + '<br> Latitude: ' + k.SAMPLING_POINT[0].LATITUDE + ' Longitude: ' + k.SAMPLING_POINT[0].LONGITUDE + '</p>'+picturemetas+'</div> <div class="title"> <i class="dropdown icon"></i> Data </div> <div class="content">' + measurements + ' </div>'+pictures+'</div>')
+                        $('.ui.sidebar.right').append('<div class="ui styled accordion"> <div class="active title"> <i class="dropdown icon"></i> ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + ' </div> <div class="active content"> <h3>' + k.TITLE.substr(0, k.TITLE.lastIndexOf("_")) + '</h3><p> Description: ' + k.SUPPLEMENTARY_FIELDS.DESCRIPTION + '<br> Sample Name: ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + '<br> Alteration degree: ' + k.SUPPLEMENTARY_FIELDS.ALTERATION_DEGREE + referent + '<br> Lithology: ' + k.SUPPLEMENTARY_FIELDS.LITHOLOGY + '<br> Latitude: ' + k.SAMPLING_POINT[0].LATITUDE + ' Longitude: ' + k.SAMPLING_POINT[0].LONGITUDE + '</p>' + picturemetas + '</div>' + measurements + pictures + rawdatas)
                         $('.ui.accordion').accordion();
                         $('.item.measurement_abbreviation').on('click', function(e) {
                             mesure = $(this).children()[0].value;
@@ -165,13 +188,13 @@ APP.modules.map = (function() {
                         });
                         $('.item.pictures').on('click', function(e) {
                             picture = $(this).children()[0].value;
-                            name = k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME ;
+                            name = k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME;
                             name = name.replace("/ /g", "");
                             $("#preview").empty();
-                            $("#preview").append('<iframe src="/Backend/src/index.php/preview_img/' + name +'/'+ picture+ '" style="width:100%; height:550px;" frameborder="0"></iframe>');
+                            $("#preview").append('<iframe src="/Backend/src/index.php/preview_img/' + name + '/' + picture + '" style="width:100%; height:550px;" frameborder="0"></iframe>');
                             $(".actions a").remove();
                             $(".actions .download").remove();
-                            $(".actions").append(' <a href="/Backend/src/index.php/download_img/'+name+'/' + picture + '"><div class="ui green  button">Download</div></a>')
+                            $(".actions").append(' <a href="/Backend/src/index.php/download_img/' + name + '/' + picture + '"><div class="ui green  button">Download</div></a>')
                             $('.ui.modal.preview').modal('show');
 
                         });
@@ -195,7 +218,7 @@ APP.modules.map = (function() {
                     return a > b ? a : b;
                 });
                 for (key in measurement_abbreviation) {
-                    item = '<div class="item" title="'+measurement_nature[key]+'">' + key + '</div>';
+                    item = '<div class="item" title="' + measurement_nature[key] + '">' + key + '</div>';
                     measurement_abbreviation += item;
                 }
                 if (all == true) {
@@ -209,10 +232,10 @@ APP.modules.map = (function() {
                     lithology = '<div class="ui one column"><div class="ui selection dropdown lithology"><input type="hidden" name="lithology"> <i class="dropdown icon"></i><div class="default text">All</div><div class="menu">' + lithology + ' </div></div></div>';
                     append += lithology;
                 }
-                 if (updatelithology == true) {
-                   
+                if (updatelithology == true) {
+
                     $('.control .lithology').remove();
-                     for (key in lithology) {
+                    for (key in lithology) {
                         item = '<div class="item">' + key + '</div>';
                         lithology += item;
                     }
@@ -315,11 +338,11 @@ APP.modules.service = (function() {
                 APP.modules.map.affichagePoi(data, true, true, true);
             });
         },
-        getpoisorted: function(json, updatedate, updatemesure,updatelithology) {
+        getpoisorted: function(json, updatedate, updatemesure, updatelithology) {
             $.post("/Backend/src/index.php/get_poi_sort", {
                 json: json
             }, function(data) {
-                APP.modules.map.affichagePoi(data, false, updatedate, updatemesure,updatelithology);
+                APP.modules.map.affichagePoi(data, false, updatedate, updatemesure, updatelithology);
             });
         },
         getdata: function(json) {
@@ -343,7 +366,7 @@ APP.modules.service = (function() {
                 var pom = document.createElement('a');
                 pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(data));
                 json = JSON.parse(json);
-                pom.setAttribute('download', json.mesure+'_'+json.lithology+'_'+json.mindate+'_'+json.maxdate+ '.csv');
+                pom.setAttribute('download', json.mesure + '_' + json.lithology + '_' + json.mindate + '_' + json.maxdate + '.csv');
 
                 if (document.createEvent) {
                     var event = document.createEvent('MouseEvents');
@@ -356,21 +379,27 @@ APP.modules.service = (function() {
 
             });
         },
-        searchlithologyanddateandmesure: function(lithology, mesure, mindate, maxdate,lat1,lat2,lon1,lon2) {
+        searchlithologyanddateandmesure: function(lithology, mesure, mindate, maxdate, lat1, lat2, lon1, lon2) {
             obj = {
                 "lithology": lithology,
                 'mesure': mesure,
                 "mindate": mindate,
                 "maxdate": maxdate,
-                "lat":{ "lat1":lat1,"lat2":lat2},
-                 "lon":{ "lon1":lon1,"lon2":lon2},
+                "lat": {
+                    "lat1": lat1,
+                    "lat2": lat2
+                },
+                "lon": {
+                    "lon1": lon1,
+                    "lon2": lon2
+                },
 
             };
             json = JSON.stringify(obj);
-            if (lat1&&lat2&&lon1&&lon2) {
-            APP.modules.service.getpoisorted(json, true, true,true);
-            }else{
-            APP.modules.service.getpoisorted(json, false, false,false);
+            if (lat1 && lat2 && lon1 && lon2) {
+                APP.modules.service.getpoisorted(json, true, true, true);
+            } else {
+                APP.modules.service.getpoisorted(json, false, false, false);
             }
             APP.modules.service.getdata(json);
             $('.control .button').remove();
