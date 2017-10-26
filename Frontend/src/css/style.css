@@ -34,3 +34,8 @@
 .picture{
 	cursor: pointer;
 }
+
+#preview iframe img{
+	height: 100%!important;
+	width: 100%!important;
+}

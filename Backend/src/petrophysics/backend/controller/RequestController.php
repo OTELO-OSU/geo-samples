@@ -99,7 +99,7 @@ class RequestController
         $sort = json_decode($sort, true);
         if ($sort['lithology'])
         {
-            $lithology = "INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY:" . $sort['lithology'] . "%20AND%20";
+           $lithology = 'INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY:"' . urlencode($sort['lithology']) . '"%20AND%20';
         }
         if ($sort['mindate'] and $sort['maxdate'])
         {
@@ -107,7 +107,7 @@ class RequestController
         }
         if ($sort['mesure'])
         {
-            $mesure = 'INTRO.MEASUREMENT.ABBREVIATION:"' . $sort['mesure'] . '"%20AND%20';
+            $mesure = 'INTRO.MEASUREMENT.ABBREVIATION:"' . urlencode($sort['mesure']) . '"%20AND%20';
         }
         if ($sort['lat'] and $sort['lng'])
         {
@@ -190,7 +190,7 @@ class RequestController
         $sort = json_decode($sort, true);
         if ($sort['lithology'])
         {
-            $lithology = "INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY:" . $sort['lithology'] . "%20AND%20";
+           $lithology = 'INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY:"' . urlencode($sort['lithology']) . '"%20AND%20';
         }
         if ($sort['mindate'] and $sort['maxdate'])
         {
@@ -198,7 +198,7 @@ class RequestController
         }
         if ($sort['mesure'])
         {
-            $mesure = 'INTRO.MEASUREMENT.ABBREVIATION:"' . $sort['mesure'] . '"%20AND%20';
+            $mesure = 'INTRO.MEASUREMENT.ABBREVIATION:"' . urlencode($sort['mesure']) . '"%20AND%20';
         }
         $config = self::ConfigFile();
         $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology . $mesure . $date . "type=petrophysics&size=10000";
@@ -270,7 +270,7 @@ class RequestController
         $sort = json_decode($sort, true);
         if ($sort['lithology'])
         {
-            $lithology = "INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY:" . $sort['lithology'] . "%20AND%20";
+            $lithology = 'INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY:"' . urlencode($sort['lithology']) . '"%20AND%20';
         }
         if ($sort['mindate'] and $sort['maxdate'])
         {
@@ -278,11 +278,12 @@ class RequestController
         }
         if ($sort['mesure'])
         {
-            $mesure = 'INTRO.MEASUREMENT.ABBREVIATION:"' . $sort['mesure'] . '"%20AND%20';
+            $mesure = 'INTRO.MEASUREMENT.ABBREVIATION:"' . urlencode($sort['mesure']) . '"%20AND%20';
         }
         /*if ($sort['lat'] and $sort['lon']) {
         	$geo='INTRO.SAMPLING_POINT.LONGITUDE:['.abs($sort['lat']['lat1']).'%20TO%20'.abs($sort['lat']['lat2']).']%20AND%20INTRO.SAMPLING_POINT.LATITUDE:['.abs($sort['lon']['lon1']).'%20TO%20'.abs($sort['lon']['lon2']).']';
         }*/
+
         $config = self::ConfigFile();
         $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology . $mesure . $date . "type=petrophysics&size=10000";
         $postcontent = '{ "_source": { 
@@ -361,6 +362,30 @@ class RequestController
         }
     }
 
+     function Request_poi_raw_data($id)
+    {
+        $config = self::ConfigFile();
+        $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . '/_search?q=INTRO.MEASUREMENT.ABBREVIATION:"' . $id .'"&type=petrophysics';
+        $curlopt = array(
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_PORT => $config['ESPORT'],
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "GET"
+        );
+        $response = self::Curlrequest($url, $curlopt);
+        $response = json_decode($response, true);
+        
+            if (count($response['hits']['hits'])==1) {
+            $response = json_encode($response['hits']['hits'][0]['_source']['DATA']);
+            return $response;
+            }
+        
+    }
+
+
     function Request_poi_img($id, $picturename)
     {
         $explode = explode('_', $id, 2);
@@ -395,6 +420,7 @@ class RequestController
      */
     function download($filepath)
     {
+    	var_dump($filepath);
         if (file_exists($filepath))
         {
             header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
@@ -417,6 +443,7 @@ class RequestController
     {
         $mime = pathinfo($path);
         $mime = $mime['extension'];
+        $mime = strtolower($mime);
         if ($mime == 'png')
         {
             $readfile = readfile($path);

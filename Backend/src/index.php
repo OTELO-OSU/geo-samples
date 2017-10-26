@@ -45,8 +45,24 @@ $app->post('/download_poi_type_data', function (Request $req,Response $responseS
 $app->get('/download_poi_data/{name}', function (Request $req,Response $responseSlim,$args) {
 	$name = $args['name'];
 	$name = str_replace(' ', '', $name);
+	if (strrpos($name, '_RAW')!=false) {
+       return $responseSlim->withStatus(403);
+    }
 	$request = new RequestApi();
 	$response = $request->Request_poi_data($name);
+	$response=json_decode($response,TRUE);
+	$path=$response['FILES'][0]['ORIGINAL_DATA_URL'];
+	$download = $request->download($path);
+	 if ($download == NULL or $download == false) {
+       return $responseSlim->withStatus(403);
+    }
+});
+
+$app->get('/download_poi_raw_data/{name}', function (Request $req,Response $responseSlim,$args) {
+	$name = $args['name'];
+	$name = str_replace(' ', '', $name);
+	$request = new RequestApi();
+	$response = $request->Request_poi_raw_data($name);
 	$response=json_decode($response,TRUE);
 	$path=$response['FILES'][0]['ORIGINAL_DATA_URL'];
 	$download = $request->download($path);

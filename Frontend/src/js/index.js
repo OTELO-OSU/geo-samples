@@ -100,8 +100,12 @@ APP.modules.map = (function() {
                     lithology[k.SUPPLEMENTARY_FIELDS.LITHOLOGY] = (k.SUPPLEMENTARY_FIELDS.LITHOLOGY);
                     creationdate.push(k.SAMPLING_DATE[0]);
                     k.MEASUREMENT.forEach(function(k, v) {
-                        measurement_abbreviation[k[0].ABBREVIATION] = (k[0].ABBREVIATION);
-                        measurement_nature[k[0].ABBREVIATION] = (k[0].NATURE)
+                        mesure=k[0].ABBREVIATION.split("_");
+                        if (mesure && new RegExp('_RAW').test(k[0].ABBREVIATION)==false) {
+                            measurement_abbreviation[k[0].ABBREVIATION] = (k[0].ABBREVIATION);
+                            measurement_nature[k[0].ABBREVIATION] = (k[0].NATURE);
+                        }
+                        
                     });
 
 
@@ -118,7 +122,7 @@ APP.modules.map = (function() {
                         if (k.MEASUREMENT) {
                             k.MEASUREMENT.forEach(function(k, v) {
                                 if ((new RegExp('_RAW')).test(k[0].ABBREVIATION)) {
-                                    rawdata = ' <div class="item measurement_abbreviation" ><input type="hidden" value="' + k[0].ABBREVIATION + '"> <div class="content"> <div class="header">' + k[0].ABBREVIATION + '</div><div>' + k[0].NATURE + '</div> </div> </div>'
+                                    rawdata = ' <div class="item measurement_abbreviation_raw" ><input type="hidden" value="' + k[0].ABBREVIATION + '"> <div class="content"> <div class="header">' + k[0].ABBREVIATION + '</div><div>' + k[0].NATURE + '</div>  <a href="/Backend/src/index.php/download_poi_raw_data/' + k[0].ABBREVIATION + '"><div class="ui green  button">Download</div></a></div> </div>'
                                     rawdatas += rawdata;
                                 } else {
                                     measurement = ' <div class="item measurement_abbreviation" ><input type="hidden" value="' + k[0].ABBREVIATION + '"> <div class="content"> <div class="header">' + k[0].ABBREVIATION + '</div><div>' + k[0].NATURE + '</div> </div> </div>'
@@ -186,12 +190,13 @@ APP.modules.map = (function() {
                             $('.ui.modal.preview').modal('show');
 
                         });
+
                         $('.item.pictures').on('click', function(e) {
                             picture = $(this).children()[0].value;
                             name = k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME;
                             name = name.replace("/ /g", "");
                             $("#preview").empty();
-                            $("#preview").append('<iframe src="/Backend/src/index.php/preview_img/' + name + '/' + picture + '" style="width:100%; height:550px;" frameborder="0"></iframe>');
+                            $("#preview").append('<img class="ui fluid image" src="/Backend/src/index.php/preview_img/' + name + '/' + picture + '""</img>');
                             $(".actions a").remove();
                             $(".actions .download").remove();
                             $(".actions").append(' <a href="/Backend/src/index.php/download_img/' + name + '/' + picture + '"><div class="ui green  button">Download</div></a>')
