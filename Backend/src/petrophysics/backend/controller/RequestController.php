@@ -420,7 +420,6 @@ class RequestController
      */
     function download($filepath)
     {
-    	var_dump($filepath);
         if (file_exists($filepath))
         {
             header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
