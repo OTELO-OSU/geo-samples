@@ -2,12 +2,9 @@ var APP = (function() {
     return {
         modules: {},
         group: null,
-        init: function() {
-
-        }
+        init: function() {}
     }
 })();
-
 /**
  * module MAP
  * modÃ©lise la carte et les fonctionnalitÃ©s
@@ -16,16 +13,13 @@ var APP = (function() {
  * @type {{init}}
  */
 APP.modules.map = (function() {
-
     /**
      * attributs
      *  @var map : carte (objet Leaflet)
      *  @var markers : ensemble des marqueurs de la carte
      */
     var map, markers, areaSelect;
-
     return {
-
         /**
          * methode d'initialisation
          *
@@ -40,7 +34,6 @@ APP.modules.map = (function() {
             var osm = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
-
             $(document).keydown(function(event) {
                 if (event.which == "17") {
                     areaSelect = L.areaSelect({
@@ -48,21 +41,17 @@ APP.modules.map = (function() {
                         height: 300
                     });
                     areaSelect.addTo(map);
-
                 }
             });
             $(document).keyup(function(event) {
                 if (event.which == "17") {
-
                     bounds = areaSelect.getBounds();
                     APP.modules.service.searchlithologyanddateandmesure($("input[name='lithology']")[0].value, $("input[name='measurement_abbreviation']")[0].value, $('input[name=mindate]')[0].value, $('input[name=maxdate]')[0].value, bounds['_southWest']['lat'], bounds['_northEast']['lat'], bounds['_northEast']['lng'], bounds['_southWest']['lng']);
-
                     areaSelect.remove();
                     delete areaSelect;
                 }
             });
         },
-
         /**
          * methode d'affichage
          * @param data
@@ -71,7 +60,6 @@ APP.modules.map = (function() {
             data = JSON.parse(data);
             $('.message').empty();
             if (APP.group != null) {
-
                 APP.group.clearLayers();
             }
             if (data == null || data.length == 0) {
@@ -100,15 +88,12 @@ APP.modules.map = (function() {
                     lithology[k.SUPPLEMENTARY_FIELDS.LITHOLOGY] = (k.SUPPLEMENTARY_FIELDS.LITHOLOGY);
                     creationdate.push(k.SAMPLING_DATE[0]);
                     k.MEASUREMENT.forEach(function(k, v) {
-                        mesure=k[0].ABBREVIATION.split("_");
-                        if (mesure && new RegExp('_RAW').test(k[0].ABBREVIATION)==false) {
+                        mesure = k[0].ABBREVIATION.split("_");
+                        if (mesure && new RegExp('_RAW').test(k[0].ABBREVIATION) == false) {
                             measurement_abbreviation[k[0].ABBREVIATION] = (k[0].ABBREVIATION);
                             measurement_nature[k[0].ABBREVIATION] = (k[0].NATURE);
                         }
-                        
                     });
-
-
                     var long = k.SAMPLING_POINT[0].LONGITUDE.replace(/\s+/g, '');
                     var lat = k.SAMPLING_POINT[0].LATITUDE.replace(/\s+/g, '');
                     var firstProj = '+proj=lcc +lat_1=49 +lat_2=44 +lat_0=46.5 +lon_0=3 +x_0=700000 +y_0=6600000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs';
@@ -138,9 +123,7 @@ APP.modules.map = (function() {
                         }
                         if (measurements != '') {
                             measurements = '<div class="title"> <i class="dropdown icon"></i> Data </div> <div class="content">' + measurements + ' </div>'
-
                         }
-
                         if (rawdatas != '') {
                             rawdatas = '<div class="title"> <i class="dropdown icon"></i> Raw data </div> <div class="content">' + rawdatas + ' </div>';
                         }
@@ -162,8 +145,6 @@ APP.modules.map = (function() {
                             pictures = '<div class="ui middle aligned selection list">' + pictures + '</div>';
                             pictures = '<div class="title"> <i class="dropdown icon"></i> Pictures </div> <div class="content">' + pictures + ' </div>';
                         }
-
-
                         setTimeout(function() {
                             $('.ui.sidebar.right').sidebar('setting', 'transition', 'overlay').sidebar('show');
                         }, 50);
@@ -188,9 +169,7 @@ APP.modules.map = (function() {
                             $(".actions .download").remove();
                             $(".actions").append(' <a href="/Backend/src/index.php/download_poi_data/' + name + '"><div class="ui green  button">Download</div></a>')
                             $('.ui.modal.preview').modal('show');
-
                         });
-
                         $('.item.pictures').on('click', function(e) {
                             picture = $(this).children()[0].value;
                             name = k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME;
@@ -201,12 +180,8 @@ APP.modules.map = (function() {
                             $(".actions .download").remove();
                             $(".actions").append(' <a href="/Backend/src/index.php/download_img/' + name + '/' + picture + '"><div class="ui green  button">Download</div></a>')
                             $('.ui.modal.preview').modal('show');
-
                         });
                     });
-
-
-
                     marker.on('mouseover', function(e) {
                         this.openPopup();
                     });
@@ -238,7 +213,6 @@ APP.modules.map = (function() {
                     append += lithology;
                 }
                 if (updatelithology == true) {
-
                     $('.control .lithology').remove();
                     for (key in lithology) {
                         item = '<div class="item">' + key + '</div>';
@@ -246,41 +220,30 @@ APP.modules.map = (function() {
                     }
                     lithology = '<div class="ui one column"><div class="ui selection dropdown lithology"><input type="hidden" name="lithology"> <i class="dropdown icon"></i><div class="default text">All</div><div class="menu">' + lithology + ' </div></div></div>';
                     append += lithology;
-
                 }
-
-
                 if (updatedate == true) {
                     $('.control button').remove();
                     $('.control .dates').remove();
                     date = '<div class="dates"><div class="ui input"><input  type="text" name="mindate" value="' + minDate + '"></div><div class="ui input"><input class="ui input" type="text"   name="maxdate" value="' + maxDate + '"></div></div>';
                     append += date;
-
                 }
-
                 if (updatemesure == true) {
                     $('.control .button').remove();
                     $('.control .measurement_abbreviation').remove();
                     measurement_abbreviation = '<div class="ui one column"><div class="ui selection dropdown measurement_abbreviation"><input type="hidden" name="measurement_abbreviation"> <i class="dropdown icon"></i><div class="default text">Select a mesure</div><div class="menu">' + measurement_abbreviation + ' </div></div></div>';
                     append += measurement_abbreviation;
-
                 }
-
                 $('.control').append(append);
                 $(".control .dates input").datepicker({
                     minDate: new Date(minDate),
                     maxDate: new Date(maxDate),
                     dateFormat: 'yy-mm-dd'
                 });
-
-
                 $('input[name=measurement_abbreviation]').unbind('change');
                 $("input[name='measurement_abbreviation']").on('change', function(e) {
                     APP.modules.service.searchlithologyanddateandmesure($("input[name='lithology']")[0].value, $("input[name='measurement_abbreviation']")[0].value, $('input[name=mindate]')[0].value, $('input[name=maxdate]')[0].value);
                 })
-
                 $('.filter').on('click', function(e) {
-
                     $('.sidebar.left').sidebar('setting', 'transition', 'overlay').sidebar('toggle');
                 })
                 $('.ui.dropdown.lithology').dropdown({
@@ -291,7 +254,6 @@ APP.modules.map = (function() {
                             APP.modules.service.searchlithology(value);
                         }
                     }
-
                 });
                 $('.ui.dropdown.measurement_abbreviation').dropdown();
                 $('.ui.dropdown.lithology').dropdown({
@@ -302,7 +264,6 @@ APP.modules.map = (function() {
                             APP.modules.service.searchlithology(value);
                         }
                     }
-
                 });
                 $('.ui.dropdown.measurement_abbreviation').dropdown();
                 $('input[name=mindate]').unbind('change');
@@ -310,33 +271,20 @@ APP.modules.map = (function() {
                 $('input[name=mindate]').on('change', function(e) {
                     APP.modules.service.searchlithologyanddate($('input[name=lithology]')[0].value, $('input[name=mindate]')[0].value, $('input[name=maxdate]')[0].value);
                 })
-
                 $('input[name=maxdate]').on('change', function(e) {
                     APP.modules.service.searchlithologyanddate($('input[name=lithology]')[0].value, $('input[name=mindate]')[0].value, $('input[name=maxdate]')[0].value);
                 })
-
-
-
-
                 APP.group = L.featureGroup(markers); // on met le groupe de markers dans une layer
                 APP.group.getLayers().length;
                 APP.group.addTo(map);
                 bounds = APP.group.getBounds();
                 map.fitBounds(bounds);
                 map.setZoom(11);
-
             }
-
         },
-
-
-
-
     }
 })();
-
 APP.modules.service = (function() {
-
     return {
         getallpoi: function() {
             $.get("/Backend/src/index.php/get_all_poi", function(data) {
@@ -372,16 +320,13 @@ APP.modules.service = (function() {
                 pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(data));
                 json = JSON.parse(json);
                 pom.setAttribute('download', json.mesure + '_' + json.lithology + '_' + json.mindate + '_' + json.maxdate + '.csv');
-
                 if (document.createEvent) {
                     var event = document.createEvent('MouseEvents');
                     event.initEvent('click', true, true);
                     pom.dispatchEvent(event);
                 } else {
                     pom.click();
-
                 }
-
             });
         },
         searchlithologyanddateandmesure: function(lithology, mesure, mindate, maxdate, lat1, lat2, lon1, lon2) {
@@ -398,7 +343,6 @@ APP.modules.service = (function() {
                     "lon1": lon1,
                     "lon2": lon2
                 },
-
             };
             json = JSON.stringify(obj);
             if (lat1 && lat2 && lon1 && lon2) {
@@ -412,9 +356,6 @@ APP.modules.service = (function() {
             $('.control .button').on('click', function(e) {
                 $('.ui.modal.preview').modal('show');
             });
-
-
-
         },
         searchlithology: function(lithology) {
             obj = {
@@ -422,8 +363,6 @@ APP.modules.service = (function() {
             };
             json = JSON.stringify(obj);
             APP.modules.service.getpoisorted(json, true, true);
-
-
         },
         searchlithologyanddate: function(lithology, mindate, maxdate) {
             obj = {
@@ -434,12 +373,8 @@ APP.modules.service = (function() {
             json = JSON.stringify(obj);
             APP.modules.service.getpoisorted(json, false, true);
         },
-
-
     }
 })();
-
-
 window.onload = (function() {
     APP.modules.map.init('map');
     APP.init();
