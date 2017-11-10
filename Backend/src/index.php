@@ -1,7 +1,7 @@
 <?php
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
-use \petrophysics\backend\controller\RequestController as RequestApi;
+use \geosamples\backend\controller\RequestController as RequestApi;
 require '../vendor/autoload.php';
 
 $c = new \Slim\Container();//Initialisation de Slim

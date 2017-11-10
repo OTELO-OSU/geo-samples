@@ -62,9 +62,9 @@ class ComposerStaticInit1f4fc654b41588a71cb4321e2d69824e
     );
 
     public static $prefixesPsr0 = array (
-        'p' => 
+        'g' => 
         array (
-            'petrophysics' => 
+            'geosamples' => 
             array (
                 0 => __DIR__ . '/../..' . '/src',
             ),

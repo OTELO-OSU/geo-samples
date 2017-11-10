@@ -1,12 +1,12 @@
 <?php
-namespace petrophysics\backend\controller;
+namespace geosamples\backend\controller;
 
 class RequestController
 {
 
     function ConfigFile()
     {
-        $config = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . 'Backend/config.ini');
+        $config = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . '/Backend/config.ini');
         return $config;
     }
     /**
@@ -40,7 +40,7 @@ class RequestController
     {
 
         $config = self::ConfigFile();
-        $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?type=petrophysics&size=10000";
+        $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?type=" . $config['ESTYPE'] ."&size=10000";
         $postcontent = '{ "_source": { 
             "includes": [ "INTRO.SAMPLING_DATE","INTRO.TITLE","INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY","INTRO.SUPPLEMENTARY_FIELDS.DESCRIPTION","INTRO.SUPPLEMENTARY_FIELDS.SAMPLE_NAME","INTRO.SUPPLEMENTARY_FIELDS.ALTERATION_DEGREE","INTRO.SUPPLEMENTARY_FIELDS.NAME_REFERENT","INTRO.SUPPLEMENTARY_FIELDS.FIRST_NAME_REFERENT",
             "INTRO.SAMPLING_DATE","INTRO.SAMPLING_POINT","INTRO.MEASUREMENT","DATA.FILES" ] 
@@ -115,7 +115,7 @@ class RequestController
         }
 
         $config = self::ConfigFile();
-        $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology . $mesure . $date . $geo . "type=petrophysics&size=10000";
+        $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology . $mesure . $date . $geo . "type=" . $config['ESTYPE'] ."&size=10000";
 
         $postcontent = '{ "_source": { 
             "includes": [ "DATA","INTRO.MEASUREMENT.ABBREVIATION" ] 
@@ -201,7 +201,7 @@ class RequestController
             $mesure = 'INTRO.MEASUREMENT.ABBREVIATION:"' . urlencode($sort['mesure']) . '"%20AND%20';
         }
         $config = self::ConfigFile();
-        $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology . $mesure . $date . "type=petrophysics&size=10000";
+        $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology . $mesure . $date . "type=" . $config['ESTYPE'] ."&size=10000";
 
         $postcontent = '{ "_source": { 
             "includes": [ "DATA","INTRO.MEASUREMENT.ABBREVIATION" ] 
@@ -285,7 +285,7 @@ class RequestController
         }*/
 
         $config = self::ConfigFile();
-        $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology . $mesure . $date . "type=petrophysics&size=10000";
+        $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology . $mesure . $date . "type=" . $config['ESTYPE'] ."&size=10000";
         $postcontent = '{ "_source": { 
             "includes": [ "INTRO.SAMPLING_DATE","INTRO.TITLE","INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY","INTRO.SUPPLEMENTARY_FIELDS.DESCRIPTION","INTRO.SUPPLEMENTARY_FIELDS.SAMPLE_NAME","INTRO.SUPPLEMENTARY_FIELDS.ALTERATION_DEGREE","INTRO.SUPPLEMENTARY_FIELDS.NAME_REFERENT","INTRO.SUPPLEMENTARY_FIELDS.FIRST_NAME_REFERENT",
             "INTRO.SAMPLING_DATE","INTRO.SAMPLING_POINT","INTRO.MEASUREMENT","DATA.FILES" ] 
@@ -342,7 +342,7 @@ class RequestController
     {
         $explode = explode('_', $id, 2);
         $config = self::ConfigFile();
-        $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . '/_search?q=(INTRO.MEASUREMENT.ABBREVIATION:"' . $explode[1] . '"%20AND%20INTRO.SUPPLEMENTARY_FIELDS.SAMPLE_NAME:"' . $explode[0] . '")&type=petrophysics';
+        $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . '/_search?q=(INTRO.MEASUREMENT.ABBREVIATION:"' . $explode[1] . '"%20AND%20INTRO.SUPPLEMENTARY_FIELDS.SAMPLE_NAME:"' . $explode[0] . '")&type=' . $config['ESTYPE'] ;
         $curlopt = array(
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
@@ -365,7 +365,7 @@ class RequestController
      function Request_poi_raw_data($id)
     {
         $config = self::ConfigFile();
-        $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . '/_search?q=INTRO.MEASUREMENT.ABBREVIATION:"' . $id .'"&type=petrophysics';
+        $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . '/_search?q=INTRO.MEASUREMENT.ABBREVIATION:"' . $id .'"&type=' . $config['ESTYPE'] ;
         $curlopt = array(
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
@@ -390,7 +390,7 @@ class RequestController
     {
         $explode = explode('_', $id, 2);
         $config = self::ConfigFile();
-        $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . '/_search?q=(INTRO.MEASUREMENT.ABBREVIATION:"' . $explode[1] . '"%20AND%20INTRO.SUPPLEMENTARY_FIELDS.SAMPLE_NAME:"' . $explode[0] . '")&type=petrophysics';
+        $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . '/_search?q=(INTRO.MEASUREMENT.ABBREVIATION:"' . $explode[1] . '"%20AND%20INTRO.SUPPLEMENTARY_FIELDS.SAMPLE_NAME:"' . $explode[0] . '")&type=' . $config['ESTYPE'] ;
         $curlopt = array(
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
