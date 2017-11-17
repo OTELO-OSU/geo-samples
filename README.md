@@ -40,7 +40,7 @@ Le fichier de configuration se trouve dans Backend/config.ini
     apt-get install python-pip
     pip install 'mongo-connector[elastic5]'
     
-** Utilisation **
+**Utilisation**
 
 Lancez Mongo-connector
 
@@ -48,4 +48,8 @@ sudo mongo-connector -m localhost:27017 -c mongo-connector_config.json  --namesp
 
 Mongo connector permet de répliquer les données présentes dans mongoDB sur un cluster elasticsearch.
 
+**Modification affichage**
 
+Si vous souhaitez modifier l'affichage des metadonnées dans l'application, il faut se rendre dans le fichier Frontend/src/js/index.js , ligne 159
+$('.ui.sidebar.right').append(HTMLCONTENT)
+Il faut modifier le HTML present dans append.
