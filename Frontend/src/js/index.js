@@ -34,6 +34,17 @@ APP.modules.map = (function() {
             var osm = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
+            var ign = L.tileLayer(
+            'https://wxs.ign.fr/9bci2kf4ow18mxkruzqcl3pi/geoportail/wmts?service=WMTS&request=GetTile&version=1.0.0&tilematrixset=PM&tilematrix={z}&tilecol={x}&tilerow={y}&layer=ORTHOIMAGERY.ORTHOPHOTOS&format=image/jpeg&style=normal',
+            {
+                minZoom : 0,
+                maxZoom : 18,
+                tileSize : 256,
+                attribution : "IGN-F/Géoportail"
+            }).addTo(map);
+            var baseLayers = {"IGN" : ign, "OpenStreetMap" : osm};
+            L.control.scale({'position':'bottomleft','metric':true,'imperial':false}).addTo(map);
+            L.control.layers(baseLayers, {}).addTo(map);
             $(document).keydown(function(event) {
                 if (event.which == "17") {
                     areaSelect = L.areaSelect({
