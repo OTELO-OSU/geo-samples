@@ -52,6 +52,7 @@ class RequestController
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 30,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_HTTPHEADER     => "Content-type: application/json",
             CURLOPT_CUSTOMREQUEST => "POST",
             CURLOPT_POSTFIELDS => $postcontent
         );
@@ -127,6 +128,7 @@ class RequestController
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 30,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_HTTPHEADER     => "Content-type: application/json",
             CURLOPT_CUSTOMREQUEST => "POST",
             CURLOPT_POSTFIELDS => $postcontent
         );
@@ -213,6 +215,7 @@ class RequestController
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 30,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_HTTPHEADER     => "Content-type: application/json",
             CURLOPT_CUSTOMREQUEST => "POST",
             CURLOPT_POSTFIELDS => $postcontent
         );
@@ -297,6 +300,7 @@ class RequestController
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 30,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_HTTPHEADER     => "Content-type: application/json",
             CURLOPT_CUSTOMREQUEST => "POST",
             CURLOPT_POSTFIELDS => $postcontent
         );
@@ -350,6 +354,7 @@ class RequestController
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 30,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_HTTPHEADER     => "Content-type: application/json",
             CURLOPT_CUSTOMREQUEST => "GET"
         );
         $response = self::Curlrequest($url, $curlopt);
@@ -373,6 +378,7 @@ class RequestController
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 30,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_HTTPHEADER     => "Content-type: application/json",
             CURLOPT_CUSTOMREQUEST => "GET"
         );
         $response = self::Curlrequest($url, $curlopt);
@@ -398,6 +404,7 @@ class RequestController
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 30,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_HTTPHEADER     => "Content-type: application/json",
             CURLOPT_CUSTOMREQUEST => "GET"
         );
         $response = self::Curlrequest($url, $curlopt);
