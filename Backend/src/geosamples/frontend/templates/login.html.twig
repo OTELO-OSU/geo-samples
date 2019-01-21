@@ -1,0 +1,59 @@
+
+{% include 'header.html.twig' %}
+<body>
+
+<div class="ui middle aligned center aligned grid">
+  <div class="column" id="login">
+  <div class="row"></div>
+    <h2 class="ui  image header">
+      <div class="content">
+        Log-in into your account
+      </div>
+    </h2>
+      {%if error%}
+    <div class="ui negative message">
+      <div class="header">
+       {{error}}
+      </div>
+</p></div>
+{%endif%}
+    <form class="ui large form login" method="post" action="login">
+      <div class="ui error message"></div>
+      <div class="ui stacked segment">
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="user icon"></i>
+            <input type="text" name="email" placeholder="E-mail address">
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="lock icon"></i>
+            <input type="password" name="password" placeholder="Password">
+          </div>
+        </div>
+
+        <button type="submit" class="ui fluid large green submit button">Login</button>
+      </div>
+
+<div class="row"></div>
+    </form>
+
+    <a href="loginCAS"><button type="submit" class="ui fluid large grey submit button">Login with CAS</button></a>
+
+
+    <div class="ui message">
+      Not a member ? <a href="/signup">Sign Up</a>
+    </div>
+     <div class="ui message">
+      Forgot your password ? <a href="/recover">Reset</a>
+    </div>
+  </div>
+</div>
+
+</body>
+
+<script type="text/javascript">
+  APP.modules.account.check_login();
+</script>
+{% include 'footer.html.twig' %}

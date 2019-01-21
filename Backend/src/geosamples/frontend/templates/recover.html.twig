@@ -1,0 +1,61 @@
+
+{% include 'header.html.twig' %}
+<body>
+
+<div class="ui middle aligned center aligned grid">
+  <div class="column" id="login">
+      <div class="row"></div>
+    <h2 class="ui  image header">
+      <div class="content">
+        Reset your password
+      </div>
+    </h2>
+    {%if post == "true"%}
+      {%if error =="Mail not found in our database" %}
+    
+<div class="ui negative message">
+      <div class="header">
+{{error}}      </div>
+</p></div>
+
+{%else%}
+<div class="ui positive message">
+      <div class="header">
+{{error}}      </div>
+</p></div>
+<script type="text/javascript">
+     setTimeout(function(){
+   window.location.href="accueil";
+   }, 3000); 
+</script>
+
+{%endif%}
+{%endif%}
+
+{%if error != "Please check your email and click on the link to reset your password"%}
+    <form class="ui large form recover" method="post" action="/recover">
+      <div class="ui error message"></div>
+      <div class="ui stacked segment">
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="user icon"></i>
+            <input type="text" name="email" placeholder="E-mail address">
+          </div>
+        </div>
+        <button type="submit" class="ui fluid large teal submit button">Send instructions</button>
+      </div>
+
+{%endif%}
+
+    </form>
+
+  
+  </div>
+</div>
+
+</body>
+<script type="text/javascript">
+  APP.modules.account.check_recover();
+
+</script>
+{% include 'footer.html.twig' %}

@@ -1,0 +1,50 @@
+
+
+#map {
+    height: 90vh;
+    width: 100%;
+}
+
+.ui.right.sidebar {
+    width: 380px!important;
+}
+
+.ui.left.sidebar {
+    width: 380px!important;
+}
+
+
+
+.control{ margin-left: 3%; margin-top: 20vh;}
+
+.ui.selection.dropdown{
+  width:100%; 
+  margin-bottom:  15px;
+}
+
+.control .input{
+  margin-top: 8%;
+  margin-bottom: 10%;
+}
+
+.message{
+  position: relative;
+}
+
+.picture{
+	cursor: pointer;
+}
+
+#preview iframe img{
+	height: 100%!important;
+	width: 100%!important;
+}
+
+#login{
+  max-width: 450px;
+}
+
+#signup{
+  max-width: 450px;
+}
+

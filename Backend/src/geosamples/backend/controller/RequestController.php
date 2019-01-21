@@ -6,7 +6,7 @@ class RequestController
 
     function ConfigFile()
     {
-        $config = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . '/Backend/config.ini');
+        $config = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . '/../config.ini');
         return $config;
     }
     /**
@@ -36,7 +36,7 @@ class RequestController
      *
      *
      */
-    function Request_all_poi()
+     function Request_all_poi()
     {
 
         $config = self::ConfigFile();
@@ -63,24 +63,28 @@ class RequestController
         $return = array();
         foreach ($response as $key => $value)
         {
-            $current = $value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME'];
-            if (!$return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']])
+            $current = $value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE'];
+
+            if (!$return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE'][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]])
             {
-                $return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_DATE'] = $value['_source']['INTRO']['SAMPLING_DATE'];
-                $return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SUPPLEMENTARY_FIELDS'] = $value['_source']['INTRO']['SUPPLEMENTARY_FIELDS'];
-                $return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['TITLE'] = $value['_source']['INTRO']['TITLE'];
-                $return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_POINT'] = $value['_source']['INTRO']['SAMPLING_POINT'];
+                $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_DATE'] = $value['_source']['INTRO']['SAMPLING_DATE'];
+                $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SUPPLEMENTARY_FIELDS'] = $value['_source']['INTRO']['SUPPLEMENTARY_FIELDS'];
+                $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['TITLE'] = $value['_source']['INTRO']['TITLE'];
+                $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_POINT'] = $value['_source']['INTRO']['SAMPLING_POINT'];
+                $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']]['COORDINATES']['LAT'] = $value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'];
+                $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']]['COORDINATES']['LONG'] = $value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE'];
 
                 foreach ($value['_source']['DATA']['FILES'] as $key => $file)
                 {
                     if (exif_imagetype($file['ORIGINAL_DATA_URL']))
                     {
-                        $return[$current]['PICTURES'][$key] = $file;
+                        $return[$current][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['PICTURES'][$key] = $file;
                     }
                 }
             }
-
-            $return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['MEASUREMENT'][] = $value['_source']['INTRO']['MEASUREMENT'];
+        if (($_SESSION['mail'] && in_array($value['_type'], $_SESSION['projects_access_right'])) or ($_SESSION['admin']==1) ) {
+            $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['MEASUREMENT'][] = $value['_source']['INTRO']['MEASUREMENT'];
+        }
 
         }
         $responses = $return;
@@ -100,173 +104,173 @@ class RequestController
         $sort = json_decode($sort, true);
         if ($sort['lithology'])
         {
-           $lithology = 'INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY:"' . urlencode($sort['lithology']) . '"%20AND%20';
-        }
-        if ($sort['mindate'] and $sort['maxdate'])
-        {
-            $date = 'INTRO.SAMPLING_DATE:[' . $sort['mindate'] . '%20TO%20' . $sort['maxdate'] . ']%20AND%20';
-        }
-        if ($sort['mesure'])
-        {
-            $mesure = 'INTRO.MEASUREMENT.ABBREVIATION:"' . urlencode($sort['mesure']) . '"%20AND%20';
-        }
-        if ($sort['lat'] and $sort['lng'])
-        {
-            $geo = 'INTRO.SAMPLING_POINT.LONGITUDE:[' . $sort['lat']['lat1'] . '%20TO%20' . $sort['lat']['lat2'] . ']%20AND%20INTRO.SAMPLING_POINT.LATITUDE:[' . $sort['lat']['lat1'] . '%20TO%20' . $sort['lat']['lat1'] . ']';
-        }
-
-        $config = self::ConfigFile();
-        $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology . $mesure . $date . $geo . "type=" . $config['COLLECTION_NAME'] ."&size=10000";
-
-        $postcontent = '{ "_source": { 
-            "includes": [ "DATA","INTRO.MEASUREMENT.ABBREVIATION" ] 
-             }}';
-        $curlopt = array(
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => "",
-            CURLOPT_PORT => $config['ESPORT'],
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 30,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_HTTPHEADER     => "Content-type: application/json",
-            CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_POSTFIELDS => $postcontent
-        );
-        $response = self::Curlrequest($url, $curlopt);
-        $response = json_decode($response, true);
-        $response = $response['hits']['hits'];
-        $responses = array();
-        $finalcsv = array();
-        $finalcsvuniq = array();
-        echo '<link rel="stylesheet" type="text/css" href="/Frontend/css/semantic/dist/semantic.min.css">';
-        echo '    <link rel="stylesheet" type="text/css" href="/Frontend/css/style.css">  
-        
-';
-
-        echo "<div class='' ui grid container'  style='overflow-x:auto'><table style='width:700px; height:500px;' class='ui compact unstackable table'></div>";
-        foreach ($response as $key => $value)
-        {
-            if (strtoupper($sort['mesure']) == strtoupper($value['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION']))
-            {
-
-                $file = $value['_source']['DATA']['FILES'][0]['ORIGINAL_DATA_URL'];
-                $folder = explode('_', strtoupper($value['_source']['DATA']['FILES'][0]['DATA_URL']));
-                $name = $value['_source']['DATA']['FILES'][0]['DATA_URL'];
-                $file_parts = pathinfo($file);
-                if ($file_parts['extension'] == "xlsx")
-                {
-                    $CSV_FOLDER = $config["CSV_FOLDER"];
-                    $file = $CSV_FOLDER . $folder[0] . '_' . $folder[1] . "/" . $name;
-                }
-                $csv = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-                $finalcsv[] = $csv;
-            }
-        }
-        foreach ($finalcsv as $key => $value)
-        {
-            foreach ($value as $key => $value)
-            {
-                $finalcsvuniq[] = $value;
-            }
-        }
-        $finalcsvuniq = array_unique($finalcsvuniq);
-        foreach ($finalcsvuniq as $key => $value)
-        {
-            $value = str_getcsv($value);
-            echo "<tr>";
-            foreach ($value as $cell)
-            {
-                echo "<td>" . htmlspecialchars($cell) . "</td>";
-            }
-            echo "</tr>\n";
-
-        }
-        echo "\n</table></body></html>";
-
+         $lithology = 'INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY:"' . urlencode($sort['lithology']) . '"%20AND%20';
+     }
+     if ($sort['mindate'] and $sort['maxdate'])
+     {
+        $date = 'INTRO.SAMPLING_DATE:[' . $sort['mindate'] . '%20TO%20' . $sort['maxdate'] . ']%20AND%20';
     }
-
-    function Download_data_with_sort($sort)
+    if ($sort['mesure'])
     {
-        $lithology = '';
-        $mesure = '';
-        $sort = json_decode($sort, true);
-        if ($sort['lithology'])
-        {
-           $lithology = 'INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY:"' . urlencode($sort['lithology']) . '"%20AND%20';
-        }
-        if ($sort['mindate'] and $sort['maxdate'])
-        {
-            $date = 'INTRO.SAMPLING_DATE:[' . $sort['mindate'] . '%20TO%20' . $sort['maxdate'] . ']%20AND%20';
-        }
-        if ($sort['mesure'])
-        {
-            $mesure = 'INTRO.MEASUREMENT.ABBREVIATION:"' . urlencode($sort['mesure']) . '"%20AND%20';
-        }
-        $config = self::ConfigFile();
-        $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology . $mesure . $date . "type=" . $config['COLLECTION_NAME'] ."&size=10000";
+        $mesure = 'INTRO.MEASUREMENT.ABBREVIATION:"' . urlencode($sort['mesure']) . '"%20AND%20';
+    }
+    if ($sort['lat'] and $sort['lng'])
+    {
+        $geo = 'INTRO.SAMPLING_POINT.LONGITUDE:[' . $sort['lat']['lat1'] . '%20TO%20' . $sort['lat']['lat2'] . ']%20AND%20INTRO.SAMPLING_POINT.LATITUDE:[' . $sort['lat']['lat1'] . '%20TO%20' . $sort['lat']['lat1'] . ']';
+    }
 
-        $postcontent = '{ "_source": { 
-            "includes": [ "DATA","INTRO.MEASUREMENT.ABBREVIATION" ] 
-             }}';
-        $curlopt = array(
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => "",
-            CURLOPT_PORT => $config['ESPORT'],
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 30,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_HTTPHEADER     => "Content-type: application/json",
-            CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_POSTFIELDS => $postcontent
-        );
-        $response = self::Curlrequest($url, $curlopt);
-        $response = json_decode($response, true);
-        $response = $response['hits']['hits'];
-        $responses = array();
-        $finalcsv = array();
-        $finalcsvuniq = array();
+    $config = self::ConfigFile();
+    $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology . $mesure . $date . $geo . "type=" . $config['COLLECTION_NAME'] ."&size=10000";
 
-        foreach ($response as $key => $value)
+    $postcontent = '{ "_source": { 
+        "includes": [ "DATA","INTRO.MEASUREMENT.ABBREVIATION" ] 
+    }}';
+    $curlopt = array(
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_PORT => $config['ESPORT'],
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_HTTPHEADER     => "Content-type: application/json",
+        CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_POSTFIELDS => $postcontent
+    );
+    $response = self::Curlrequest($url, $curlopt);
+    $response = json_decode($response, true);
+    $response = $response['hits']['hits'];
+    $responses = array();
+    $finalcsv = array();
+    $finalcsvuniq = array();
+    echo '<link rel="stylesheet" type="text/css" href="/css/semantic/dist/semantic.min.css">';
+    echo '    <link rel="stylesheet" type="text/css" href="/css/style.css">  
+
+    ';
+
+    echo "<div class='' ui grid container'  style='overflow-x:auto'><table style='width:700px; height:500px;' class='ui compact unstackable table'></div>";
+    foreach ($response as $key => $value)
+    {
+        if (strtoupper($sort['mesure']) == strtoupper($value['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION']))
         {
-            if (strtoupper($sort['mesure']) == strtoupper($value['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION']) or $sort['mesure'] == null)
+
+            $file = $value['_source']['DATA']['FILES'][0]['ORIGINAL_DATA_URL'];
+            $folder = explode('_', strtoupper($value['_source']['DATA']['FILES'][0]['DATA_URL']));
+            $name = $value['_source']['DATA']['FILES'][0]['DATA_URL'];
+            $file_parts = pathinfo($file);
+            if ($file_parts['extension'] == "xlsx")
             {
-
-                $file = $value['_source']['DATA']['FILES'][0]['ORIGINAL_DATA_URL'];
-                $folder = explode('_', strtoupper($value['_source']['DATA']['FILES'][0]['DATA_URL']));
-                $name = $value['_source']['DATA']['FILES'][0]['DATA_URL'];
-                $file_parts = pathinfo($file);
-                if ($file_parts['extension'] == "xlsx")
-                {
-                    $CSV_FOLDER = $config["CSV_FOLDER"];
-                    $file = $CSV_FOLDER . $folder[0] . '_' . $folder[1] . "/" . $name;
-                }
-                $csv = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-                $finalcsv[] = $csv;
+                $CSV_FOLDER = $config["CSV_FOLDER"];
+                $file = $CSV_FOLDER . $folder[0] . '_' . $folder[1] . "/" . $name;
             }
+            $csv = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            $finalcsv[] = $csv;
         }
-        foreach ($finalcsv as $key => $value)
+    }
+    foreach ($finalcsv as $key => $value)
+    {
+        foreach ($value as $key => $value)
         {
-            foreach ($value as $key => $value)
-            {
-                $finalcsvuniq[] = $value;
-            }
+            $finalcsvuniq[] = $value;
         }
-        $finalcsvuniq = array_unique($finalcsvuniq);
-        $generatedfile = "";
-        foreach ($finalcsvuniq as $key => $value)
+    }
+    $finalcsvuniq = array_unique($finalcsvuniq);
+    foreach ($finalcsvuniq as $key => $value)
+    {
+        $value = str_getcsv($value);
+        echo "<tr>";
+        foreach ($value as $cell)
         {
-            $generatedfile .= $value . "\n";
+            echo "<td>" . htmlspecialchars($cell) . "</td>";
         }
-        echo $generatedfile;
+        echo "</tr>\n";
 
     }
+    echo "\n</table></body></html>";
+
+}
+
+function Download_data_with_sort($sort)
+{
+    $lithology = '';
+    $mesure = '';
+    $sort = json_decode($sort, true);
+    if ($sort['lithology'])
+    {
+     $lithology = 'INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY:"' . urlencode($sort['lithology']) . '"%20AND%20';
+ }
+ if ($sort['mindate'] and $sort['maxdate'])
+ {
+    $date = 'INTRO.SAMPLING_DATE:[' . $sort['mindate'] . '%20TO%20' . $sort['maxdate'] . ']%20AND%20';
+}
+if ($sort['mesure'])
+{
+    $mesure = 'INTRO.MEASUREMENT.ABBREVIATION:"' . urlencode($sort['mesure']) . '"%20AND%20';
+}
+$config = self::ConfigFile();
+$url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology . $mesure . $date . "type=" . $config['COLLECTION_NAME'] ."&size=10000";
+
+$postcontent = '{ "_source": { 
+    "includes": [ "DATA","INTRO.MEASUREMENT.ABBREVIATION" ] 
+}}';
+$curlopt = array(
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_ENCODING => "",
+    CURLOPT_PORT => $config['ESPORT'],
+    CURLOPT_MAXREDIRS => 10,
+    CURLOPT_TIMEOUT => 30,
+    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    CURLOPT_HTTPHEADER     => "Content-type: application/json",
+    CURLOPT_CUSTOMREQUEST => "POST",
+    CURLOPT_POSTFIELDS => $postcontent
+);
+$response = self::Curlrequest($url, $curlopt);
+$response = json_decode($response, true);
+$response = $response['hits']['hits'];
+$responses = array();
+$finalcsv = array();
+$finalcsvuniq = array();
+
+foreach ($response as $key => $value)
+{
+    if (strtoupper($sort['mesure']) == strtoupper($value['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION']) or $sort['mesure'] == null)
+    {
+
+        $file = $value['_source']['DATA']['FILES'][0]['ORIGINAL_DATA_URL'];
+        $folder = explode('_', strtoupper($value['_source']['DATA']['FILES'][0]['DATA_URL']));
+        $name = $value['_source']['DATA']['FILES'][0]['DATA_URL'];
+        $file_parts = pathinfo($file);
+        if ($file_parts['extension'] == "xlsx")
+        {
+            $CSV_FOLDER = $config["CSV_FOLDER"];
+            $file = $CSV_FOLDER . $folder[0] . '_' . $folder[1] . "/" . $name;
+        }
+        $csv = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        $finalcsv[] = $csv;
+    }
+}
+foreach ($finalcsv as $key => $value)
+{
+    foreach ($value as $key => $value)
+    {
+        $finalcsvuniq[] = $value;
+    }
+}
+$finalcsvuniq = array_unique($finalcsvuniq);
+$generatedfile = "";
+foreach ($finalcsvuniq as $key => $value)
+{
+    $generatedfile .= $value . "\n";
+}
+echo $generatedfile;
+
+}
 
     /**
      *  Methode de requetes vers elasticsearch
      *
      *
      */
-    function Request_poi_with_sort($sort)
+     function Request_poi_with_sort($sort)
     {
         $lithology = '';
         $mesure = '';
@@ -315,25 +319,29 @@ class RequestController
             $latitude = (float)$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'];
             if ((strtoupper($sort['mesure']) == strtoupper($value['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION']) or $sort['mesure'] == null) and (($latitude >= $sort['lat']['lat1']) && $latitude < $sort['lat']['lat2']) && ($longitude >= $sort['lon']['lon2'] && $longitude < $sort['lon']['lon1']) or $sort['lat'] == null or $sort['lon'] == null)
             {
-                if (!$return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']])
+                if (!$return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']])
                 {
-                    $current = $value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME'];
-                    $return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_DATE'] = $value['_source']['INTRO']['SAMPLING_DATE'];
-                    $return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SUPPLEMENTARY_FIELDS'] = $value['_source']['INTRO']['SUPPLEMENTARY_FIELDS'];
-                    $return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['TITLE'] = $value['_source']['INTRO']['TITLE'];
-                    $return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_POINT'] = $value['_source']['INTRO']['SAMPLING_POINT'];
+                    $current = $value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE'];
+
+                    $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_DATE'] = $value['_source']['INTRO']['SAMPLING_DATE'];
+                    $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SUPPLEMENTARY_FIELDS'] = $value['_source']['INTRO']['SUPPLEMENTARY_FIELDS'];
+                    $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['TITLE'] = $value['_source']['INTRO']['TITLE'];
+                    $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_POINT'] = $value['_source']['INTRO']['SAMPLING_POINT'];
+                    $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']]['COORDINATES']['LAT'] = $value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'];
+                $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']]['COORDINATES']['LONG'] = $value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE'];
 
                     foreach ($value['_source']['DATA']['FILES'] as $key => $file)
                     {
                         if (exif_imagetype($file['ORIGINAL_DATA_URL']))
                         {
-                            $return[$current]['PICTURES'][$key] = $file;
+                            $return[$current][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['PICTURES'][$key] = $file;
                         }
                     }
 
                 }
-
-                $return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['MEASUREMENT'][] = $value['_source']['INTRO']['MEASUREMENT'];
+            if (($_SESSION['mail'] && in_array($value['_type'], $_SESSION['projects_access_right'])) or ($_SESSION['admin']==1) ) {
+               $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['MEASUREMENT'][] = $value['_source']['INTRO']['MEASUREMENT'];
+           }
 
                 $responses = $return;
             }
@@ -367,7 +375,7 @@ class RequestController
         }
     }
 
-     function Request_poi_raw_data($id)
+    function Request_poi_raw_data($id)
     {
         $config = self::ConfigFile();
         $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . '/_search?q=INTRO.MEASUREMENT.ABBREVIATION:"' . $id .'"&type=' . $config['COLLECTION_NAME'] ;
@@ -384,10 +392,11 @@ class RequestController
         $response = self::Curlrequest($url, $curlopt);
         $response = json_decode($response, true);
         
-            if (count($response['hits']['hits'])==1) {
+        if (count($response['hits']['hits'])==1) {
+        var_dump($response);
             $response = json_encode($response['hits']['hits'][0]['_source']['DATA']);
             return $response;
-            }
+        }
         
     }
 
@@ -506,8 +515,8 @@ class RequestController
             $file = fopen($file, "r");
             $firstTimeHeader = true;
             $firstTimeBody = true;
-            echo '<link rel="stylesheet" type="text/css" href="/Frontend/src/css/semantic/dist/semantic.min.css">';
-            echo '    <link rel="stylesheet" type="text/css" href="/Frontend/src/css/style.css">';
+            echo '<link rel="stylesheet" type="text/css" href="/css/semantic/dist/semantic.min.css">';
+            echo '    <link rel="stylesheet" type="text/css" href="/css/style.css">';
             echo "<div class='' ui grid container'  style='overflow-x:auto'><table style='width:700px; height:500px;' class='ui compact unstackable table'></div>";
             while (!feof($file))
             {

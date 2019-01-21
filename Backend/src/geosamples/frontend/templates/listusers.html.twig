@@ -1,0 +1,113 @@
+{% include 'header.html.twig' %}
+<body>
+
+
+  <div class="ui grid container">
+    <div class="row"></div>
+    <div class="row">
+      <h1 class="ui dividing header">Administration panel </h1>
+    </div>
+    <div class="ui twelve wide column centered">
+      {%if userswaiting%} 
+      <h2>Users waiting for approvement</h2>
+      <div class="ui relaxed divided list waitinglist">
+        {%for user in userswaiting%}
+        <div class="item">
+          <div class="right floated content">
+            <button class="ui green button" name="approve">Approve</button>
+            <button class="ui red button" name="remove">Remove</button>
+          </div>
+          <div class="content">
+            <input type="hidden" name="name" value="{{user.name}}">
+            <input type="hidden" name="firstname" value="{{user.firstname}}">
+            <input type="hidden" name="mail" value="{{user.mail}}">
+
+            <a class="header"><i class="large user middle aligned icon"></i>      {{user.name}}  {{user.firstname}} 
+            </a>
+            <div class="description"> {%if user.type==1%} 
+              <div class="ui red horizontal label">Administrator</div> 
+              {%elseif user.type==2%} 
+              <div class="ui blue horizontal label">Referent</div>
+ 	      {%elseif user.type==3%} 
+              <div class="ui orange horizontal label">User Feeder</div>
+              {%else%} 
+              <div class="ui green horizontal label">User</div> 
+            {%endif%} {{user.mail}} </div>
+          </div>
+        </div>
+        {%endfor%}
+
+      </div> 
+      {%endif%}
+      <h2>All users</h2>
+      <div class="ui relaxed divided list userapprovedlist">
+        {%for user in usersapproved%}
+        <div class="item">
+          <div class="right floated content">
+            <button class="ui green button" name="modify">Modify profile</button>
+            <button class="ui button" name="disable">Disable</button>
+            <button class="ui red button" name="remove">Remove</button>
+          </div>
+          <div class="content">
+
+           <input type="hidden" name="name" value="{{user.name}}">
+           <input type="hidden" name="firstname" value="{{user.firstname}}">
+           <input type="hidden" name="mail" value="{{user.mail}}">
+           <input type="hidden" name="type" value="{{user.type}}">
+           <a class="header"><i class="large user middle aligned icon"></i>      {{user.name}}  {{user.firstname}}    
+             
+            
+           </a>
+           <div class="description"> {%if user.type==1%} 
+            <div class="ui red horizontal label">Administrator</div> 
+            {%elseif user.type==2%} <div class="ui blue horizontal label">Referent</div>
+            {%elseif user.type==3%} 
+              <div class="ui orange horizontal label">User Feeder</div>
+            {%else%} <div class="ui green horizontal label">User</div> 
+          {%endif%}{{user.mail}} </div>
+        </div>
+      </div>
+      {%endfor%}
+
+      
+    </div>
+
+    <h2>Projects list on system</h2>
+    <button class="ui blue button" onclick="APP.modules.account.add_project('{{name_CSRF}}','{{value_CSRF}}')" name="createproject">Add a new project</button>
+    <div class="ui relaxed divided list userapprovedlist">
+      {%for key,value in allprojects%}
+      <div class="item">
+        <div class="content">
+          <a class="header"><i class="large archive middle aligned icon"></i>{{key}})  {{value}}</a>
+          {%endfor%}
+
+
+
+          
+        </div>
+        <div class="row"></div>
+      </div>
+    </div>
+
+
+    <div class="ui modal user">
+     <i class="close icon"></i>
+     <div class="header">
+     </div>
+     <div class="content">
+      
+       
+     </div>
+
+   </div>
+
+
+
+ </body>
+ <script type="text/javascript">
+   $('.button').on('click', function(e) {
+    APP.modules.account.check_clicked(e,"{{name_CSRF}}","{{value_CSRF}}",$($($(this).parent()[0]).parent()).find('input[name="name"]').val(),$($($(this).parent()[0]).parent()).find('input[name="firstname"]').val(),$($($(this).parent()[0]).parent()).find('input[name="mail"]').val(),$($($(this).parent()[0]).parent()).find('input[name="type"]').val());
+  });
+</script>
+{% include 'footer.html.twig' %}
+
