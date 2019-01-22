@@ -108,7 +108,14 @@ var APP = (function() {
                                      supplementary_field += '<br>' +v4+': '+k4
                                 });
                                 });
-                            }else{
+                            }else if (v3=='ANALYST') {
+                               k3.forEach(function(ref, val) {
+                                $.map(ref, function(k4, v4) {  
+                                     supplementary_field += '<br>' +v4+': '+k4
+                                });
+                                });
+                            }
+                            else{
 
                                 supplementary_field = '<br>' +v3+': '+k3
                             }
@@ -256,10 +263,10 @@ var APP = (function() {
                         $("#preview").empty();
                             APP.data_raw=k2;
                             var samples= new Array();
-
+                            var show_popup=null;
                             $.map(k2, function(k, v) {  
-                          
-                                if (k.SUPPLEMENTARY_FIELDS) {
+                            if (k.SUPPLEMENTARY_FIELDS) {
+                                if (k.SUPPLEMENTARY_FIELDS.CORE || k.SUPPLEMENTARY_FIELDS.BLOCK) {
                                     if (k.SUPPLEMENTARY_FIELDS.CORE.toUpperCase() == 'YES' && k.SUPPLEMENTARY_FIELDS.DEPTH != null) {
                                         $('#preview').append('<div id="line"></div><style>.event{top:-30px!important;}</style>');
                                         object= new Object();
@@ -283,11 +290,12 @@ var APP = (function() {
                             $(".actions .download").remove();
                             if (Object.keys(k2).length>2) {
                                 show_popup=true;
-                            }else{
+                        }else{
                                  if (k.SUPPLEMENTARY_FIELDS) {
                             APP.modules.map.affichageinfo(k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME);
                                 show_popup=false;
                                 }
+                            }
                             }
                             });
                            
@@ -706,6 +714,9 @@ APP.modules.account = (function() {
           $(".modal.user .content").append('<form class="ui form ' + action + ' " action="' + action + '" method="post"><input type="hidden" name="csrf_name" value="' + name_CSRF + '"><input type="hidden" name="csrf_value" value="' + value_CSRF + '"><input type="hidden" name="email" value="' + mail + '"> <div class="actions"> <div class="ui black deny button"> Cancel </div> <button class="ui submit red button" >Yes</button> </div> </form>');
           $('.ui.modal.user').modal('show');
       } else if (action == 'modify') {
+        /*$.post("get_user_projects",{ mail_user: mail} ,function(data, status){
+            alert("Data: " + data + "\nStatus: " + status);
+        });*/
        
           $(".modal.user .header").empty();
           $(".modal.user .content").empty();
@@ -723,6 +734,49 @@ APP.modules.account = (function() {
       $(".modal.user .content").append('<form class="ui form " action="/create_project" method="post"><input type="hidden" name="csrf_name" value="' + name_CSRF + '"><input type="hidden" name="csrf_value" value="' + value_CSRF + '">  <div class="field"> <div class="ui left icon input"> <i class="user icon"></i> <input type="text" name="project_name"  placeholder="Project name"> </div><div class="actions"> <div class="ui black deny button"> Cancel </div> <button class="ui submit green button" >Create</button> </div> </form>');
       $('.ui.modal.user').modal('show');
   },
+ display_project: function(project_name) {
+    $.post("get_user_in_projects",{ project_name: project_name} ,function(data, status){
+    html='<div class="ui middle aligned divided list">';
+    obj = JSON.parse(data);
+    $.each(obj,function(index,value){
+    html+='<div class="item"><div class="right floated content"><i onclick="APP.modules.account.delete_user_from_project( \''+value.mail+'\',\''+project_name+'\')" class="delete icon"></i></div>'+value.mail+'</div>'
+    });
+    html+='</div></div>'
+      $(".modal.user .header").empty();
+      $(".modal.user .content").empty();
+      $(".modal.user .header").append("<h3>Users in "+project_name+"</h3>");
+      $(".modal.user .content").append('<div class="ui search"><div class="ui icon input"><input class="prompt" name="usermail_add" type="text" placeholder="Select user to add"><i class="search icon"></i></div><div class="results"></div><button onclick="APP.modules.account.add_user(\''+project_name+'\');" class="ui blue button">Add user</button></div>'+html);
+ $.post("get_valid_user",function(data, status){
+    //var users=data;
+          $(".modal.user .content").append('<script>var users='+String(data)+'</script>');
+$('.ui.search')
+  .search({
+   type: 'standard',
+    source: users,
+    searchFields: ['title'],
+    minCharacters : 1,
+  });
+});
+    
+      $('.ui.modal.user').modal('show');
+        });
+  },
+   add_user: function(project_name) {
+    $.post("add_user_projects",{ mail_user:$("input[type=text][name=usermail_add]").val(),project_name: project_name} ,function(data, status){
+        APP.modules.account.display_project(project_name);
+  })
+},
+   delete_user_from_project: function(mail_user,project_name) {
+    console.log(this)
+    $.post("delete_user_projects",{ mail_user:mail_user,project_name: project_name} ,function(data, status){
+        if (data=1) {
+           $.post("get_user_in_projects",{ project_name: project_name} ,function(data, status){        
+            APP.modules.account.display_project(project_name);
+});
+        }
+  
+        });
+  }
 }
 })()
 

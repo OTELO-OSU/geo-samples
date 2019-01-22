@@ -445,6 +445,70 @@ $app->post('/create_project', function (Request $req, Response $responseSlim) {
 })->add($mw)->add($container->get('csrf'));
 
 
+$app->post('/get_user_projects', function (Request $req, Response $responseSlim) {
+	if (@$_SESSION['admin'] == 1) {
+		$loader    = new Twig_Loader_Filesystem('geosamples/frontend/templates');
+		$twig      = new Twig_Environment($loader);
+		$user  = new User();
+		$response = $user->getReferentProject();
+		return json_encode($response);
+	}
+
+});
+
+
+
+$app->post('/get_valid_user', function (Request $req, Response $responseSlim) {
+	if (@$_SESSION['admin'] == 1) {
+		$loader    = new Twig_Loader_Filesystem('geosamples/frontend/templates');
+		$twig      = new Twig_Environment($loader);
+		$user  = new User();
+		$response = $user->getAllUsersApprovedAutocomplete();
+		return json_encode($response);
+	}
+
+});
+
+$app->post('/get_user_in_projects', function (Request $req, Response $responseSlim) {
+	if (@$_SESSION['admin'] == 1) {
+		$loader    = new Twig_Loader_Filesystem('geosamples/frontend/templates');
+		$twig      = new Twig_Environment($loader);
+		$project_name      = $req->getparam('project_name');
+		$user  = new User();
+		$response = $user->getUserInProject($project_name);
+		return json_encode($response);
+	}
+
+});
+
+$app->post('/add_user_projects', function (Request $req, Response $responseSlim) {
+	if (@$_SESSION['admin'] == 1) {
+		$loader    = new Twig_Loader_Filesystem('geosamples/frontend/templates');
+		$twig      = new Twig_Environment($loader);
+		$mail      = $req->getparam('mail_user');
+		$project_name      = $req->getparam('project_name');
+		$user  = new User();
+		$error = $user->AddUserToProject($mail,$project_name);
+		return$error;
+	}
+
+});
+
+$app->post('/delete_user_projects', function (Request $req, Response $responseSlim) {
+	if (@$_SESSION['admin'] == 1) {
+		$loader    = new Twig_Loader_Filesystem('geosamples/frontend/templates');
+		$twig      = new Twig_Environment($loader);
+		$mail      = $req->getparam('mail_user');
+		$project_name      = $req->getparam('project_name');
+		$user  = new User();
+		$error = $user->DeleteUserFromProject($mail,$project_name);
+		echo $error;
+	}
+
+});
+
+
+
 $app->get('/get_all_poi', function (Request $req,Response $responseSlim) {
 	$request = new RequestApi();
 	$response = $request->Request_all_poi();

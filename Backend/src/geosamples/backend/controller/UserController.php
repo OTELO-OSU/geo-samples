@@ -245,6 +245,18 @@ public function getAllUsersWaiting()
     }
 }
 
+public function getAllUsersApprovedAutocomplete()
+{
+    $verif = Users::where('status', '=', "1")->get();
+    foreach ($verif as $key => $value) {
+        $obj = new \stdClass();
+        $obj->title=$value->mail;
+        $array[]=$obj;
+      }
+    return $array;
+
+}
+
 public function getAllProject()
 {
     $verif = Projects::all();
@@ -257,6 +269,87 @@ public function getAllProject()
     return false;
 }
 }
+
+public function getReferentProject()
+{
+     $verif = Projects_access_right::select('id_project','Projects.name')->where('users.mail', '=',$_SESSION['mail'] )->join('Projects', 'id_project', '=', 'Projects.id')->join('users','users.id_user','=','Projects_access_right.id_user')->get();
+    if (count($verif) != 0) {
+        foreach ($verif as $key => $value) {
+          $array[]=$value->name;
+      }
+      return $array;
+  } else {
+    return false;
+}
+}
+
+
+
+public function getProjectForUser($mail)
+{
+    $verif = Projects_access_right::select('id_project','Projects.name')->where('users.mail', '=',$mail )->join('Projects', 'id_project', '=', 'Projects.id')->join('users','users.id_user','=','Projects_access_right.id_user')->get();
+    if (count($verif) != 0) {
+        foreach ($verif as $key => $value) {
+          $array[$value->id_project]=$value->name;
+      }
+      return $array;
+  } else {
+    return false;
+}
+}
+
+
+public function getUserInProject($project_name)
+{
+    $verif = Projects_access_right::select('users.id_user','users.mail','users.name','users.firstname')->where('Projects.name', '=',$project_name )->join('Projects', 'id_project', '=', 'Projects.id')->join('users','users.id_user','=','Projects_access_right.id_user')->get();
+    if (count($verif) != 0) {
+        foreach ($verif as $key => $value) {
+          $array[]=$value;
+      }
+      return $array;
+  } else {
+    return false;
+}
+}
+
+
+
+public function AddUserToProject($mail,$project_name)
+{
+    $user_id = users::select('id_user')->where('mail', '=',$mail )->get();
+    $project_id = Projects::select('id')->where('name', '=',$project_name )->get();
+    $exist=Projects_access_right::select('id')->where('id_user', '=', $user_id[0]->id_user)->where('id_project','=',$project_id[0]->id)->get();
+    if (count($user_id) != 0 && count($project_id) != 0 && (count($exist) == 0 )) {
+    $verif            = new Projects_access_right;
+    $verif->id_user      = $user_id[0]->id_user;
+    $verif->id_project      = $project_id[0]->id;
+     if ($verif->save()) {
+        return true;
+    } else {
+        return false;
+    }
+  } else {
+    return false;
+}
+}
+
+public function DeleteUserFromProject($mail,$project_name)
+{
+    $user_id = users::select('id_user')->where('mail', '=',$mail )->get();
+    $project_id = Projects::select('id')->where('name', '=',$project_name )->get();
+ ;
+    if (count($user_id) != 0 && count($project_id) != 0 ) {
+
+     if ($exist=Projects_access_right::select('id')->where('id_user', '=', $user_id[0]->id_user)->where('id_project','=',$project_id[0]->id)->delete()) {
+        return true;
+    } else {
+        return false;
+    }
+  } else {
+    return false;
+}
+}
+
 
 public function Create_project($name)
 {

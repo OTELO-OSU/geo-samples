@@ -78,7 +78,7 @@
       {%for key,value in allprojects%}
       <div class="item">
         <div class="content">
-          <a class="header"><i class="large archive middle aligned icon"></i>{{key}})  {{value}}</a>
+          <a class="header" onclick="APP.modules.account.display_project('{{value}}')"><i class="large archive middle aligned icon"></i>{{key}})  {{value}}</a>
           {%endfor%}
 
 
