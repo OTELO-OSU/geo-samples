@@ -64,7 +64,7 @@ $mw = function ($request, $response, $next) {
 
 
 $check_access_right_file = function ($request, $response, $next) {
-	if (($_SESSION['mail'] && in_array($value['_type'], $_SESSION['projects_access_right'])) or ($_SESSION['admin']==1) )  {
+	if (($_SESSION['mail']) or ($_SESSION['admin']==1) )  {
 		$response = $next($request, $response);
 		return $response;
 	}
@@ -455,8 +455,6 @@ $app->post('/get_user_projects', function (Request $req, Response $responseSlim)
 	}
 
 });
-
-
 
 $app->post('/get_valid_user', function (Request $req, Response $responseSlim) {
 	if (@$_SESSION['admin'] == 1) {

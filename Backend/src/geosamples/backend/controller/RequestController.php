@@ -367,11 +367,13 @@ echo $generatedfile;
         );
         $response = self::Curlrequest($url, $curlopt);
         $response = json_decode($response, true);
-        $identifier = $response['hits']['hits'][0]['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME'] . '_' . $response['hits']['hits'][0]['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION'];
-        if ($identifier == $id)
-        {
-            $response = json_encode($response['hits']['hits'][0]['_source']['DATA']);
-            return $response;
+         if (($_SESSION['mail'] && in_array($response['hits']['hits'][0]['_type'], $_SESSION['projects_access_right'])) or ($_SESSION['admin']==1) ) {
+            $identifier = $response['hits']['hits'][0]['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME'] . '_' . $response['hits']['hits'][0]['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION'];
+            if ($identifier == $id)
+            {
+                $response = json_encode($response['hits']['hits'][0]['_source']['DATA']);
+                return $response;
+            }
         }
     }
 
@@ -393,7 +395,6 @@ echo $generatedfile;
         $response = json_decode($response, true);
         
         if (count($response['hits']['hits'])==1) {
-        var_dump($response);
             $response = json_encode($response['hits']['hits'][0]['_source']['DATA']);
             return $response;
         }
