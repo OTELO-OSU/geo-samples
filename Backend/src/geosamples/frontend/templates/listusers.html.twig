@@ -39,6 +39,7 @@
 
       </div> 
       {%endif%}
+      {%if usersapproved%}
       <h2>All users</h2>
       <div class="ui relaxed divided list userapprovedlist">
         {%for user in usersapproved%}
@@ -68,11 +69,37 @@
         </div>
       </div>
       {%endfor%}
+       {%endif%}
+       {%if usersreferents%}
+      <h2>All users in yours projects</h2>
+      <div class="ui relaxed divided list userapprovedlist">
+        {%for user in usersreferents%}
+        <div class="item">
+          <div class="right floated content">
+            <button class="ui green button" name="modify_referent">Modify profile</button>
+          </div>
+          <div class="content">
+
+           <input type="hidden" name="mail" value="{{user.mail}}">
+           <input type="hidden" name="type" value="{{user.type}}">
+           <a class="header"><i class="large user middle aligned icon"></i>      {{user.name}}  {{user.firstname}}    
+             
+            
+           </a>
+           <div class="description"> 
+            {%if user.type==3%}
+              <div class="ui orange horizontal label">User Feeder</div>
+            {%elseif user.type==0%} <div class="ui green horizontal label">User</div> 
+          {%endif%}{{user.mail}} </div>
+        </div>
+      </div>
+      {%endfor%}
+       {%endif%}
 
       
     </div>
 
-    <h2>Projects list on system</h2>
+    <h2>Projects list</h2>
     <button class="ui blue button" onclick="APP.modules.account.add_project('{{name_CSRF}}','{{value_CSRF}}')" name="createproject">Add a new project</button>
     <div class="ui relaxed divided list userapprovedlist">
       {%for key,value in allprojects%}

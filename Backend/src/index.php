@@ -351,7 +351,7 @@ $app->post('/change_password', function (Request $req, Response $responseSlim) {
 
 
 $app->get('/listusers', function (Request $req, Response $responseSlim) {
-	if (@$_SESSION['admin'] == 1) {
+	if (@$_SESSION['admin'] == 1 ) {
 		$loader  = new Twig_Loader_Filesystem('geosamples/frontend/templates');
 		$twig    = new Twig_Environment($loader);
 		$nameKey = $this
@@ -367,7 +367,23 @@ $app->get('/listusers', function (Request $req, Response $responseSlim) {
 		$userswaiting  = $user->getAllUsersWaiting();
 		$Allprojects  = $user->getAllProject();
 		echo $twig->render('listusers.html.twig', ['usersapproved' => $usersapproved, 'userswaiting' => $userswaiting, 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'],'allprojects'=>$Allprojects]);
-	} else {
+	} else if(@$_SESSION['admin'] == 2){
+		$loader  = new Twig_Loader_Filesystem('geosamples/frontend/templates');
+		$twig    = new Twig_Environment($loader);
+		$nameKey = $this
+		->csrf
+		->getTokenNameKey();
+		$valueKey = $this
+		->csrf
+		->getTokenValueKey();
+		$namecsrf      = $req->getAttribute($nameKey);
+		$valuecsrf     = $req->getAttribute($valueKey);
+		$user          = new User();
+		$usersreferents = $user->getReferentProjectsUSERS();
+		//$usersreferents = $user->getAllUsersReferentProject();
+		$Allprojects  = $user->getReferentProject();
+		echo $twig->render('listusers.html.twig', ['usersreferents' => $usersreferents, 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'],'allprojects'=>$Allprojects]);
+	}else {
 		return $responseSlim->withRedirect('accueil');
 	}
 })->add($mw)->add($container->get('csrf'))->add($check_current_user);
@@ -422,12 +438,36 @@ $app->post('/modifyuser', function (Request $req, Response $responseSlim) {
 		elseif ($type == 2) {
 			$type = 2;
 		}
+		elseif ($type == 3) {
+			$type = 3;
+		}
 		else {
 			$type = 0;
 		}
 		$user  = new User();
 		$error = $user->modifyUser($email, $name, $firstname, $type);
 		return $responseSlim->withRedirect('listusers');
+	}else if(@$_SESSION['admin'] == 2){
+		$loader    = new Twig_Loader_Filesystem('geosamples/frontend/templates');
+		$twig      = new Twig_Environment($loader);
+		$email     = $req->getparam('email');
+		$type      = $req->getparam('type');
+		if ($type == 1) {
+			return $responseSlim->withRedirect('listusers');
+		} 
+		elseif ($type == 2) {
+			return $responseSlim->withRedirect('listusers');
+		}
+		elseif ($type == 3) {
+			$type = 3;
+		}
+		else {
+			$type = 0;
+		}
+		$user  = new User();
+		$error = $user->SetRightUser($email, $type);
+		return $responseSlim->withRedirect('listusers');
+
 	}
 
 })->add($mw)->add($container->get('csrf'));
@@ -446,7 +486,7 @@ $app->post('/create_project', function (Request $req, Response $responseSlim) {
 
 
 $app->post('/get_user_projects', function (Request $req, Response $responseSlim) {
-	if (@$_SESSION['admin'] == 1) {
+	if (@$_SESSION['admin'] == 1 or @$_SESSION['admin'] == 2) {
 		$loader    = new Twig_Loader_Filesystem('geosamples/frontend/templates');
 		$twig      = new Twig_Environment($loader);
 		$user  = new User();
@@ -457,7 +497,7 @@ $app->post('/get_user_projects', function (Request $req, Response $responseSlim)
 });
 
 $app->post('/get_valid_user', function (Request $req, Response $responseSlim) {
-	if (@$_SESSION['admin'] == 1) {
+	if (@$_SESSION['admin'] == 1 or @$_SESSION['admin'] == 2) {
 		$loader    = new Twig_Loader_Filesystem('geosamples/frontend/templates');
 		$twig      = new Twig_Environment($loader);
 		$user  = new User();
@@ -468,7 +508,7 @@ $app->post('/get_valid_user', function (Request $req, Response $responseSlim) {
 });
 
 $app->post('/get_user_in_projects', function (Request $req, Response $responseSlim) {
-	if (@$_SESSION['admin'] == 1) {
+	if (@$_SESSION['admin'] == 1 or @$_SESSION['admin'] == 2) {
 		$loader    = new Twig_Loader_Filesystem('geosamples/frontend/templates');
 		$twig      = new Twig_Environment($loader);
 		$project_name      = $req->getparam('project_name');
@@ -480,7 +520,7 @@ $app->post('/get_user_in_projects', function (Request $req, Response $responseSl
 });
 
 $app->post('/add_user_projects', function (Request $req, Response $responseSlim) {
-	if (@$_SESSION['admin'] == 1) {
+	if (@$_SESSION['admin'] == 1 or @$_SESSION['admin'] == 2) {
 		$loader    = new Twig_Loader_Filesystem('geosamples/frontend/templates');
 		$twig      = new Twig_Environment($loader);
 		$mail      = $req->getparam('mail_user');
@@ -493,7 +533,7 @@ $app->post('/add_user_projects', function (Request $req, Response $responseSlim)
 });
 
 $app->post('/delete_user_projects', function (Request $req, Response $responseSlim) {
-	if (@$_SESSION['admin'] == 1) {
+	if (@$_SESSION['admin'] == 1 or @$_SESSION['admin'] == 2) {
 		$loader    = new Twig_Loader_Filesystem('geosamples/frontend/templates');
 		$twig      = new Twig_Environment($loader);
 		$mail      = $req->getparam('mail_user');
@@ -504,6 +544,8 @@ $app->post('/delete_user_projects', function (Request $req, Response $responseSl
 	}
 
 });
+
+
 
 
 

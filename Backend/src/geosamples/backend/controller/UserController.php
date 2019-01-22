@@ -270,6 +270,37 @@ public function getAllProject()
 }
 }
 
+public function getReferentProjectsUSERS()
+{
+   $getReferentProject= $this->getReferentProject();
+   foreach ($getReferentProject as $key => $value) {
+     $users[]= $this->getUserInProjectForReferent($value);
+   }
+   foreach ($users as $key => $value) {
+       foreach ($value as $key => $value) {
+           $users2[]=$value;
+       }
+   }
+  return array_unique($users2);
+}
+
+
+public function getUserInProjectForReferent($project_name)
+{
+    $verif = Projects_access_right::select('users.id_user','users.mail','users.name','users.firstname','users.type')->where('Projects.name', '=',$project_name )->join('Projects', 'id_project', '=', 'Projects.id')->join('users','users.id_user','=','Projects_access_right.id_user')->where('users.type','=','0')->orwhere('users.type','=','3')->get();
+    if (count($verif) != 0) {
+        foreach ($verif as $key => $value) {
+          $array[]=$value;
+      }
+      return $array;
+  } else {
+    return false;
+}
+}
+
+
+
+
 public function getReferentProject()
 {
      $verif = Projects_access_right::select('id_project','Projects.name')->where('users.mail', '=',$_SESSION['mail'] )->join('Projects', 'id_project', '=', 'Projects.id')->join('users','users.id_user','=','Projects_access_right.id_user')->get();
@@ -301,7 +332,7 @@ public function getProjectForUser($mail)
 
 public function getUserInProject($project_name)
 {
-    $verif = Projects_access_right::select('users.id_user','users.mail','users.name','users.firstname')->where('Projects.name', '=',$project_name )->join('Projects', 'id_project', '=', 'Projects.id')->join('users','users.id_user','=','Projects_access_right.id_user')->get();
+    $verif = Projects_access_right::select('users.id_user','users.mail','users.name','users.firstname','users.type')->where('Projects.name', '=',$project_name )->join('Projects', 'id_project', '=', 'Projects.id')->join('users','users.id_user','=','Projects_access_right.id_user')->get();
     if (count($verif) != 0) {
         foreach ($verif as $key => $value) {
           $array[]=$value;
@@ -387,6 +418,21 @@ public function disableUser($email)
         return false;
     }
 }
+
+
+public function SetRightUser($email, $type)
+{
+    $verif            = Users::find($email);
+    $verif->type      = $type;
+    if ($verif->save()) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
+
 public function modifyUser($email, $name, $firstname, $type)
 {
     $verif            = Users::find($email);
