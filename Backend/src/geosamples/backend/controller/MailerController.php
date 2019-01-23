@@ -3,6 +3,7 @@ namespace geosamples\backend\controller;
 
 use \geosamples\backend\controller\ConnectController as ConnectDB;
 use \geosamples\backend\controller\FileController as File;
+use \geosamples\model\ProjectsAccessRight as Projects_access_right;
 use \geosamples\model\Users as Users;
 
 class MailerController
@@ -232,6 +233,13 @@ class MailerController
             $headers = "From:<" . $config['NO_REPLY_MAIL'] . ">\r\n";
             $headers .= "MIME-Version: 1.0\r\n";
             $headers .= "Content-Type: text/html; charset=utf-8\r\n";
+            $referents_cc='';
+            $referents=Projects_access_right::select('users.id_user','users.mail','users.name','users.firstname','users.type')->where('Projects.name', '=',$project )->where('users.type','=','2')->join('Projects', 'id_project', '=', 'Projects.id')->join('users','users.id_user','=','Projects_access_right.id_user')->get();
+            foreach ($referents as $key => $value) {
+              $referents_cc.=$value->mail.',';
+            }
+            $headers .= "CC: ".rtrim($referents_cc,',');
+
             $mail = mail($email, '[' . $config['PROJECT_NAME'] . '] Access granted to '.$project.' !', '<html>
                <head>
                <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -256,6 +264,12 @@ class MailerController
             $headers = "From:<" . $config['NO_REPLY_MAIL'] . ">\r\n";
             $headers .= "MIME-Version: 1.0\r\n";
             $headers .= "Content-Type: text/html; charset=utf-8\r\n";
+            $referents_cc='';
+            $referents=Projects_access_right::select('users.id_user','users.mail','users.name','users.firstname','users.type')->where('Projects.name', '=',$project )->where('users.type','=','2')->join('Projects', 'id_project', '=', 'Projects.id')->join('users','users.id_user','=','Projects_access_right.id_user')->get();
+            foreach ($referents as $key => $value) {
+              $referents_cc.=$value->mail.',';
+            }
+            $headers .= "CC: ".rtrim($referents_cc,',');
             $mail = mail($email, '[' . $config['PROJECT_NAME'] . '] Access denied to '.$project.' !', '<html>
                <head>
                <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
