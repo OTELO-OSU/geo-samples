@@ -40,11 +40,21 @@
           </div>
         </div>
         <div class="field">
-          <div class="ui left icon input">
-            <i class="user icon"></i>
-            <input type="text" name="project_name" placeholder="Project">
-          </div>
+          <div class="ui search"><div class="ui icon input"><input class="prompt" name="project_name[]" type="text" placeholder="Select project to add"><i class="search icon"></i></div><div class="results"></div>
         </div>
+      </div>
+        <div id="project">
+          
+        </div>
+        <br>
+        <div class="field">
+        <div class="ui primary right floated button" id="addproject">
+                <i class="plus icon"></i> Add Project
+            </div>
+        </div>
+        <br>
+        <br>
+        <br>
         <div class="field">
           <div class="ui left icon input">
             <i class="lock icon"></i>
@@ -76,10 +86,33 @@
 
 </body>
 
+{% include 'footer.html.twig' %}
 <script type="text/javascript">
+     
+    //var users=data;
+$('.ui.search')
+  .search({
+   type: 'standard',
+    source: {{data|raw}},
+    searchFields: ['title'],
+    minCharacters : 1,
+  });
+
+    
+
+
+    $("#addproject").click(function(e) {
+                  $("#project").append('   <div class="field"><div class="ui search"><div class="ui icon input"><input class="prompt" name="project_name[]" type="text" placeholder="Select project to add"><i class="search icon"></i></div><div class="results"></div></div></div>');
+                  $('.ui.search')
+  .search({
+   type: 'standard',
+        source: {{data|raw}},
+    searchFields: ['title'],
+    minCharacters : 1,
+  });
+              });
   APP.modules.account.check_signup();
 
 
 </script>
 
-{% include 'footer.html.twig' %}

@@ -179,10 +179,16 @@ $app->get('/signup', function (Request $req, Response $responseSlim) {
 		->getTokenValueKey();
 		$namecsrf  = $req->getAttribute($nameKey);
 		$valuecsrf = $req->getAttribute($valueKey);
-
+		$user= new User();
+		$project = $user->getAllProject();
+		$response=array();
+		foreach ($project as $key => $value) {
+			$array['title']=$value;
+			$response[]=$array;
+		}
 		$loader    = new Twig_Loader_Filesystem('geosamples/frontend/templates');
 		$twig      = new Twig_Environment($loader);
-		echo $twig->render('signup.html.twig', ['name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf]);
+		echo $twig->render('signup.html.twig', ['name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf,'data'=>json_encode($response)]);
 	} else {
 		return $responseSlim->withRedirect('/');
 
@@ -201,6 +207,7 @@ $app->post('/signup', function (Request $req, Response $responseSlim) {
 	$valuecsrf       = $req->getAttribute($valueKey);
 	$loader          = new Twig_Loader_Filesystem('geosamples/frontend/templates');
 	$twig            = new Twig_Environment($loader);
+	var_dump($req->getparam('project_name'));
 	$name            = $req->getparam('name');
 	$firstname       = $req->getparam('firstname');
 	$mail            = $req->getparam('email');
@@ -510,6 +517,9 @@ $app->post('/get_valid_user', function (Request $req, Response $responseSlim) {
 	}
 
 });
+
+
+
 
 $app->post('/get_user_in_projects', function (Request $req, Response $responseSlim) {
 	if (@$_SESSION['admin'] == 1 or @$_SESSION['admin'] == 2) {

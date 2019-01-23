@@ -65,7 +65,6 @@ class UserController
 }
 public function signup($name, $firstname, $email, $password, $passwordconfirm,$project_name)
 {
-    var_dump($project_name);
     $verif = Users::select('mail', 'mdp')->where('mail', '=', $email)->get();
     if (count($verif) == 0) {
         if (preg_match("/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}/", $password)) {
@@ -80,12 +79,15 @@ public function signup($name, $firstname, $email, $password, $passwordconfirm,$p
                 $signup->status    = 0;
                 if ($signup->save()) {
                     $verif = Users::select('id_user')->where('mail', '=', $email)->get();
-                    $project = Projects::select('id')->where('name','=',$project_name)->get();
-                    var_dump($project);
-                    $Projects_request= new ProjectsRequest;
-                    $Projects_request->id_project=$project[0]->id;
-                    $Projects_request->id_user=$verif[0]->id_user;
-                    $Projects_request->save();
+                    foreach ($project_name as $key => $value) {
+                        if ($value!='') {
+                            $project = Projects::select('id')->where('name','=',$value)->get();
+                            $Projects_request= new ProjectsRequest;
+                            $Projects_request->id_project=$project[0]->id;
+                            $Projects_request->id_user=$verif[0]->id_user;
+                            $Projects_request->save();
+                        }
+                    }
 
                     $token                    = bin2hex(openssl_random_pseudo_bytes(32));
                     $MailValidation           = new MailValidation();
@@ -124,8 +126,25 @@ public function activate_account($token)
             if ($write->save()) {
                 $mail = new Mailer();
                 $mail->Send_mail_validation($verif[0]->mail);
+
+                $project=Projects::select('Projects.name')->where('users.mail','=',$verif[0]->mail)->join('Projects_request', 'id_project', '=', 'Projects.id')->join('users','users.id_user','=','Projects_request.id_user')->get();
+                foreach ($project as $key => $project) {
+                   //var_dump($value->name);
+
+                    $referents=Projects_access_right::select('users.id_user','users.mail','users.name','users.firstname','users.type')->where('Projects.name', '=',$project->name )->where('users.type','=','2')->join('Projects', 'id_project', '=', 'Projects.id')->join('users','users.id_user','=','Projects_access_right.id_user')->get();
+                    //var_dump($referents);
+                    foreach ($referents as $key => $value) {
+                        //var_dump($value->mail);
+                         $mail = new Mailer();
+                        $mail->Send_mail_referent_project($value->mail,$project->name,$verif[0]->mail);
+                    }
+
+                }
+                
                 $verif = MailValidation::select('token', 'mail')->where('token', '=', $token)->delete();
-                return true;
+
+
+              return true;
             }
         }
     } else {
@@ -283,7 +302,7 @@ public function getAllProject()
 public function getUserAwaitingValidationFromReferent($project_name)
 {
     foreach ($project_name as $key => $value) {
-    $verif = ProjectsRequest::select('users.id_user','users.mail','users.name','users.firstname','users.type','Projects.name as project_name')->where('Projects.name', '=',$value )->join('Projects', 'id_project', '=', 'Projects.id')->join('users','users.id_user','=','Projects_request.id_user')->get();
+    $verif = ProjectsRequest::select('users.id_user','users.mail','users.name','users.firstname','users.type','Projects.name as project_name')->where('Projects.name', '=',$value )->where('users.mail_validation','=','1')->join('Projects', 'id_project', '=', 'Projects.id')->join('users','users.id_user','=','Projects_request.id_user')->get();
     if (count($verif) != 0) {
         foreach ($verif as $key => $value) {
           $array[]=$value;
@@ -317,7 +336,7 @@ public function getReferentProjectsUSERS()
 
 public function getUserInProjectForReferent($project_name)
 {
-    $verif = Projects_access_right::select('users.id_user','users.mail','users.name','users.firstname','users.type')->where('Projects.name', '=',$project_name )->join('Projects', 'id_project', '=', 'Projects.id')->join('users','users.id_user','=','Projects_access_right.id_user')->where('users.type','=','0')->orwhere('users.type','=','3')->get();
+    $verif = Projects_access_right::select('users.id_user','users.mail','users.name','users.firstname','users.type')->join('Projects', 'id_project', '=', 'Projects.id')->join('users','users.id_user','=','Projects_access_right.id_user')->whereraw('(users.type = 0 or users.type = 3)')->where('Projects.name', '=',$project_name )->get();
     if (count($verif) != 0) {
         foreach ($verif as $key => $value) {
           $array[]=$value;
@@ -387,6 +406,8 @@ public function AddUserToProject($mail,$project_name)
     $verif->id_user      = $user_id[0]->id_user;
     $verif->id_project      = $project_id[0]->id;
      if ($verif->save()) {
+        $mailer=new Mailer();
+        $mailer->Send_mail_user_welcome_project($mail,$project_name,$_SESSION['mail']);
         return true;
     } else {
         return false;
@@ -404,6 +425,8 @@ public function DeleteUserFromProject($mail,$project_name)
     if (count($user_id) != 0 && count($project_id) != 0 ) {
 
      if ($exist=Projects_access_right::select('id')->where('id_user', '=', $user_id[0]->id_user)->where('id_project','=',$project_id[0]->id)->delete()) {
+        $mailer=new Mailer();
+        $mailer->Send_mail_user_denyaccess_project($mail,$project_name,$_SESSION['mail']);
         return true;
     } else {
         return false;
@@ -428,12 +451,16 @@ public function Create_project($name)
 public function approveUser($email)
 {
     $verif         = Users::find($email);
-    $verif->status = 1;
-    if ($verif->save()) {
-        $mail = new Mailer();
-        $mail->Send_mail_account_activation($email);
-        return true;
-    } else {
+    if ($verif->status==0) {
+        $verif->status = 1;
+        if ($verif->save()) {
+            $mail = new Mailer();
+            $mail->Send_mail_account_activation($email);
+            return true;
+        } else {
+            return false;
+        }
+    }else{
         return false;
     }
 }

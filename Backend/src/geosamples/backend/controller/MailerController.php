@@ -199,6 +199,84 @@ class MailerController
         return $error;
     }
 
+     public function Send_mail_referent_project($email,$project,$user)
+    {
+        $connected = self::CheckSMTPstatus();
+        if ($connected === true) {
+            $file    = new File();
+            $config  = $file->ConfigFile();
+            $headers = "From:<" . $config['NO_REPLY_MAIL'] . ">\r\n";
+            $headers .= "MIME-Version: 1.0\r\n";
+            $headers .= "Content-Type: text/html; charset=utf-8\r\n";
+            $mail = mail($email, '[' . $config['PROJECT_NAME'] . '] You must verify a user account for the project '.$project.' !', '<html>
+               <head>
+               <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+               </head>
+               <body>
+               <p>Hello, '.$user.' want access to the project '.$project.', please go to your account to check it out! </a>. </p>
+               </body>
+               </html> ', $headers);
+
+        } else {
+            $error = "true";
+        }
+        return $error;
+    }
+
+ public function Send_mail_user_welcome_project($email,$project,$referent)
+    {
+        $connected = self::CheckSMTPstatus();
+        if ($connected === true) {
+            $file    = new File();
+            $config  = $file->ConfigFile();
+            $headers = "From:<" . $config['NO_REPLY_MAIL'] . ">\r\n";
+            $headers .= "MIME-Version: 1.0\r\n";
+            $headers .= "Content-Type: text/html; charset=utf-8\r\n";
+            $mail = mail($email, '[' . $config['PROJECT_NAME'] . '] Access granted to '.$project.' !', '<html>
+               <head>
+               <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+               </head>
+               <body>
+               <p>Hello, '.$referent.' approve you to the project '.$project.',you can access it now! </a>. </p>
+               </body>
+               </html> ', $headers);
+
+        } else {
+            $error = "true";
+        }
+        return $error;
+    }
+
+     public function Send_mail_user_denyaccess_project($email,$project,$referent)
+    {
+        $connected = self::CheckSMTPstatus();
+        if ($connected === true) {
+            $file    = new File();
+            $config  = $file->ConfigFile();
+            $headers = "From:<" . $config['NO_REPLY_MAIL'] . ">\r\n";
+            $headers .= "MIME-Version: 1.0\r\n";
+            $headers .= "Content-Type: text/html; charset=utf-8\r\n";
+            $mail = mail($email, '[' . $config['PROJECT_NAME'] . '] Access denied to '.$project.' !', '<html>
+               <head>
+               <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+               </head>
+               <body>
+               <p>Hello, '.$referent.' did not give his authorization for your access to the project '.$project.', If you want more information contact him at his email address</a>. </p>
+               </body>
+               </html> ', $headers);
+
+        } else {
+            $error = "true";
+        }
+        return $error;
+    }
+
+
+
+
+
+
+
     /**
      * Send a mail to user to notify account activation
      */
