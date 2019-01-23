@@ -8,6 +8,7 @@ use \geosamples\model\MailValidation as MailValidation;
 use \geosamples\model\Users as Users;
 use \geosamples\model\Projects as Projects;
 use \geosamples\model\ProjectsAccessRight as Projects_access_right;
+use \geosamples\model\ProjectsRequest as ProjectsRequest;
 
 class UserController
 {
@@ -62,8 +63,9 @@ class UserController
 
     }
 }
-public function signup($name, $firstname, $email, $password, $passwordconfirm)
+public function signup($name, $firstname, $email, $password, $passwordconfirm,$project_name)
 {
+    var_dump($project_name);
     $verif = Users::select('mail', 'mdp')->where('mail', '=', $email)->get();
     if (count($verif) == 0) {
         if (preg_match("/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}/", $password)) {
@@ -77,6 +79,14 @@ public function signup($name, $firstname, $email, $password, $passwordconfirm)
                 $signup->type      = 0;
                 $signup->status    = 0;
                 if ($signup->save()) {
+                    $verif = Users::select('id_user')->where('mail', '=', $email)->get();
+                    $project = Projects::select('id')->where('name','=',$project_name)->get();
+                    var_dump($project);
+                    $Projects_request= new ProjectsRequest;
+                    $Projects_request->id_project=$project[0]->id;
+                    $Projects_request->id_user=$verif[0]->id_user;
+                    $Projects_request->save();
+
                     $token                    = bin2hex(openssl_random_pseudo_bytes(32));
                     $MailValidation           = new MailValidation();
                     $MailValidation->mail     = $email;
@@ -270,6 +280,26 @@ public function getAllProject()
 }
 }
 
+public function getUserAwaitingValidationFromReferent($project_name)
+{
+    foreach ($project_name as $key => $value) {
+    $verif = ProjectsRequest::select('users.id_user','users.mail','users.name','users.firstname','users.type','Projects.name as project_name')->where('Projects.name', '=',$value )->join('Projects', 'id_project', '=', 'Projects.id')->join('users','users.id_user','=','Projects_request.id_user')->get();
+    if (count($verif) != 0) {
+        foreach ($verif as $key => $value) {
+          $array[]=$value;
+      }
+  } 
+    }
+    if (count($array)!=0) {
+      return $array;
+    }
+    else{
+        return false;
+    }
+}
+
+
+
 public function getReferentProjectsUSERS()
 {
    $getReferentProject= $this->getReferentProject();
@@ -347,8 +377,10 @@ public function getUserInProject($project_name)
 
 public function AddUserToProject($mail,$project_name)
 {
+    $this->approveUser($mail);
     $user_id = users::select('id_user')->where('mail', '=',$mail )->get();
     $project_id = Projects::select('id')->where('name', '=',$project_name )->get();
+    ProjectsRequest::select('id')->where('id_user', '=', $user_id[0]->id_user)->where('id_project','=',$project_id[0]->id)->delete();
     $exist=Projects_access_right::select('id')->where('id_user', '=', $user_id[0]->id_user)->where('id_project','=',$project_id[0]->id)->get();
     if (count($user_id) != 0 && count($project_id) != 0 && (count($exist) == 0 )) {
     $verif            = new Projects_access_right;
@@ -368,7 +400,7 @@ public function DeleteUserFromProject($mail,$project_name)
 {
     $user_id = users::select('id_user')->where('mail', '=',$mail )->get();
     $project_id = Projects::select('id')->where('name', '=',$project_name )->get();
- ;
+    ProjectsRequest::select('id')->where('id_user', '=', $user_id[0]->id_user)->where('id_project','=',$project_id[0]->id)->delete();
     if (count($user_id) != 0 && count($project_id) != 0 ) {
 
      if ($exist=Projects_access_right::select('id')->where('id_user', '=', $user_id[0]->id_user)->where('id_project','=',$project_id[0]->id)->delete()) {
@@ -423,10 +455,16 @@ public function disableUser($email)
 public function SetRightUser($email, $type)
 {
     $verif            = Users::find($email);
-    $verif->type      = $type;
-    if ($verif->save()) {
-        return true;
-    } else {
+    if ($verif->type==3 or $verif->type==0) {
+        $verif->type  = $type;
+        if ($verif->save()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    else{
         return false;
     }
 }
@@ -449,6 +487,8 @@ public function modifyUser($email, $name, $firstname, $type)
 public function deleteUser($email)
 {
     $verif = Users::find($email)->delete();
+    
+   //Projects_access_right::select('Projects_access_right.id')->join('users','Projects_access_right.id_user', '=', 'users.id_user')->where('users.mail','=',$email)->delete();
     if ($verif == true) {
         $mail = new Mailer();
         $mail->Send_mail_account_removed($email);

@@ -204,10 +204,11 @@ $app->post('/signup', function (Request $req, Response $responseSlim) {
 	$name            = $req->getparam('name');
 	$firstname       = $req->getparam('firstname');
 	$mail            = $req->getparam('email');
+	$project_name    = $req->getparam('project_name');
 	$password        = $req->getparam('password');
 	$passwordconfirm = $req->getparam('password_confirm');
 	$user            = new User();
-	$error           = $user->signup($name, $firstname, $mail, $password, $passwordconfirm);
+	$error           = $user->signup($name, $firstname, $mail, $password, $passwordconfirm,$project_name);
 	if (!$error) {
 		return $responseSlim->withRedirect('accueil');
 	} else {
@@ -366,7 +367,8 @@ $app->get('/listusers', function (Request $req, Response $responseSlim) {
 		$usersapproved = $user->getAllUsersApproved();
 		$userswaiting  = $user->getAllUsersWaiting();
 		$Allprojects  = $user->getAllProject();
-		echo $twig->render('listusers.html.twig', ['usersapproved' => $usersapproved, 'userswaiting' => $userswaiting, 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'],'allprojects'=>$Allprojects]);
+		$usersawaitingvalidation = $user->getUserAwaitingValidationFromReferent($Allprojects);
+		echo $twig->render('listusers.html.twig', ['usersapproved' => $usersapproved, 'userswaiting' => $userswaiting, 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'],'allprojects'=>$Allprojects,'UsersAwaitingValidation' => $usersawaitingvalidation]);
 	} else if(@$_SESSION['admin'] == 2){
 		$loader  = new Twig_Loader_Filesystem('geosamples/frontend/templates');
 		$twig    = new Twig_Environment($loader);
@@ -382,7 +384,8 @@ $app->get('/listusers', function (Request $req, Response $responseSlim) {
 		$usersreferents = $user->getReferentProjectsUSERS();
 		//$usersreferents = $user->getAllUsersReferentProject();
 		$Allprojects  = $user->getReferentProject();
-		echo $twig->render('listusers.html.twig', ['usersreferents' => $usersreferents, 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'],'allprojects'=>$Allprojects]);
+		$usersawaitingvalidation = $user->getUserAwaitingValidationFromReferent($Allprojects);
+		echo $twig->render('listusers.html.twig', ['usersreferents' => $usersreferents, 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'],'allprojects'=>$Allprojects,'UsersAwaitingValidation' => $usersawaitingvalidation,]);
 	}else {
 		return $responseSlim->withRedirect('accueil');
 	}
@@ -496,6 +499,7 @@ $app->post('/get_user_projects', function (Request $req, Response $responseSlim)
 
 });
 
+
 $app->post('/get_valid_user', function (Request $req, Response $responseSlim) {
 	if (@$_SESSION['admin'] == 1 or @$_SESSION['admin'] == 2) {
 		$loader    = new Twig_Loader_Filesystem('geosamples/frontend/templates');
@@ -527,7 +531,8 @@ $app->post('/add_user_projects', function (Request $req, Response $responseSlim)
 		$project_name      = $req->getparam('project_name');
 		$user  = new User();
 		$error = $user->AddUserToProject($mail,$project_name);
-		return$error;
+				return $responseSlim->withRedirect('listusers');
+
 	}
 
 });
@@ -540,7 +545,8 @@ $app->post('/delete_user_projects', function (Request $req, Response $responseSl
 		$project_name      = $req->getparam('project_name');
 		$user  = new User();
 		$error = $user->DeleteUserFromProject($mail,$project_name);
-		echo $error;
+				return $responseSlim->withRedirect('listusers');
+
 	}
 
 });

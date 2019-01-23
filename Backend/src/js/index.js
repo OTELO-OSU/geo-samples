@@ -690,7 +690,7 @@ APP.modules.account = (function() {
       });
       
   },
-  check_clicked: function(e, name_CSRF, value_CSRF, name, firstname, mail, type) {
+  check_clicked: function(e, name_CSRF, value_CSRF, name, firstname, mail, type,project_name) {
       var action = e.target.name;
       if (action == 'approve') {
           var action = "approveuser";
@@ -739,6 +739,22 @@ APP.modules.account = (function() {
           $('.ui.dropdown').dropdown('set selected', type);
           APP.modules.account.check_myaccount();
       }
+      else if (action == 'approve_project') {
+          var action = "add_user_projects";
+          $(".modal.user .header").empty();
+          $(".modal.user .content").empty();
+          $(".modal.user .header").append('Are you sure to approve ' + mail + ' to access to '+project_name+'?');
+          $(".modal.user .content").append('<form class="ui form ' + action + ' " action="' + action + '" method="post"><input type="hidden" name="csrf_name" value="' + name_CSRF + '"><input type="hidden" name="csrf_value" value="' + value_CSRF + '"><input type="hidden" name="mail_user" value="' + mail + '"> <input type="hidden" name="project_name" value="' + project_name + '"><div class="actions"> <div class="ui black deny button"> Cancel </div> <button class="ui submit button" >Yes</button> </div> </form>');
+          $('.ui.modal.user').modal('show');
+      } 
+      else if (action == 'remove_project') {
+          var action = "delete_user_projects";
+          $(".modal.user .header").empty();
+          $(".modal.user .content").empty();
+          $(".modal.user .header").append('Are you sure to refuse ' + mail + ' to access to '+project_name+'?');
+          $(".modal.user .content").append('<form class="ui form ' + action + ' " action="' + action + '" method="post"><input type="hidden" name="csrf_name" value="' + name_CSRF + '"><input type="hidden" name="csrf_value" value="' + value_CSRF + '"><input type="hidden" name="mail_user" value="' + mail + '"> <input type="hidden" name="project_name" value="' + project_name + '"> <div class="actions"> <div class="ui black deny button"> Cancel </div> <button class="ui submit button" >Yes</button> </div> </form>');
+          $('.ui.modal.user').modal('show');
+      } 
   },
   add_project: function(name_CSRF, value_CSRF) {
       $(".modal.user .header").empty();

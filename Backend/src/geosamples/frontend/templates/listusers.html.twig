@@ -9,7 +9,7 @@
     </div>
     <div class="ui twelve wide column centered">
       {%if userswaiting%} 
-      <h2>Users waiting for approvement</h2>
+      <h2>Users waiting for account approvement</h2>
       <div class="ui relaxed divided list waitinglist">
         {%for user in userswaiting%}
         <div class="item">
@@ -39,6 +39,43 @@
 
       </div> 
       {%endif%}
+      <div class="ui twelve wide column centered">
+      {%if UsersAwaitingValidation%} 
+      <h2>Users want to access to your projects</h2>
+      <div class="ui relaxed divided list waitinglist">
+        {%for user in UsersAwaitingValidation%}
+        <div class="item">
+          <div class="right floated content">
+            <button class="ui green button" name="approve_project">Approve</button>
+            <button class="ui red button" name="remove_project">Remove</button>
+          </div>
+          <div class="content">
+            <input type="hidden" name="name" value="{{user.name}}">
+            <input type="hidden" name="firstname" value="{{user.firstname}}">
+            <input type="hidden" name="mail" value="{{user.mail}}">
+            <input type="hidden" name="project_name" value="{{user.project_name}}">
+
+
+            <a class="header"><i class="large user middle aligned icon"></i>       {{user.name}}  {{user.firstname}} want access to {{user.project_name}}
+            </a>
+            <div class="description"> {%if user.type==1%} 
+              <div class="ui red horizontal label">Administrator</div> 
+              {%elseif user.type==2%} 
+              <div class="ui blue horizontal label">Referent</div>
+        {%elseif user.type==3%} 
+              <div class="ui orange horizontal label">User Feeder</div>
+              {%else%} 
+              <div class="ui green horizontal label">User</div> 
+            {%endif%} {{user.mail}} </div>
+          </div>
+        </div>
+        {%endfor%}
+
+      </div> 
+      {%endif%}
+
+
+
       {%if usersapproved%}
       <h2>All users</h2>
       <div class="ui relaxed divided list userapprovedlist">
@@ -71,7 +108,7 @@
       {%endfor%}
        {%endif%}
        {%if usersreferents%}
-      <h2>All users in yours projects</h2>
+      <h2>All users in yours projects (only user and feeder)</h2>
       <div class="ui relaxed divided list userapprovedlist">
         {%for user in usersreferents%}
         <div class="item">
@@ -133,7 +170,7 @@
  </body>
  <script type="text/javascript">
    $('.button').on('click', function(e) {
-    APP.modules.account.check_clicked(e,"{{name_CSRF}}","{{value_CSRF}}",$($($(this).parent()[0]).parent()).find('input[name="name"]').val(),$($($(this).parent()[0]).parent()).find('input[name="firstname"]').val(),$($($(this).parent()[0]).parent()).find('input[name="mail"]').val(),$($($(this).parent()[0]).parent()).find('input[name="type"]').val());
+    APP.modules.account.check_clicked(e,"{{name_CSRF}}","{{value_CSRF}}",$($($(this).parent()[0]).parent()).find('input[name="name"]').val(),$($($(this).parent()[0]).parent()).find('input[name="firstname"]').val(),$($($(this).parent()[0]).parent()).find('input[name="mail"]').val(),$($($(this).parent()[0]).parent()).find('input[name="type"]').val(),$($($(this).parent()[0]).parent()).find('input[name="project_name"]').val());
   });
 </script>
 {% include 'footer.html.twig' %}
