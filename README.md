@@ -40,6 +40,10 @@ Le fichier de configuration se trouve dans Backend/config.ini
     apt-get install python-pip
     pip install 'mongo-connector[elastic5]'
     
+**Installation de mysql:**
+
+    apt-get install mysql-server mysql-client libmysqlclient15-dev mysql-common
+    
     
  **Configuration de l'authentification:**
 
@@ -53,7 +57,7 @@ Executez cette commande (requiert les droits admin):
 
 Créer un utilisateur avec des droits limités à la base authentication (requiert les droits admin)
 
-	CREATE USER 'USER'@'localhost' IDENTIFIED BY "PASSWORD";GRANT SELECT, INSERT, UPDATE, DELETE, FILE ON *.* TO 'USER'@'localhost';GRANT ALL PRIVILEGES ON `authentication`.* TO 'USER'@'localhost';
+	CREATE USER 'USER'@'localhost' IDENTIFIED BY "PASSWORD";GRANT SELECT, INSERT, UPDATE, DELETE, FILE ON *.* TO 'USER'@'localhost';GRANT ALL PRIVILEGES ON `authentication_geosamples`.* TO 'USER'@'localhost';
 
 Une fois ceci fait, Editer le fichier Backend/AuthDB.ini avec l'utilisateur précédemment créé:
 
