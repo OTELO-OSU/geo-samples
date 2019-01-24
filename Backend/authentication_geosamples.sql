@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Client :  localhost
--- Généré le :  Jeu 24 Janvier 2019 à 08:56
+-- Généré le :  Jeu 24 Janvier 2019 à 09:56
 -- Version du serveur :  10.1.37-MariaDB-0+deb9u1
 -- Version de PHP :  5.6.39-1+0~20181212060557.8+stretch~1.gbp4260ff
 
@@ -19,6 +19,8 @@ SET time_zone = "+00:00";
 --
 -- Base de données :  `authentication_geosamples`
 --
+CREATE DATABASE IF NOT EXISTS `authentication_geosamples` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `authentication_geosamples`;
 
 -- --------------------------------------------------------
 
@@ -185,11 +187,11 @@ DELIMITER $$
 --
 -- Événements
 --
-CREATE DEFINER=`root`@`localhost` EVENT `remove_password_token` ON SCHEDULE EVERY 30 MINUTE STARTS '2017-11-21 16:03:14' ON COMPLETION NOT PRESERVE ENABLE DO DELETE FROM lost_password WHERE `datetime` < (NOW() - INTERVAL 30 MINUTE)$$
+CREATE DEFINER=`root`@`localhost` EVENT `remove_mail_token` ON SCHEDULE EVERY 30 MINUTE STARTS '2017-11-21 16:03:14' ON COMPLETION NOT PRESERVE ENABLE DO DELETE FROM mail_validation WHERE `datetime` < (NOW() - INTERVAL 30 MINUTE)$$
 
 CREATE DEFINER=`root`@`localhost` EVENT `remove_invalid_user` ON SCHEDULE EVERY 1 HOUR STARTS '2017-11-21 16:03:14' ON COMPLETION NOT PRESERVE ENABLE DO DELETE FROM users WHERE `mail_validation`=0$$
 
-CREATE DEFINER=`root`@`localhost` EVENT `remove_mail_token` ON SCHEDULE EVERY 30 MINUTE STARTS '2017-11-21 16:03:14' ON COMPLETION NOT PRESERVE ENABLE DO DELETE FROM mail_validation WHERE `datetime` < (NOW() - INTERVAL 30 MINUTE)$$
+CREATE DEFINER=`root`@`localhost` EVENT `remove_password_token` ON SCHEDULE EVERY 30 MINUTE STARTS '2017-11-21 16:03:14' ON COMPLETION NOT PRESERVE ENABLE DO DELETE FROM lost_password WHERE `datetime` < (NOW() - INTERVAL 30 MINUTE)$$
 
 DELIMITER ;
 
