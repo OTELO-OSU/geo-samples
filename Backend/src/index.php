@@ -207,7 +207,6 @@ $app->post('/signup', function (Request $req, Response $responseSlim) {
 	$valuecsrf       = $req->getAttribute($valueKey);
 	$loader          = new Twig_Loader_Filesystem('geosamples/frontend/templates');
 	$twig            = new Twig_Environment($loader);
-	var_dump($req->getparam('project_name'));
 	$name            = $req->getparam('name');
 	$firstname       = $req->getparam('firstname');
 	$mail            = $req->getparam('email');
@@ -619,7 +618,6 @@ $app->get('/download_poi_raw_data/{name}', function (Request $req,Response $resp
 	$response = $request->Request_poi_raw_data($name);
 	$response=json_decode($response,TRUE);
 	$path=$response['FILES'][0]['ORIGINAL_DATA_URL'];
-	var_dump($path);
 	$download = $request->download($path);
 	if ($download == NULL or $download == false) {
 		//return $responseSlim->withStatus(403);

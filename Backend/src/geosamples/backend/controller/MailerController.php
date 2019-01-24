@@ -20,7 +20,6 @@ class MailerController
     {
         $file      = new File();
         $config    = $file->ConfigFile();
-        var_dump($config);
         $f         = fsockopen($config['SMTP'], 25, $errno, $errstr, 3);
         $connected = false;
         if ($f !== false) {
