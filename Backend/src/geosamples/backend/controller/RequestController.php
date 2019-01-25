@@ -82,7 +82,7 @@ class RequestController
                     }
                 }
             }
-        if (($_SESSION['mail'] && in_array($value['_type'], $_SESSION['projects_access_right'])) or ($_SESSION['admin']==1) ) {
+        if (($_SESSION['mail'] && in_array($value['_type'], $_SESSION['projects_access_right_name'])) or ($_SESSION['admin']==1) ) {
             $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['MEASUREMENT'][] = $value['_source']['INTRO']['MEASUREMENT'];
         }
 
@@ -339,7 +339,7 @@ echo $generatedfile;
                     }
 
                 }
-            if (($_SESSION['mail'] && in_array($value['_type'], $_SESSION['projects_access_right'])) or ($_SESSION['admin']==1) ) {
+            if (($_SESSION['mail'] && in_array($value['_type'], $_SESSION['projects_access_right_name'])) or ($_SESSION['admin']==1) ) {
                $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['MEASUREMENT'][] = $value['_source']['INTRO']['MEASUREMENT'];
            }
 
@@ -367,7 +367,7 @@ echo $generatedfile;
         );
         $response = self::Curlrequest($url, $curlopt);
         $response = json_decode($response, true);
-         if (($_SESSION['mail'] && in_array($response['hits']['hits'][0]['_type'], $_SESSION['projects_access_right'])) or ($_SESSION['admin']==1) ) {
+         if (($_SESSION['mail'] && in_array($response['hits']['hits'][0]['_type'], $_SESSION['projects_access_right_name'])) or ($_SESSION['admin']==1) ) {
             $identifier = $response['hits']['hits'][0]['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME'] . '_' . $response['hits']['hits'][0]['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION'];
             if ($identifier == $id)
             {

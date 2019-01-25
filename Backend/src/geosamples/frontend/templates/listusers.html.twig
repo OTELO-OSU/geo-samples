@@ -26,10 +26,6 @@
             </a>
             <div class="description"> {%if user.type==1%} 
               <div class="ui red horizontal label">Administrator</div> 
-              {%elseif user.type==2%} 
-              <div class="ui blue horizontal label">Referent</div>
- 	      {%elseif user.type==3%} 
-              <div class="ui orange horizontal label">User Feeder</div>
               {%else%} 
               <div class="ui green horizontal label">User</div> 
             {%endif%} {{user.mail}} </div>
@@ -71,8 +67,8 @@
         </div>
         {%endfor%}
 
-      </div> 
       {%endif%}
+      </div> 
 
 
 
@@ -98,9 +94,7 @@
            </a>
            <div class="description"> {%if user.type==1%} 
             <div class="ui red horizontal label">Administrator</div> 
-            {%elseif user.type==2%} <div class="ui blue horizontal label">Referent</div>
-            {%elseif user.type==3%} 
-              <div class="ui orange horizontal label">User Feeder</div>
+            
             {%else%} <div class="ui green horizontal label">User</div> 
           {%endif%}{{user.mail}} </div>
         </div>
@@ -108,41 +102,104 @@
       {%endfor%}
        {%endif%}
        {%if usersreferents%}
-      <h2>All users in yours projects (only user and feeder)</h2>
+      <h2>Manage right in your projects (only user and feeder)</h2>
       <div class="ui relaxed divided list userapprovedlist">
-        {%for user in usersreferents%}
+        {%for key,project in usersreferents%}
+        {%if project|length >= 1 %}
+        <h1>{{key}}</h1>
+        {%endif%}
+        {%for user in project%}
         <div class="item">
           <div class="right floated content">
-            <button class="ui green button" name="modify_referent">Modify profile</button>
+            <button class="ui green button" name="modify_referent">Modify right</button>
           </div>
           <div class="content">
 
            <input type="hidden" name="mail" value="{{user.mail}}">
-           <input type="hidden" name="type" value="{{user.type}}">
+           <input type="hidden" name="type" value="{{user.user_type}}">
+          <input type="hidden" name="project_name_modify" value="{{user.project_name}}">
            <a class="header"><i class="large user middle aligned icon"></i>      {{user.name}}  {{user.firstname}}    
              
             
            </a>
            <div class="description"> 
-            {%if user.type==3%}
+            {%if user.user_type==3%}
               <div class="ui orange horizontal label">User Feeder</div>
-            {%elseif user.type==0%} <div class="ui green horizontal label">User</div> 
+            {%elseif user.user_type==0%} <div class="ui green horizontal label">User</div> 
           {%endif%}{{user.mail}} </div>
         </div>
       </div>
+      {%endfor%}
+      {%endfor%}
+       {%endif%}
+     </div>
+          {%if usersreferentsadmin%}
+      <h2>Manage rights on projects</h2>
+      <div class="ui relaxed divided list userapprovedlist">
+        {%for key,project in usersreferentsadmin%}
+        {%if project|length >= 1 %}
+        <h3>{{key}}</h3>
+        {%endif%}
+        {%for user in project%}
+        <div class="item">
+          <div class="right floated content">
+            <button class="ui green button" name="modify_referent_admin">Modify right</button>
+          </div>
+          <div class="content">
+
+           <input type="hidden" name="mail" value="{{user.mail}}">
+           <input type="hidden" name="type" value="{{user.user_type}}">
+          <input type="hidden" name="project_name_modify" value="{{user.project_name}}">
+           <a class="header"><i class="large user middle aligned icon"></i>      {{user.name}}  {{user.firstname}}    
+             
+            
+           </a>
+           <div class="description"> 
+            {%if user.user_type==3%}
+              <div class="ui orange horizontal label">User Feeder</div>
+            {%elseif user.user_type==0%} <div class="ui green horizontal label">User</div> 
+            {%elseif user.user_type==2%} <div class="ui blue horizontal label">Referent</div> 
+          {%endif%}{{user.mail}} </div>
+        </div>
+      </div>
+      {%endfor%}
       {%endfor%}
        {%endif%}
 
       
     </div>
 
-    <h2>Projects list</h2>
+    {%if allprojects%}
+    <h2>My Projects</h2>
+    {%if admin==1%}
     <button class="ui blue button" onclick="APP.modules.account.add_project('{{name_CSRF}}','{{value_CSRF}}')" name="createproject">Add a new project</button>
+    {%endif%}
     <div class="ui relaxed divided list userapprovedlist">
       {%for key,value in allprojects%}
       <div class="item">
         <div class="content">
-          <a class="header" onclick="APP.modules.account.display_project('{{value}}')"><i class="large archive middle aligned icon"></i>{{key}})  {{value}}</a>
+          <a class="header" onclick="APP.modules.account.display_project('{{value}}')"><i class="large archive middle aligned icon"></i>{{value}}</a>
+          {%endfor%}
+
+            </div>
+            </div>
+            </div>
+            {%endif%}
+    {%if admin!=1%}
+     <h2>Others projects</h2>
+     {%endif%}
+    <div class="ui relaxed divided list userapprovedlist">
+      {%for key,value in readonlyproject%}
+      <div class="item">
+        <div class="content">
+          {{value}}:
+          You are 
+{%if key == 0%}
+<div class="ui green horizontal label">User</div>
+{%elseif key == 3%}
+<div class="ui orange horizontal label">User Feeder</div>
+{%endif%}
+in this project
           {%endfor%}
 
 
@@ -170,7 +227,7 @@
  </body>
  <script type="text/javascript">
    $('.button').on('click', function(e) {
-    APP.modules.account.check_clicked(e,"{{name_CSRF}}","{{value_CSRF}}",$($($(this).parent()[0]).parent()).find('input[name="name"]').val(),$($($(this).parent()[0]).parent()).find('input[name="firstname"]').val(),$($($(this).parent()[0]).parent()).find('input[name="mail"]').val(),$($($(this).parent()[0]).parent()).find('input[name="type"]').val(),$($($(this).parent()[0]).parent()).find('input[name="project_name"]').val());
+    APP.modules.account.check_clicked(e,"{{name_CSRF}}","{{value_CSRF}}",$($($(this).parent()[0]).parent()).find('input[name="name"]').val(),$($($(this).parent()[0]).parent()).find('input[name="firstname"]').val(),$($($(this).parent()[0]).parent()).find('input[name="mail"]').val(),$($($(this).parent()[0]).parent()).find('input[name="type"]').val(),$($($(this).parent()[0]).parent()).find('input[name="project_name"]').val(),$($($(this).parent()[0]).parent()).find('input[name="project_name_modify"]').val());
   });
 </script>
 {% include 'footer.html.twig' %}

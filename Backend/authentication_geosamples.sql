@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Client :  localhost
--- Généré le :  Jeu 24 Janvier 2019 à 09:56
+-- Généré le :  Ven 25 Janvier 2019 à 11:07
 -- Version du serveur :  10.1.37-MariaDB-0+deb9u1
 -- Version de PHP :  5.6.39-1+0~20181212060557.8+stretch~1.gbp4260ff
 
@@ -73,6 +73,7 @@ CREATE TABLE `Projects_access_right` (
   `id` int(10) NOT NULL,
   `id_project` int(10) NOT NULL,
   `id_user` int(10) NOT NULL,
+  `user_type` int(3) NOT NULL,
   `updated_at` date NOT NULL,
   `created_at` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

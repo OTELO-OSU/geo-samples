@@ -37,6 +37,8 @@
 
     {%if admin%}
     <a href="listusers"><button type="submit" class="ui fluid large black submit button">Go to administration panel</button></a>
+    {%else%}
+    <a href="listusers"><button type="submit" class="ui fluid large black submit button">View my project</button></a>
     {%endif%}
     <form class="ui large form myaccount" method="post" action="/myaccount">
       <div class="ui error message"></div>

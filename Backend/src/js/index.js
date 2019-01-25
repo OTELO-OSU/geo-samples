@@ -690,7 +690,7 @@ APP.modules.account = (function() {
       });
       
   },
-  check_clicked: function(e, name_CSRF, value_CSRF, name, firstname, mail, type,project_name) {
+  check_clicked: function(e, name_CSRF, value_CSRF, name, firstname, mail, type,project_name,project_name_modify) {
       var action = e.target.name;
       if (action == 'approve') {
           var action = "approveuser";
@@ -721,7 +721,7 @@ APP.modules.account = (function() {
           $(".modal.user .header").empty();
           $(".modal.user .content").empty();
           $(".modal.user .header").append('Modify informations: ' + mail);
-          $(".modal.user .content").append('<form class="ui large form myaccount" method="post" action="/modifyuser"><input type="hidden" name="csrf_name" value="' + name_CSRF + '"><input type="hidden" name="csrf_value" value="' + value_CSRF + '"><input type="hidden" name="email" value="' + mail + '"> <div class="ui error message"></div> <div class="ui stacked segment"> <div class="field"> <div class="ui left icon input"> <i class="user icon"></i> <input type="text" name="name" value="' + name + '" placeholder="Name"> </div> </div> <div class="field"> <div class="ui left icon input"> <i class="user icon"></i> <input type="text" name="firstname" value="' + firstname + '" placeholder="Firstname"> </div></div> <div class="field"><div class="ui selection dropdown"><input type="hidden" name="type"><i class="dropdown icon"></i><div class="default text">Access right</div><div class="menu"><div class="item" data-value="0">User</div><div class="item" data-value="2">Referent</div><div class="item" data-value="1">Administrator</div><div class="item" data-value="3">User Feeder</div></div></div></div></div></div> </div> <div class="actions"><div class="ui black deny button"> Cancel </div> <button class="ui submit red button" >Yes</button> </div></div> </form>');
+          $(".modal.user .content").append('<form class="ui large form myaccount" method="post" action="/modifyuser"><input type="hidden" name="csrf_name" value="' + name_CSRF + '"><input type="hidden" name="csrf_value" value="' + value_CSRF + '"><input type="hidden" name="email" value="' + mail + '"> <div class="ui error message"></div> <div class="ui stacked segment"> <div class="field"> <div class="ui left icon input"> <i class="user icon"></i> <input type="text" name="name" value="' + name + '" placeholder="Name"> </div> </div> <div class="field"> <div class="ui left icon input"> <i class="user icon"></i> <input type="text" name="firstname" value="' + firstname + '" placeholder="Firstname"> </div></div> <div class="field"><div class="ui selection dropdown"><input type="hidden" name="type"><i class="dropdown icon"></i><div class="default text">Access right</div><div class="menu"><div class="item" data-value="0">User</div> <div class="item" data-value="1">Administrator</div></div></div></div></div></div> </div> <div class="actions"><div class="ui black deny button"> Cancel </div> <button class="ui submit red button" >Yes</button> </div></div> </form>');
           $('.ui.modal.user').modal('show');
           $('.ui.dropdown').dropdown('set selected', type);
           APP.modules.account.check_myaccount();
@@ -734,7 +734,20 @@ APP.modules.account = (function() {
           $(".modal.user .header").empty();
           $(".modal.user .content").empty();
           $(".modal.user .header").append('Modify informations: ' + mail);
-          $(".modal.user .content").append('<form class="ui large form myaccount" method="post" action="/modifyuser"><input type="hidden" name="csrf_name" value="' + name_CSRF + '"><input type="hidden" name="csrf_value" value="' + value_CSRF + '"><input type="hidden" name="email" value="' + mail + '"> <div class="ui error message"></div> <div class="field"><div class="ui selection dropdown"><input type="hidden" name="type"><i class="dropdown icon"></i><div class="default text">Access right</div><div class="menu"><div class="item" data-value="0">User</div><div class="item" data-value="3">User Feeder</div></div></div></div></div></div> </div> <div class="actions"><div class="ui black deny button"> Cancel </div> <button class="ui submit red button" >Yes</button> </div></div> </form>');
+          $(".modal.user .content").append('<form class="ui large form myaccount" method="post" action="/modifyuser"><input type="hidden" name="csrf_name" value="' + name_CSRF + '"><input type="hidden" name="csrf_value" value="' + value_CSRF + '"><input type="hidden" name="email" value="' + mail + '"><input type="hidden" name="project_name_modify" value="' + project_name_modify + '"> <div class="ui error message"></div> <div class="field"><div class="ui selection dropdown"><input type="hidden" name="type"><i class="dropdown icon"></i><div class="default text">Access right</div><div class="menu"><div class="item" data-value="0">User</div><div class="item" data-value="3">User Feeder</div></div></div></div></div></div> </div> <div class="actions"><div class="ui black deny button"> Cancel </div> <button class="ui submit red button" >Yes</button> </div></div> </form>');
+          $('.ui.modal.user').modal('show');
+          $('.ui.dropdown').dropdown('set selected', type);
+          APP.modules.account.check_myaccount();
+      }
+       else if (action == 'modify_referent_admin') {
+        /*$.post("get_user_projects",{ mail_user: mail} ,function(data, status){
+            alert("Data: " + data + "\nStatus: " + status);
+        });*/
+       
+          $(".modal.user .header").empty();
+          $(".modal.user .content").empty();
+          $(".modal.user .header").append('Modify informations: ' + mail);
+          $(".modal.user .content").append('<form class="ui large form myaccount" method="post" action="/modifyuser"><input type="hidden" name="csrf_name" value="' + name_CSRF + '"><input type="hidden" name="csrf_value" value="' + value_CSRF + '"><input type="hidden" name="email" value="' + mail + '"><input type="hidden" name="project_name_modify" value="' + project_name_modify + '"> <div class="ui error message"></div> <div class="field"><div class="ui selection dropdown"><input type="hidden" name="type"><i class="dropdown icon"></i><div class="default text">Access right</div><div class="menu"><div class="item" data-value="0">User</div><div class="item" data-value="3">User Feeder</div><div class="item" data-value="2">Referent</div></div></div></div></div></div> </div> <div class="actions"><div class="ui black deny button"> Cancel </div> <button class="ui submit red button" >Yes</button> </div></div> </form>');
           $('.ui.modal.user').modal('show');
           $('.ui.dropdown').dropdown('set selected', type);
           APP.modules.account.check_myaccount();
