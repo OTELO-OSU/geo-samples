@@ -385,7 +385,7 @@ public function getUserInProjectForReferent($project_name)
     $verif = Projects_access_right::select('users.id_user','users.mail','users.name','users.firstname','Projects_access_right.user_type','Projects.name as project_name')->join('Projects', 'id_project', '=', 'Projects.id')->join('users','users.id_user','=','Projects_access_right.id_user')->whereraw('(user_type = 0 or user_type = 3 or user_type = 2)')->where('Projects.name', '=',$project_name)->get();
     }else{
         
-    $verif = Projects_access_right::select('users.id_user','users.mail','users.name','users.firstname','Projects_access_right.user_type','Projects.name as project_name')->join('Projects', 'id_project', '=', 'Projects.id')->join('users','users.id_user','=','Projects_access_right.id_user')->whereraw('(user_type = 0 or user_type = 3)')->where('Projects.name', '=',$project_name)->get();
+    $verif = Projects_access_right::select('users.id_user','users.mail','users.name','users.firstname','Projects_access_right.user_type','Projects.name as project_name')->join('Projects', 'id_project', '=', 'Projects.id')->join('users','users.id_user','=','Projects_access_right.id_user')->whereraw('(user_type = 0 or user_type = 3 or user_type = 2)')->where('Projects.name', '=',$project_name)->get();
     }
     if (count($verif) != 0) {
         foreach ($verif as $key => $value) {
@@ -513,6 +513,19 @@ public function DeleteUserFromProject($mail,$project_name)
   } else {
     return false;
 }
+}
+
+
+public function is_referent($email,$project_name)
+{
+   $verif=Projects_access_right::select('Projects_access_right.user_type')->join('Projects', 'Projects.id', '=', 'Projects_access_right.id_project')->join('users','users.id_user','=','Projects_access_right.id_user')->where('Projects.name', '=',$project_name)->where('users.mail', '=',$email)->get();
+   if ($verif[0]->user_type==2) {
+       return true;
+   }
+   else{
+    return false;
+   }
+    
 }
 
 

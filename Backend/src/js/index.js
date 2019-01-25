@@ -784,7 +784,7 @@ APP.modules.account = (function() {
   })
 },
    delete_user_from_project: function(mail_user,project_name) {
-    console.log(mail_user)
+
     $.post("delete_user_projects",{ mail_user:mail_user,project_name: project_name} ,function(data, status){
         if (data=1) {
             location.reload();

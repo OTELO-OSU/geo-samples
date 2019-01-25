@@ -113,8 +113,10 @@
         {%for user in project%}
         <div class="item">
           <div class="right floated content">
+            {%if user.user_type==3 or user.user_type==0%}
             <button class="ui green button" name="modify_referent">Modify right</button>
             <button class="ui red button" onclick="APP.modules.account.delete_user_from_project('{{user.mail}}','{{key}}')">Remove from project </button>
+            {%endif%}
           </div>
           <div class="content">
 
@@ -129,6 +131,7 @@
             {%if user.user_type==3%}
               <div class="ui orange horizontal label">User Feeder</div>
             {%elseif user.user_type==0%} <div class="ui green horizontal label">User</div> 
+             {%elseif user.user_type==2%} <div class="ui blue horizontal label">Referent</div>
           {%endif%}{{user.mail}} </div>
         </div>
       </div>

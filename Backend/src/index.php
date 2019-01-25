@@ -150,10 +150,12 @@ $app->post('/login', function (Request $req, Response $responseSlim) {
 });
 
 $app->get('/test', function (Request $req, Response $responseSlim) {
-	var_dump($_SESSION['projects_access_right']);
-	foreach ($_SESSION['projects_access_right'] as $key => $value) {
-		var_dump($value);
-	}
+	//var_dump($_SESSION['projects_access_right']);
+	
+		//var_dump($value);
+	
+	$user = new User();
+	var_dump($user->is_referent('petrophysics@referent.fr','petrophysics'));
 
 });
 
@@ -585,14 +587,16 @@ $app->post('/delete_user_projects', function (Request $req, Response $responseSl
 		if ($_SESSION['admin']==1) {
 		$user  = new User();
 				$error = $user->DeleteUserFromProject($mail,$project_name);
-						return $responseSlim->withRedirect('listusers');
+				return $responseSlim->withRedirect('listusers');
 		}else{
 
 		foreach ($_SESSION['projects_access_right'] as $key => $value) {
 			if (($project_name==$value->name) and (($value->user_type==2) || ($_SESSION['admin']==1))) {
 				$user  = new User();
-				$error = $user->DeleteUserFromProject($mail,$project_name);
-						return $responseSlim->withRedirect('listusers');
+				if ($user->is_referent($mail,$project_name)==false) {
+					$error = $user->DeleteUserFromProject($mail,$project_name);
+				}
+				return $responseSlim->withRedirect('listusers');
 
 		}
 	}
