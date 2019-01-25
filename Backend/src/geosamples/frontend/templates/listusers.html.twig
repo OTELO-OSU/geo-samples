@@ -169,11 +169,11 @@
       
     </div>
 
-    {%if allprojects%}
-    <h2>My Projects</h2>
     {%if admin==1%}
     <button class="ui blue button" onclick="APP.modules.account.add_project('{{name_CSRF}}','{{value_CSRF}}')" name="createproject">Add a new project</button>
     {%endif%}
+    <h2>My Projects</h2>
+    {%if allprojects%}
     <div class="ui relaxed divided list userapprovedlist">
       {%for key,value in allprojects%}
       <div class="item">
