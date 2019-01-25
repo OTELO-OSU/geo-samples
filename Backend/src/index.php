@@ -170,7 +170,7 @@ $app->get('/loginCAS', function (Request $req, Response $responseSlim) {
 		$_SESSION['mail']      = $checkuser->mail;
 		$_SESSION['admin']     = $checkuser->type;
 		//$id_user  = Users::select('id_user')->where('mail', '=', $checkuser->mail)->first();
-		$user->giveRight($checkuser->id_user);
+		$user->giveRight($checkuser);
 		return $responseSlim->withRedirect('accueil');
 	} else {
 		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
