@@ -43,18 +43,12 @@ class UserController
                         $error = "Account not verified, please wait for an admin to activate your account";
                         return $error;
                     } else {
-                    $Projects= Projects_access_right::select('id_project','name','user_type')->where('id_user', '=', $id_user->id_user)->join('Projects', 'id_project', '=', 'Projects.id')->get(); // Recuperation projets de l'utilisateurs
-                    foreach ($Projects as $key => $value) {
-                        $array[$value->id_project]=$value;
-                        $array2[$value->id_project]=$value->name;
-                        
-                    }
+                    $this->giveRight($id_user);
                     $_SESSION['name']      = $verif[0]->name;
                     $_SESSION['firstname'] = $verif[0]->firstname;
                     $_SESSION['mail']      = $verif[0]->mail;
                     $_SESSION['admin']     = $verif[0]->type;
-                    $_SESSION['projects_access_right'] = $array;
-                    $_SESSION['projects_access_right_name'] = $array2;
+               
 
                 }
             } else {
@@ -65,6 +59,21 @@ class UserController
 
     }
 }
+
+
+
+public function giveRight($id_user){
+    $Projects= Projects_access_right::select('id_project','name','user_type')->where('id_user', '=', $id_user->id_user)->join('Projects', 'id_project', '=', 'Projects.id')->get(); // Recuperation projets de l'utilisateurs
+    foreach ($Projects as $key => $value) {
+        $array[$value->id_project]=$value;
+        $array2[$value->id_project]=$value->name;
+        
+    }
+         $_SESSION['projects_access_right'] = $array;
+        $_SESSION['projects_access_right_name'] = $array2;
+
+}
+
 public function signup($name, $firstname, $email, $password, $passwordconfirm,$project_name)
 {
     $project = Projects::select('id')->where('name','=',$project_name[0])->get();

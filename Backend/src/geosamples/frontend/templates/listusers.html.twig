@@ -106,12 +106,15 @@
       <div class="ui relaxed divided list userapprovedlist">
         {%for key,project in usersreferents%}
         {%if project|length >= 1 %}
-        <h1>{{key}}</h1>
+        <h3>{{key}}</h3> <div class="ui search"><div class="ui icon input"><input class="prompt" name="usermail_add_{{key}}" type="text" placeholder="Select user to add"><i class="search icon"></i></div><div class="results"></div><button onclick="APP.modules.account.add_user('{{key}}');" class="ui blue button">Add user</button></div>
+
         {%endif%}
+        <br>
         {%for user in project%}
         <div class="item">
           <div class="right floated content">
             <button class="ui green button" name="modify_referent">Modify right</button>
+            <button class="ui red button" onclick="APP.modules.account.delete_user_from_project('{{user.mail}}','{{key}}')">Remove from project </button>
           </div>
           <div class="content">
 
@@ -131,6 +134,15 @@
       </div>
       {%endfor%}
       {%endfor%}
+       <script>
+      $('.ui.search')
+  .search({
+   type: 'standard',
+    source: {{alluser|raw}},
+    searchFields: ['title'],
+    minCharacters : 1,
+  });
+</script>
        {%endif%}
      </div>
           {%if usersreferentsadmin%}
@@ -138,12 +150,14 @@
       <div class="ui relaxed divided list userapprovedlist">
         {%for key,project in usersreferentsadmin%}
         {%if project|length >= 1 %}
-        <h3>{{key}}</h3>
+        <h3>{{key}}</h3><div class="ui search"><div class="ui icon input"><input class="prompt" name="usermail_add_{{key}}" type="text" placeholder="Select user to add"><i class="search icon"></i></div><div class="results"></div><button onclick="APP.modules.account.add_user('{{key}}');" class="ui blue button">Add user</button></div>
         {%endif%}
+        <br>
         {%for user in project%}
         <div class="item">
           <div class="right floated content">
             <button class="ui green button" name="modify_referent_admin">Modify right</button>
+            <button class="ui red button" onclick="APP.modules.account.delete_user_from_project('{{user.mail}}','{{key}}')">Remove from project </button>
           </div>
           <div class="content">
 
@@ -164,27 +178,22 @@
       </div>
       {%endfor%}
       {%endfor%}
+      <script>
+      $('.ui.search')
+  .search({
+   type: 'standard',
+    source: {{alluser|raw}},
+    searchFields: ['title'],
+    minCharacters : 1,
+  });
+</script>
        {%endif%}
 
       
-    </div>
 
     {%if admin==1%}
     <button class="ui blue button" onclick="APP.modules.account.add_project('{{name_CSRF}}','{{value_CSRF}}')" name="createproject">Add a new project</button>
     {%endif%}
-    <h2>My Projects</h2>
-    {%if allprojects%}
-    <div class="ui relaxed divided list userapprovedlist">
-      {%for key,value in allprojects%}
-      <div class="item">
-        <div class="content">
-          <a class="header" onclick="APP.modules.account.display_project('{{value}}')"><i class="large archive middle aligned icon"></i>{{value}}</a>
-          {%endfor%}
-
-            </div>
-            </div>
-            </div>
-            {%endif%}
     {%if admin!=1%}
      <h2>Others projects</h2>
      {%endif%}
@@ -192,7 +201,7 @@
       {%for key,value in readonlyproject%}
       <div class="item">
         <div class="content">
-          {{value}}:
+          <h3>{{value}}:</h3>
           You are 
 {%if key == 0%}
 <div class="ui green horizontal label">User</div>
@@ -201,6 +210,7 @@
 {%endif%}
 in this project
           {%endfor%}
+    </div>
 
 
 

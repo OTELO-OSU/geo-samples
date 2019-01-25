@@ -167,6 +167,7 @@ $app->get('/loginCAS', function (Request $req, Response $responseSlim) {
 		$_SESSION['firstname'] = $checkuser->firstname;
 		$_SESSION['mail']      = $checkuser->mail;
 		$_SESSION['admin']     = $checkuser->type;
+		$user->giveRight($checkuser->mail);
 		return $responseSlim->withRedirect('accueil');
 	} else {
 		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
@@ -390,7 +391,8 @@ $app->get('/listusers', function (Request $req, Response $responseSlim) {
 		$userswaiting  = $user->getAllUsersWaiting();
 		$Allprojects  = $user->getAllProject();
 		$usersawaitingvalidation = $user->getUserAwaitingValidationFromReferent($Allprojects);
-		echo $twig->render('listusers.html.twig', ['usersapproved' => $usersapproved, 'userswaiting' => $userswaiting, 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'],'allprojects'=>$Allprojects,'UsersAwaitingValidation' => $usersawaitingvalidation,'usersreferentsadmin' => $usersreferents,'admin'=> '1']);
+		$allusers=json_encode($user->getAllUsersApprovedAutocomplete());
+		echo $twig->render('listusers.html.twig', ['usersapproved' => $usersapproved, 'userswaiting' => $userswaiting, 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'],'allprojects'=>$Allprojects,'UsersAwaitingValidation' => $usersawaitingvalidation,'usersreferentsadmin' => $usersreferents,'admin'=> '1','alluser' => $allusers]);
 	} else{
 		$loader  = new Twig_Loader_Filesystem('geosamples/frontend/templates');
 		$twig    = new Twig_Environment($loader);
@@ -408,7 +410,8 @@ $app->get('/listusers', function (Request $req, Response $responseSlim) {
 		$Allprojects  = $user->getReferentProject();
 		$readonlyproject = $user->getNotReferentProject();
 		$usersawaitingvalidation = $user->getUserAwaitingValidationFromReferent($Allprojects);
-		echo $twig->render('listusers.html.twig', ['usersreferents' => $usersreferents, 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'],'allprojects'=>$Allprojects,'readonlyproject'=>$readonlyproject,'UsersAwaitingValidation' => $usersawaitingvalidation,]);
+		$allusers=json_encode($user->getAllUsersApprovedAutocomplete());
+		echo $twig->render('listusers.html.twig', ['usersreferents' => $usersreferents, 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'],'allprojects'=>$Allprojects,'readonlyproject'=>$readonlyproject,'UsersAwaitingValidation' => $usersawaitingvalidation,'alluser' => $allusers]);
 	}
 })->add($mw)->add($container->get('csrf'))->add($check_current_user);
 
