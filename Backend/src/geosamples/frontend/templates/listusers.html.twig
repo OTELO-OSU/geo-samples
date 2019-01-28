@@ -70,7 +70,7 @@
         {%endfor%}
 
       {%endif%}
-      </div> 
+     
 
 
 
@@ -108,7 +108,7 @@
       <div class="ui relaxed divided list userapprovedlist">
         {%for key,project in usersreferents%}
         {%if project|length >= 1 %}
-        <h3>{{key}}</h3> <div class="ui search"><div class="ui icon input"><input class="prompt" name="usermail_add_{{key}}" type="text" placeholder="Select user to add"><i class="search icon"></i></div><div class="results"></div><button onclick="APP.modules.account.add_user('{{key}}');" class="ui blue button">Add user</button></div>
+        <h3>{{key}}</h3> <div class="ui search"><div class="ui icon input"><input class="prompt" name="usermail_add_{{key}}" type="text" placeholder="Select user to add"><i class="search icon"></i></div><div class="results"></div><button onclick="APP.modules.account.add_user('{{key}}');"  class="ui blue button adduser">Add user</button></div>
 
         {%endif%}
         <br>
@@ -117,7 +117,7 @@
           <div class="right floated content">
             {%if user.user_type==3 or user.user_type==0%}
             <button class="ui green button" name="modify_referent">Modify right</button>
-            <button class="ui red button" onclick="APP.modules.account.delete_user_from_project('{{user.mail}}','{{key}}')">Remove from project </button>
+            <button class="ui red button" onclick="APP.modules.account.delete_user_from_project('{{user.mail}}','{{key}}')">Remove</button>
             {%endif%}
           </div>
           <div class="content">
@@ -155,14 +155,14 @@
       <div class="ui relaxed divided list userapprovedlist">
         {%for key,project in usersreferentsadmin%}
        
-        <h3>{{key}}</h3><div class="ui search"><div class="ui icon input"><input class="prompt" name="usermail_add_{{key}}" type="text" placeholder="Select user to add"><i class="search icon"></i></div><div class="results"></div><button onclick="APP.modules.account.add_user('{{key}}');" class="ui blue button">Add user</button></div>
+        <h3>{{key}}</h3><div class="ui search"><div class="ui icon input"><input class="prompt" name="usermail_add_{{key}}" type="text" placeholder="Select user to add"><i class="search icon"></i></div><div class="results"></div><button onclick="APP.modules.account.add_user('{{key}}');" class="ui blue button adduser">Add user</button></div>
        
         <br>
         {%for user in project%}
         <div class="item">
           <div class="right floated content">
             <button class="ui green button" name="modify_referent_admin">Modify right</button>
-            <button class="ui red button" onclick="APP.modules.account.delete_user_from_project('{{user.mail}}','{{key}}')">Remove from project </button>
+            <button class="ui red button" onclick="APP.modules.account.delete_user_from_project('{{user.mail}}','{{key}}')">Remove</button>
           </div>
           <div class="content">
 
@@ -245,5 +245,10 @@ in this project
     APP.modules.account.check_clicked(e,"{{name_CSRF}}","{{value_CSRF}}",$($($(this).parent()[0]).parent()).find('input[name="name"]').val(),$($($(this).parent()[0]).parent()).find('input[name="firstname"]').val(),$($($(this).parent()[0]).parent()).find('input[name="mail"]').val(),$($($(this).parent()[0]).parent()).find('input[name="type"]').val(),$($($(this).parent()[0]).parent()).find('input[name="project_name"]').val(),$($($(this).parent()[0]).parent()).find('input[name="project_name_modify"]').val());
   });
 </script>
+<style type="text/css">
+  .adduser{
+    margin-left: 23px!important;
+  }
+</style>
 {% include 'footer.html.twig' %}
 

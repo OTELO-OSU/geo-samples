@@ -1,3 +1,4 @@
 Backend/AuthDB.ini
 Backend/config.ini
-
+Backend/mongo-connector.log
+Backend/oplog.timestamp

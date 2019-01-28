@@ -115,6 +115,13 @@ var APP = (function() {
                                 });
                                 });
                             }
+                            else if (v3=='CORE_DETAILS') {
+                               k3.forEach(function(ref, val) {
+                                $.map(ref, function(k4, v4) {  
+                                     supplementary_field += '<br>' +v4+': '+k4
+                                });
+                                });
+                            }
                             else{
 
                                 supplementary_field = '<br>' +v3+': '+k3
@@ -266,11 +273,11 @@ var APP = (function() {
                             var show_popup=null;
                             $.map(k2, function(k, v) {  
                             if (k.SUPPLEMENTARY_FIELDS) {
-                                if (k.SUPPLEMENTARY_FIELDS.CORE || k.SUPPLEMENTARY_FIELDS.BLOCK) {
-                                    if (k.SUPPLEMENTARY_FIELDS.CORE.toUpperCase() == 'YES' && k.SUPPLEMENTARY_FIELDS.DEPTH != null) {
+                                if (k.SUPPLEMENTARY_FIELDS.CORE_DETAILS || k.SUPPLEMENTARY_FIELDS.BLOCK) {
+                                    if (k.SUPPLEMENTARY_FIELDS.CORE_DETAILS[0].CORE.toUpperCase() == 'YES' && k.SUPPLEMENTARY_FIELDS.CORE_DETAILS[0].DEPTH != null) {
                                         $('#preview').append('<div id="line"></div><style>.event{top:-30px!important;}</style>');
                                         object= new Object();
-                                        object.date=k.SUPPLEMENTARY_FIELDS.DEPTH;
+                                        object.date=k.SUPPLEMENTARY_FIELDS.CORE_DETAILS[0].DEPTH;
                                         object.content='<a onclick=\"APP.modules.map.affichageinfo(\''+k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME+'\');\">'+k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME +'</a>';
                                         samples.push(object);
                                         orientation='vertical';
