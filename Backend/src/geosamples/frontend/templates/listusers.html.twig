@@ -1,6 +1,8 @@
 {% include 'header.html.twig' %}
 <body>
-
+{%if error%}
+{{error}}
+{%endif%}
 
   <div class="ui grid container">
     <div class="row"></div>
@@ -152,9 +154,9 @@
       <h2>Manage rights on projects</h2>
       <div class="ui relaxed divided list userapprovedlist">
         {%for key,project in usersreferentsadmin%}
-        {%if project|length >= 1 %}
+       
         <h3>{{key}}</h3><div class="ui search"><div class="ui icon input"><input class="prompt" name="usermail_add_{{key}}" type="text" placeholder="Select user to add"><i class="search icon"></i></div><div class="results"></div><button onclick="APP.modules.account.add_user('{{key}}');" class="ui blue button">Add user</button></div>
-        {%endif%}
+       
         <br>
         {%for user in project%}
         <div class="item">

@@ -232,12 +232,20 @@ class MailerController
             $headers = "From:<" . $config['NO_REPLY_MAIL'] . ">\r\n";
             $headers .= "MIME-Version: 1.0\r\n";
             $headers .= "Content-Type: text/html; charset=utf-8\r\n";
-            $referents_cc='';
+            //$referents_cc=array();
             $referents=Projects_access_right::select('users.id_user','users.mail','users.name','users.firstname','users.type')->where('Projects.name', '=',$project )->where('Projects_access_right.user_type','=','2')->join('Projects', 'id_project', '=', 'Projects.id')->join('users','users.id_user','=','Projects_access_right.id_user')->get();
             foreach ($referents as $key => $value) {
-              $referents_cc.=$value->mail.',';
+              $mail = mail($value->mail, '[' . $config['PROJECT_NAME'] . '] New user in '.$project.' !', '<html>
+               <head>
+               <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+               </head>
+               <body>
+               <p>Hello, '.$referent.' approve '.$email.' to the project '.$project.'</a>. </p>
+               </body>
+               </html> ', $headers);
+              //$referents_cc.=$value->mail.',';
             }
-            $headers .= "CC: ".rtrim($referents_cc,',');
+            //$headers .= "CC: ".rtrim($referents_cc,',');
 
             $mail = mail($email, '[' . $config['PROJECT_NAME'] . '] Access granted to '.$project.' !', '<html>
                <head>
@@ -263,18 +271,26 @@ class MailerController
             $headers = "From:<" . $config['NO_REPLY_MAIL'] . ">\r\n";
             $headers .= "MIME-Version: 1.0\r\n";
             $headers .= "Content-Type: text/html; charset=utf-8\r\n";
-            $referents_cc='';
+           // $referents_cc='';
             $referents=Projects_access_right::select('users.id_user','users.mail','users.name','users.firstname','users.type')->where('Projects.name', '=',$project )->where('Projects_access_right.user_type','=','2')->join('Projects', 'id_project', '=', 'Projects.id')->join('users','users.id_user','=','Projects_access_right.id_user')->get();
             foreach ($referents as $key => $value) {
-              $referents_cc.=$value->mail.',';
+               $mail = mail($value->mail, '[' . $config['PROJECT_NAME'] . '] Deleted user in '.$project.' !', '<html>
+               <head>
+               <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+               </head>
+               <body>
+               <p>Hello, '.$referent.' removed '.$email.' authorization to access project '.$project.'</a>. </p>
+               </body>
+               </html> ', $headers);
+              //$referents_cc.=$value->mail.',';
             }
-            $headers .= "CC: ".rtrim($referents_cc,',');
+            //$headers .= "CC: ".rtrim($referents_cc,',');
             $mail = mail($email, '[' . $config['PROJECT_NAME'] . '] Access denied to '.$project.' !', '<html>
                <head>
                <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
                </head>
                <body>
-               <p>Hello, '.$referent.' did not give his authorization for your access to the project '.$project.', If you want more information contact him at his email address</a>. </p>
+               <p>Hello, '.$referent.' removed your authorization to access project '.$project.', If you want more information contact him at his email address</a>. </p>
                </body>
                </html> ', $headers);
 

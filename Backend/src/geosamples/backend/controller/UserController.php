@@ -531,12 +531,18 @@ public function is_referent($email,$project_name)
 
 public function Create_project($name)
 {
-    $verif            = new Projects;
-    $verif->name      = $name;
-    if ($verif->save()) {
-        return true;
-    } else {
-        return false;
+    $test= Projects::where('name', '=',$name)->get();
+        if (count($test)>=1) {
+           return 'Project '.$name.' already exist';
+           
+    }else{
+        $verif            = new Projects;
+        $verif->name      = $name;
+        if ($verif->save()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 

@@ -416,7 +416,7 @@ $app->get('/listusers', function (Request $req, Response $responseSlim) {
 		$allusers=json_encode($user->getAllUsersApprovedAutocomplete());
 		echo $twig->render('listusers.html.twig', ['usersreferents' => $usersreferents, 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'],'allprojects'=>$Allprojects,'readonlyproject'=>$readonlyproject,'UsersAwaitingValidation' => $usersawaitingvalidation,'alluser' => $allusers]);
 	}
-})->add($mw)->add($container->get('csrf'))->add($check_current_user);
+})->add($mw)->add($container->get('csrf'))->add($check_current_user)->setName('listusers');
 
 $app->post('/approveuser', function (Request $req, Response $responseSlim) {
 	if (@$_SESSION['admin'] == 1) {
@@ -515,7 +515,12 @@ $app->post('/create_project', function (Request $req, Response $responseSlim) {
 		$name      = $req->getparam('project_name');
 		$user  = new User();
 		$error = $user->Create_project($name);
-		return $responseSlim->withRedirect('listusers');
+		if ($error!==true) {
+			return $responseSlim->withStatus(403);
+		
+		}else{
+			return $responseSlim->withRedirect('listusers');
+		}
 	}
 
 })->add($mw)->add($container->get('csrf'));
