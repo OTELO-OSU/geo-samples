@@ -202,7 +202,7 @@ jsonform.fieldTemplate = function(inner) {
     '<% }%>' +
     'class="form-group jsonform-error-<%= keydash %>' +
     '<%= elt.htmlClass ? " " + elt.htmlClass : "" %>' +
-    '<%= (node.schemaElement && node.schemaElement.required && (node.schemaElement.type !== "boolean") ? " jsonform-required" : "") %>' +
+    '<%= (node.schemaElement && node.schemaElement.required && (node.schemaElement.type !== "boolean") ? " jsonform-required required field" : "") %>' +
     '<%= (node.readOnly ? " jsonform-readonly" : "") %>' +
     '<%= (node.disabled ? " jsonform-disabled" : "") %>' +
     '">' +
@@ -1151,6 +1151,7 @@ jsonform.elementTypes = {
       '<% if (id) { %> id="<%= id %>"<% } %>' +
       '>' +
       '<% if (node.title || node.legend) { %><legend><%= node.title || node.legend %></legend><% } %>' +
+
       '<% if (elt.expandable) { %><div class="form-group"><% } %>' +
       '<%= children %>' +
       '<% if (elt.expandable) { %></div><% } %>' +
@@ -1163,7 +1164,7 @@ jsonform.elementTypes = {
     'template': '<fieldset' +
       '<% if (id) { %> id="<%= id %>"<% } %>' +
       ' class="expandable <%= elt.htmlClass?elt.htmlClass:"" %>">' +
-      '<legend>Advanced options</legend>' +
+      '<legend> <%= elt.title?elt.title:"" %> <i class="angle down icon"></i></legend>' +
       '<div class="form-group">' +
       '<%= children %>' +
       '</div>' +

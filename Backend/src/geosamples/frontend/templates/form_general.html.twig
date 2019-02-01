@@ -18,6 +18,7 @@
 		sample_name: {
 			type: 'string',
 			title: 'Sample name',
+			required:true
 			
 		},
 		description: {
@@ -45,6 +46,7 @@
 		"file-creator": {
 
 			"type": "array",
+			"required":true,
 			"items": {
 
 
@@ -54,16 +56,19 @@
 
 					"name": {
 						"type": "string",
+						"title": "File creator name"
 
 
 					},
 					"first_name": {
 						"type": "string",
+						"title": "File creator firstname"
 
 
 					},
 					"mail": {
 						"type": "email",
+						"title": "File creator email"
 
 
 					}
@@ -158,40 +163,17 @@
 	},
 
 	"form": [
-		{
-			"key": "title",
-			"htmlClass": "ui-input",
-			"value":""
-		},
-		{
-			"key": "data"
-			
-			
-		},
-		{
-			"key": "sample_name",
-			"htmlClass": "ui-input",
-			"value":""
-		},
-		{
-			"key": "description",
-			"htmlClass": "ui-input"
-		},
-		{
-			"key": "language",
-			"htmlClass": "ui-input"
-		},
-		{
-			"type": "array",
-			"items": {
-				"type": "section",
-				"items": [
-					"keywords[].keyword"
 
-				]
-			}
-		},
-		{
+		 {
+	      "type": "fieldset",
+	      "title":"Basic information",
+	      "items": [
+	        "title","sample_name","description","language",
+	         {
+	      "type": "fieldset",
+	      "title":"File creators",
+	      "items": [
+	        {
 			"type": "array",
 			"items": {
 				"type": "section",
@@ -205,8 +187,38 @@
 
 				]
 			}
+		},]}
+
+	      ]
+	    },
+		
+		{
+			"key": "data"
+			
+			
 		},
 		{
+	      "type": "advancedfieldset",
+	      "title":"Keyword",
+	      "items": [
+			{
+				"type": "array",
+				"items": {
+					"type": "section",
+					"items": [
+						"keywords[].keyword"
+
+					]
+				}
+			}
+		]
+	  },
+		{
+	      "type": "advancedfieldset",
+	      "title":"Institution",
+	      "items": [
+			{
+		
 			"type": "array",
 			"items": {
 				"type": "section",
@@ -215,8 +227,17 @@
 
 				]
 			}
+		}]
+	  
+
 		},
 		{
+	      "type": "advancedfieldset",
+	      "title":"Scientific fields",
+	      "items": [
+			{
+		
+		
 			"type": "array",
 			"items": {
 				"type": "section",
@@ -225,6 +246,7 @@
 
 				]
 			}
+		}]
 		},{
 			"type": "array",
 			"items": {
