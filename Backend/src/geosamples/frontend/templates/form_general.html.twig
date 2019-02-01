@@ -1,0 +1,279 @@
+
+
+{
+	schema: {
+
+		title: {
+			type: 'string',
+			title: 'Title',
+			required:true
+
+		},
+		data: {
+			type: 'file',
+			title: 'data'
+
+		},
+
+		sample_name: {
+			type: 'string',
+			title: 'Sample name',
+			
+		},
+		description: {
+			type: 'textarea',
+			title: 'Description'
+		},
+		language: {
+			type: 'string',
+			title: 'Language'
+		},
+		"keywords": {
+
+			"type": "array",
+			"items": {
+				"properties": {
+					"keyword": {
+						"type": "string",
+						"title": "Keyword",
+
+
+					}
+				}
+			}
+		},
+		"file-creator": {
+
+			"type": "array",
+			"items": {
+
+
+				"properties": {
+
+
+
+					"name": {
+						"type": "string",
+
+
+					},
+					"first_name": {
+						"type": "string",
+
+
+					},
+					"mail": {
+						"type": "email",
+
+
+					}
+
+
+				}
+			}
+		},
+		"referents": {
+
+			"type": "array",
+			"items": {
+				"properties": {
+					"name_referent": {
+						"type": "string",
+						"title": "Referent name",
+
+
+					},
+					"first_name_referent": {
+						"type": "string",
+						"title": "Referent firstname",
+
+
+					},
+					"mail": {
+						"type": "email",
+						"title": "Email",
+
+
+					}
+				}
+			}
+		},
+		"measurements": {
+
+			"type": "array",
+			"items": {
+				"properties": {
+					"nature_of_measurement": {
+						"type": "string",
+						"title": "Nature of measurement",
+
+
+					},
+					"abbreviation": {
+						"type": "string",
+						"title": "abbreviation",
+
+
+					},
+					"unit": {
+						"type": "string",
+						"title": "unit",
+
+
+					}
+				}
+			}
+		},
+
+		"institution": {
+
+			"type": "array",
+			"items": {
+				"properties": {
+					"institution": {
+						"type": "string",
+						"title": "Institution",
+
+
+					}
+				}
+			}
+		},
+		"scientific_fields": {
+
+			"type": "array",
+			"items": {
+				"properties": {
+					"scientific_field": {
+						"type": "string",
+						"title": "Scientific field",
+
+
+					}
+				}
+			}
+		},
+		{{supplementary_fields_schema}}
+
+	},
+
+	"form": [
+		{
+			"key": "title",
+			"htmlClass": "ui-input",
+			"value":""
+		},
+		{
+			"key": "data"
+			
+			
+		},
+		{
+			"key": "sample_name",
+			"htmlClass": "ui-input",
+			"value":""
+		},
+		{
+			"key": "description",
+			"htmlClass": "ui-input"
+		},
+		{
+			"key": "language",
+			"htmlClass": "ui-input"
+		},
+		{
+			"type": "array",
+			"items": {
+				"type": "section",
+				"items": [
+					"keywords[].keyword"
+
+				]
+			}
+		},
+		{
+			"type": "array",
+			"items": {
+				"type": "section",
+				"items": [
+
+					"file-creator[].name",
+					"file-creator[].first_name",
+					"file-creator[].mail"
+
+
+
+				]
+			}
+		},
+		{
+			"type": "array",
+			"items": {
+				"type": "section",
+				"items": [
+					"institution[].institution"
+
+				]
+			}
+		},
+		{
+			"type": "array",
+			"items": {
+				"type": "section",
+				"items": [
+					"scientific_fields[].scientific_field"
+
+				]
+			}
+		},{
+			"type": "array",
+			"items": {
+				"type": "section",
+				"items": [
+					"referents[].name_referent",
+					"referents[].first_name_referent",
+					"referents[].mail"
+
+
+				]
+			}
+		},
+		{
+			"type": "array",
+			"items": {
+				"type": "section",
+				"items": [
+					"measurements[].nature_of_measurement",
+					"measurements[].abbreviation",
+					"measurements[].unit"
+
+
+				]
+			}
+		},
+		{{supplementary_fields_form}}				    
+
+
+		,{
+
+
+			type: 'submit',
+			title: 'Submit',
+
+
+
+
+
+		}
+	],
+	"onSubmit": function (errors, values) {
+		if (errors) {
+			alert('Check the form for invalid values!');
+			return;
+		}
+		$.post( "upload", {data:values} )
+     console.log(values);
+ }
+}
+
+

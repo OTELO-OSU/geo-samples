@@ -321,6 +321,25 @@ $app->get('/activate_account', function (Request $req, Response $responseSlim) {
 	}
 })->add($mw);
 
+
+$app->get('/upload', function (Request $req, Response $responseSlim) {
+		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
+		$twig   = new Twig_Environment($loader);
+		echo $twig->render('upload.html.twig');
+
+	
+});
+
+
+$app->post('/upload', function (Request $req, Response $responseSlim) {
+		$request      = new RequestApi();
+		$request->Post_Processing($_REQUEST['data']);
+	
+});
+
+
+
+
 $app->get('/recover', function (Request $req, Response $responseSlim) {
 	if (!@$_SESSION['name']) {
 		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');

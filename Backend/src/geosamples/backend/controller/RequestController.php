@@ -1,5 +1,7 @@
 <?php
 namespace geosamples\backend\controller;
+use MongoDB;
+use MongoDuplicateKeyException;
 
 class RequestController
 {
@@ -578,6 +580,95 @@ echo $generatedfile;
         exit;
 
     }
+
+    function Post_Processing($POST)
+    {
+        var_dump($POST);
+        foreach ($POST as $key => $value) {
+        
+         switch ($key) {
+                            default:
+                            $arrKey['INTRO'][strtoupper($key)] = $value;
+                            
+                            case "keywords":
+                                foreach ($value as $key2 => $value2) {
+                                    $arrKey['INTRO'][strtoupper($key)]['NAME'] = $value2;
+                                }
+                                break;
+
+                             case "institution":
+                                foreach ($value as $key2 => $value2) {
+                                    $arrKey['INTRO'][strtoupper($key)]['NAME'] = $value2;
+                                }
+                                
+                               
+                                break;
+                            case "scientifics_fields":
+                                foreach ($value as $key2 => $value2) {
+                                    $arrKey['INTRO'][strtoupper($key)]['NAME'] = $value2;
+                                }
+
+                             case "file-creator":
+                                foreach ($value as $key2 => $value2) {
+                                    $arrKey['INTRO'][strtoupper($key)][strtoupper($key2)] = array_change_key_case ($value2 ,  CASE_UPPER  );
+                                }
+
+                             case "referents":
+                                foreach ($value as $key2 => $value2) {
+                                    $arrKey['INTRO'][strtoupper($key)][strtoupper($key2)] = array_change_key_case ($value2 ,  CASE_UPPER  );
+                                }
+                                
+                               
+                                break;
+
+                            case "sample_name":
+                                $sample_name=$value;
+                                $sample_name_old=$sample_name;
+                                break;
+
+
+
+            }
+
+
+
+
+        }
+
+        foreach ($POST['measurements'] as $key => $value) {
+            $sample_name=$sample_name_old;
+        $arrKey["ACCESS_RIGHT"] = "Draft";
+        $arrKey["UPLOAD_DATE"]  = date('Y-m-d');
+        $arrKey["METADATA_DATE"]  = date('Y-m-d');
+             $sample_name=$sample_name.'_'.$value['abbreviation'];
+        $insert=array('_id' => strtoupper($sample_name),"INTRO"=>$arrKey);
+
+         echo   json_encode($arrKey);
+
+
+
+
+        $config = self::ConfigFile();
+         try {
+                if(empty($config['authSource']) && empty($config['username']) && empty($config['password'])) {
+                    $this->db = new MongoDB\Driver\Manager("mongodb://" . $config['host'] . ':' . $config['port'], array('journal' => false));
+                } else {
+                    $this->db= new MongoDB\Driver\Manager("mongodb://" . $config['host'] . ':' . $config['port'], array('journal' => false, 'authSource' => $config['authSource'], 'username' => $config['username'], 'password' => $config['password']));
+                }
+       } catch (Exception $e) {
+            echo $e->getMessage();
+            $this->logger->error($e->getMessage());
+        }
+         $bulk = new MongoDB\Driver\BulkWrite;
+       
+            $bulk->insert($insert);
+            $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $bulk);
+                                               
+            
+    }
+        }
+
+
 
 }
 

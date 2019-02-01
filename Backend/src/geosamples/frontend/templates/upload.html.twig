@@ -1,0 +1,42 @@
+{% include 'header.html.twig' %}
+	
+<script type="text/javascript" src="jsonform/jquery.min.js"></script>
+<script type="text/javascript" src="jsonform/underscore.js"></script>
+<script type="text/javascript" src="jsonform/jsv.js"></script>
+<script type="text/javascript" src="jsonform/jsonform.js"></script>
+<script type="text/javascript" src="js/jquery.chained.js"></script>
+<link rel="stylesheet" type="text/css" href="jsonform/css/bootstrap.css" />
+<div class="ui grid">
+	<div class="ui height wide column centered ">
+		<form method="post" class="ui form">
+
+
+
+
+
+		</form>		
+	</div>
+</div>
+<script type="text/javascript">
+	JSONForm.fieldTypes['lithology'] = {
+		  template: '<%=node.value%>'
+		};
+		JSONForm.fieldTypes['texture'] = {
+		  template: '<%=node.value%>'
+		};
+		JSONForm.fieldTypes['ore_type'] = {
+		  template: '<%=node.value%>'
+		};
+		$('form').jsonForm({% include 'form_petrophysics.html.twig' %});
+
+		 $(function() {
+		$("#jsonform-1-elt-lithology2").chained("#jsonform-1-elt-lithology1");
+		$("#jsonform-1-elt-lithology3").chained("#jsonform-1-elt-lithology2");
+		$("#jsonform-1-elt-texture2").chained("#jsonform-1-elt-texture1");
+		$("#jsonform-1-elt-texture3").chained("#jsonform-1-elt-texture2");
+		$("#jsonform-1-elt-oretype2").chained("#jsonform-1-elt-oretype1");
+		$("#jsonform-1-elt-oretype3").chained("#jsonform-1-elt-oretype2");
+	});
+		//$('form div input[type="submit"]').parent().prepend('<h1>TEST</h1>')
+
+	</script>
