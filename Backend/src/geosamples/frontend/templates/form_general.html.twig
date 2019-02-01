@@ -166,7 +166,7 @@
 
 		 {
 	      "type": "fieldset",
-	      "title":"Basic information",
+	      "title":"Basic informations",
 	      "items": [
 	        "title","sample_name","description","language",
 	         {
@@ -198,8 +198,26 @@
 			
 		},
 		{
+	      "type": "fieldset",
+	      "title":"Measurements",
+	      "items": [
+			{
+			"type": "array",
+			"items": {
+				"type": "section",
+				"items": [
+					"measurements[].nature_of_measurement",
+					"measurements[].abbreviation",
+					"measurements[].unit"
+
+
+				]
+			}
+		}]
+		},
+		{
 	      "type": "advancedfieldset",
-	      "title":"Keyword",
+	      "title":"Keywords",
 	      "items": [
 			{
 				"type": "array",
@@ -215,7 +233,7 @@
 	  },
 		{
 	      "type": "advancedfieldset",
-	      "title":"Institution",
+	      "title":"Institutions",
 	      "items": [
 			{
 		
@@ -248,6 +266,10 @@
 			}
 		}]
 		},{
+	      "type": "advancedfieldset",
+	      "title":"Referents",
+	      "items": [
+			{
 			"type": "array",
 			"items": {
 				"type": "section",
@@ -259,20 +281,10 @@
 
 				]
 			}
-		},
-		{
-			"type": "array",
-			"items": {
-				"type": "section",
-				"items": [
-					"measurements[].nature_of_measurement",
-					"measurements[].abbreviation",
-					"measurements[].unit"
-
-
-				]
-			}
-		},
+		}]}
+		,
+		
+		
 		{{supplementary_fields_form}}				    
 
 
