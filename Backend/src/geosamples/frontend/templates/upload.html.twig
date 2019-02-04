@@ -5,6 +5,8 @@
 <script type="text/javascript" src="jsonform/jsv.js"></script>
 <script type="text/javascript" src="jsonform/jsonform.js"></script>
 <script type="text/javascript" src="js/jquery.chained.js"></script>
+  <script src="/css/semantic/dist/semantic.min.js">
+  </script>
 <link rel="stylesheet" type="text/css" href="jsonform/css/bootstrap.css" />
 <div class="ui grid">
 	<div class="ui height wide column centered ">
@@ -13,6 +15,8 @@
 
 
 
+
+		<div class="ui error message"></div>
 
 		</form>		
 	</div>
@@ -37,8 +41,31 @@
 		$("#jsonform-1-elt-oretype2").chained("#jsonform-1-elt-oretype1");
 		$("#jsonform-1-elt-oretype3").chained("#jsonform-1-elt-oretype2");
 	});
-		//$('form div input[type="submit"]').parent().prepend('<h1>TEST</h1>')
 
+$('.ui.form')
+  .form({
+    fields: {
+      title: {
+        identifier: 'title',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Please enter a title'
+          }
+        ]
+      },
+       institutions: {
+                          identifier: 'institution[0].institution',
+                          rules: [{
+                              type: 'empty',
+                              prompt: 'Please enter institution'
+                          }]
+                      },
+        
+      
+    }
+  })
+;
 	</script>
 	<style type="text/css">
 		label{

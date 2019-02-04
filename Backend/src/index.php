@@ -155,7 +155,8 @@ $app->get('/test', function (Request $req, Response $responseSlim) {
 		//var_dump($value);
 	
 	$user = new User();
-	var_dump($user->is_referent('petrophysics@referent.fr','petrophysics'));
+	//var_dump($user->getProjectReferent('petrophysics'));
+	//var_dump($user->is_referent('petrophysics@referent.fr','petrophysics'));
 
 });
 
@@ -323,18 +324,51 @@ $app->get('/activate_account', function (Request $req, Response $responseSlim) {
 
 
 $app->get('/upload', function (Request $req, Response $responseSlim) {
+	$nameKey = $this
+		->csrf
+		->getTokenNameKey();
+		$valueKey = $this
+		->csrf
+		->getTokenValueKey();
+		$namecsrf  = $req->getAttribute($nameKey);
+		$valuecsrf = $req->getAttribute($valueKey);
 		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
 		$twig   = new Twig_Environment($loader);
-		echo $twig->render('upload.html.twig');
+		$user      = new User();
+		$file   = new File();
+        $config = $file->ConfigFile();
+		$feeder= $user->is_feeder($_SESSION['mail'],$config['COLLECTION_NAME']);
+		$referent= $user->is_referent($_SESSION['mail'],$config['COLLECTION_NAME']);
+		if (($feeder===true )OR ($referent===true) OR $_SESSION['admin']==1) {
+		echo $twig->render('upload.html.twig',[ 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'], 'admin' => $_SESSION['admin'],'access'=>$_SESSION['admin']]);
+		}else{
+			return $responseSlim->withRedirect('accueil');
+		}
+
 
 	
 });
 
 
 $app->post('/upload', function (Request $req, Response $responseSlim) {
+		$nameKey = $this
+		->csrf
+		->getTokenNameKey();
+		$valueKey = $this
+		->csrf
+		->getTokenValueKey();
+		$namecsrf  = $req->getAttribute($nameKey);
+		$valuecsrf = $req->getAttribute($valueKey);
+		$user      = new User();
+		$feeder= $user->is_feeder($_SESSION['mail'],$config['COLLECTION_NAME']);
+		$referent= $user->is_referent($_SESSION['mail'],$config['COLLECTION_NAME']);
+		if (($feeder===true )OR ($referent===true) OR $_SESSION['admin']==1) {
 		$request      = new RequestApi();
 		$request->Post_Processing($_REQUEST['data']);
 	
+		}else{
+			return $responseSlim->withRedirect('accueil');
+		}
 });
 
 

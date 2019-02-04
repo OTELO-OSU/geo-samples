@@ -1,5 +1,6 @@
 <?php
 namespace geosamples\backend\controller;
+use \geosamples\backend\controller\UserController as User;
 use MongoDB;
 use MongoDuplicateKeyException;
 
@@ -633,17 +634,7 @@ echo $generatedfile;
                                     $arrKey[strtoupper($key)][]['NAME'] = $sc;
                                 }
                                 break;
-
-                             case "file-creator":
-                                foreach ($value as $key2 => $value2) {
-                                    $arrKey[strtoupper($key)][strtoupper($key2)] = array_change_key_case ($value2 ,  CASE_UPPER  );
-                                }
-
-                             case "referents":
-                                foreach ($value as $key2 => $value2) {
-                                    $arrKey['SUPPLEMENTARY_FIELDS'][strtoupper($key)][strtoupper($key2)] = array_change_key_case ($value2 ,  CASE_UPPER  );
-                                }
-                                
+                               
                                
                                 break;
                             case "sampling_points":
@@ -675,11 +666,37 @@ echo $generatedfile;
 
 
 
-
         }
+        $config = self::ConfigFile();
+            $user= New User();
+            $referents=$user->getProjectReferent($config['COLLECTION_NAME']);
+           
+            foreach ($referents as $key => $value) {
+              
+                 $arrKey['SUPPLEMENTARY_FIELDS']['REFERENTS'][$key]['NAME_REFERENT'] = $value->name;
+                 $arrKey['SUPPLEMENTARY_FIELDS']['REFERENTS'][$key]['FIRST_NAME_REFERENT'] = $value->firstname;
+                 $arrKey['SUPPLEMENTARY_FIELDS']['REFERENTS'][$key]['MAIL'] = $value->mail;
+
+                 $arrKey['FILE_CREATOR'][$key]['NAME'] = $value->name;
+                 $arrKey['FILE_CREATOR'][$key]['FIRST_NAME'] = $value->firstname;
+                 $arrKey['FILE_CREATOR'][$key]['MAIL'] = $value->mail;
+                 $arrKey['FILE_CREATOR'][$key]['DISPLAY_NAME'] = $value->name." ".$value->firstname;
+            }
+
+         
+            $item=count($referents);     
+            $item++;
+                 $arrKey['FILE_CREATOR'][$item]['NAME'] = $_SESSION['name'];
+                 $arrKey['FILE_CREATOR'][$item]['FIRST_NAME'] = $_SESSION['firstname'];
+                 $arrKey['FILE_CREATOR'][$item]['MAIL'] = $_SESSION['mail'];
+                 $arrKey['FILE_CREATOR'][$item]['DISPLAY_NAME'] = $_SESSION['name']." ".$_SESSION['firstname'];
+
+            
+
+
 
         foreach ($POST['measurements'] as $key => $value) {
-            $sample_name=$sample_name_old;
+        $sample_name=$sample_name_old;
         $arrKey["ACCESS_RIGHT"] = "Draft";
         $arrKey["UPLOAD_DATE"]  = date('Y-m-d');
         $arrKey["METADATA_DATE"]  = date('Y-m-d');
@@ -692,7 +709,6 @@ echo $generatedfile;
 
 
 
-        $config = self::ConfigFile();
          try {
                 if(empty($config['authSource']) && empty($config['username']) && empty($config['password'])) {
                     $this->db = new MongoDB\Driver\Manager("mongodb://" . $config['host'] . ':' . $config['port'], array('journal' => false));

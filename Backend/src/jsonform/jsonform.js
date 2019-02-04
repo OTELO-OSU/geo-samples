@@ -209,7 +209,7 @@ jsonform.fieldTemplate = function(inner) {
     '<% if (!elt.notitle) { %>' +
       '<label for="<%= node.id %>"><%= node.title ? node.title : node.name %></label>' +
     '<% } %>' +
-    '<div class="controls">' +
+    '<div class="controls field">' +
       '<% if (node.prepend || node.append) { %>' +
       '<div class="<% if (node.prepend) { %>input-group<% } %>' +
         '<% if (node.append) { %> input-group<% } %>">' +
@@ -431,7 +431,8 @@ jsonform.elementTypes = {
           $(node.el).find(idSelector).trigger("blur");
         });
         editor.on('focus', function() {
-          $(node.el).find(idSelector).trigger("focus");
+         $(node.el).find(idSelector).trigger("focus");
+
         });
       };
 
@@ -1187,7 +1188,7 @@ jsonform.elementTypes = {
     }
   },
   'submit':{
-    'template':'<input type="submit" <% if (id) { %> id="<%= id %>" <% } %> class="btn btn-primary <%= elt.htmlClass?elt.htmlClass:"" %>" value="<%= value || node.title %>"<%= (node.disabled? " disabled" : "")%>/>'
+    'template':'<input type="submit" <% if (id) { %> id="<%= id %>" <% } %> class="ui primary submit button <%= elt.htmlClass?elt.htmlClass:"" %>" value="<%= value || node.title %>"<%= (node.disabled? " disabled" : "")%>/>'
   },
   'button':{
     'template':' <button type="button" <% if (id) { %> id="<%= id %>" <% } %> class="btn btn-default <%= elt.htmlClass?elt.htmlClass:"" %>"><%= node.title %></button> '
@@ -1207,7 +1208,7 @@ jsonform.elementTypes = {
       '<div class="tabbable">' +
         '<div class="form-group<%= node.formElement.hideMenu ? " hide" : "" %>">' +
           '<% if (!elt.notitle) { %><label for="<%= node.id %>"><%= node.title ? node.title : node.name %></label><% } %>' +
-          '<div class="controls"><%= tabs %></div>' +
+          '<div class="controls field"><%= tabs %></div>' +
         '</div>' +
         '<div class="tab-content">' +
           '<%= children %>' +
