@@ -948,7 +948,7 @@ jsonform.elementTypes = {
             return false;
           }
         }
-        else if (node.children.length === 1) {
+        else if (node.children.length === 2) {
           $nodeid.find('> span > a._jsonform-array-deletelast')
             .addClass('disabled');
         }

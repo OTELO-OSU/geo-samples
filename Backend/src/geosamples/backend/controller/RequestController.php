@@ -584,47 +584,90 @@ echo $generatedfile;
     function Post_Processing($POST)
     {
         var_dump($POST);
+        $SUPPLEMENTARY_FIELDS=array('HOST_LITHOLOGY_OR_PROTOLITH','LITHOLOGY1','LITHOLOGY2','LITHOLOGY3','ORETYPE1','ORETYPE2','ORETYPE3','TEXTURE1','TEXTURE2','TEXTURE3','SUBSTANCE','STORAGE_DETAILS','HOST_AGE','MAIN_EVENT_AGE','OTHER_EVENT_AGE','ALTERATION_DEGREE','SAMPLE_NAME','BLOCK','PULP','SAFETY_CONSTRAINTS','SAMPLE_LOCATION_FACILITY','DESCRIPTION');
+
+
         foreach ($POST as $key => $value) {
         
          switch ($key) {
-                            default:
-                            $arrKey['INTRO'][strtoupper($key)] = $value;
+                            
                             
                             case "keywords":
                                 foreach ($value as $key2 => $value2) {
-                                    $arrKey['INTRO'][strtoupper($key)]['NAME'] = $value2;
+                                    $arrKey[strtoupper($key)][]['NAME'] = $value2['keyword'];
+                                }
+                                break;
+                            case "core":
+                                    $arrKey['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][]['CORE'] = $value;
+                               
+                                break;
+                            case "core_depth":
+                                    $arrKey['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][0]['DEPTH'] = $value;
+                            
+                            break;
+                            case "core_azimut":
+                                    $arrKey['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][0]['AZIMUT'] = $value;
+                            
+                                break;
+                            case "sampling_date":
+                                    $arrKey[strtoupper($key)][] = $value;
+                            break;
+
+                            case "measurements":
+                                foreach ($value as $key2 => $value2) {
+                                    $arrKey['MEASUREMENT'][] = array_change_key_case ($value2 ,  CASE_UPPER  );
                                 }
                                 break;
 
                              case "institution":
                                 foreach ($value as $key2 => $value2) {
-                                    $arrKey['INTRO'][strtoupper($key)]['NAME'] = $value2;
+                                    $arrKey[strtoupper($key)][]['NAME'] = $value2['institution'];
                                 }
                                 
                                
                                 break;
-                            case "scientifics_fields":
+                            case "scientific_fields":
                                 foreach ($value as $key2 => $value2) {
-                                    $arrKey['INTRO'][strtoupper($key)]['NAME'] = $value2;
+                                    $sc=$value2['scientific_field'];
+
+                                    $arrKey[strtoupper($key)][]['NAME'] = $sc;
                                 }
+                                break;
 
                              case "file-creator":
                                 foreach ($value as $key2 => $value2) {
-                                    $arrKey['INTRO'][strtoupper($key)][strtoupper($key2)] = array_change_key_case ($value2 ,  CASE_UPPER  );
+                                    $arrKey[strtoupper($key)][strtoupper($key2)] = array_change_key_case ($value2 ,  CASE_UPPER  );
                                 }
 
                              case "referents":
                                 foreach ($value as $key2 => $value2) {
-                                    $arrKey['INTRO'][strtoupper($key)][strtoupper($key2)] = array_change_key_case ($value2 ,  CASE_UPPER  );
+                                    $arrKey['SUPPLEMENTARY_FIELDS'][strtoupper($key)][strtoupper($key2)] = array_change_key_case ($value2 ,  CASE_UPPER  );
+                                }
+                                
+                               
+                                break;
+                            case "sampling_points":
+                                foreach ($value as $key2 => $value2) {
+                                    $arrKey['SAMPLING_POINT'][strtoupper($key2)] = array_change_key_case ($value2 ,  CASE_UPPER  );
                                 }
                                 
                                
                                 break;
 
                             case "sample_name":
+                            $arrKey['SUPPLEMENTARY_FIELDS'][strtoupper($key)] =strtoupper($value);
                                 $sample_name=$value;
                                 $sample_name_old=$sample_name;
                                 break;
+
+                                default:
+                            if (in_array(strtoupper($key), $SUPPLEMENTARY_FIELDS)) {
+                                $arrKey['SUPPLEMENTARY_FIELDS'][strtoupper($key)] = $value;
+                            }else{
+
+                            $arrKey[strtoupper($key)] = $value;
+                            }
+
 
 
 
@@ -640,6 +683,7 @@ echo $generatedfile;
         $arrKey["ACCESS_RIGHT"] = "Draft";
         $arrKey["UPLOAD_DATE"]  = date('Y-m-d');
         $arrKey["METADATA_DATE"]  = date('Y-m-d');
+        $arrKey["STATUS"]  = "Awaiting";
              $sample_name=$sample_name.'_'.$value['abbreviation'];
         $insert=array('_id' => strtoupper($sample_name),"INTRO"=>$arrKey);
 

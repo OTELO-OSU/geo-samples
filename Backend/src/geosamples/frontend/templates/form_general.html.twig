@@ -32,6 +32,7 @@
 		"keywords": {
 
 			"type": "array",
+			"minItems":1,
 			"items": {
 				"properties": {
 					"keyword": {
@@ -46,6 +47,7 @@
 		"file-creator": {
 
 			"type": "array",
+			"minItems":1,
 			"required":true,
 			"items": {
 
@@ -80,6 +82,7 @@
 		"referents": {
 
 			"type": "array",
+			"minItems":1,
 			"items": {
 				"properties": {
 					"name_referent": {
@@ -106,9 +109,10 @@
 		"measurements": {
 
 			"type": "array",
+			"minItems":1,
 			"items": {
 				"properties": {
-					"nature_of_measurement": {
+					"nature": {
 						"type": "string",
 						"title": "Nature of measurement",
 
@@ -133,6 +137,7 @@
 		"institution": {
 
 			"type": "array",
+			"minItems":1,
 			"items": {
 				"properties": {
 					"institution": {
@@ -147,6 +152,7 @@
 		"scientific_fields": {
 
 			"type": "array",
+			"minItems":1,
 			"items": {
 				"properties": {
 					"scientific_field": {
@@ -206,7 +212,7 @@
 			"items": {
 				"type": "section",
 				"items": [
-					"measurements[].nature_of_measurement",
+					"measurements[].nature",
 					"measurements[].abbreviation",
 					"measurements[].unit"
 
