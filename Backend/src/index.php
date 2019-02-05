@@ -351,6 +351,7 @@ $app->get('/upload', function (Request $req, Response $responseSlim) {
 
 
 $app->post('/upload', function (Request $req, Response $responseSlim) {
+	
 		$nameKey = $this
 		->csrf
 		->getTokenNameKey();
@@ -364,12 +365,44 @@ $app->post('/upload', function (Request $req, Response $responseSlim) {
 		$referent= $user->is_referent($_SESSION['mail'],$config['COLLECTION_NAME']);
 		if (($feeder===true )OR ($referent===true) OR $_SESSION['admin']==1) {
 		$request      = new RequestApi();
-		$request->Post_Processing($_REQUEST['data']);
+		$request->Post_Processing($_POST);
 	
 		}else{
 			return $responseSlim->withRedirect('accueil');
 		}
 });
+
+
+$app->get('/modify', function (Request $req, Response $responseSlim) {
+	$nameKey = $this
+		->csrf
+		->getTokenNameKey();
+		$valueKey = $this
+		->csrf
+		->getTokenValueKey();
+		$namecsrf  = $req->getAttribute($nameKey);
+		$valuecsrf = $req->getAttribute($valueKey);
+		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
+		$twig   = new Twig_Environment($loader);
+		$user      = new User();
+		$file   = new File();
+        $config = $file->ConfigFile();
+		$feeder= $user->is_feeder($_SESSION['mail'],$config['COLLECTION_NAME']);
+		$referent= $user->is_referent($_SESSION['mail'],$config['COLLECTION_NAME']);
+		if (($feeder===true )OR ($referent===true) OR $_SESSION['admin']==1) {
+		$request = new RequestApi();
+
+			$response=$request->Request_data_awaiting();
+			var_dump($response);
+		echo $twig->render('upload.html.twig',[ 'edit'=>true,'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'], 'admin' => $_SESSION['admin'],'access'=>$_SESSION['admin'],'title'=>$response['_source']['INTRO']['TITLE'],'description'=>$response['_source']['INTRO']['DATA_DESCRIPTION'],'sample_name'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME'],'language'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['LANGUAGE'],'block'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['BLOCK'],'keywords'=>$response['_source']['INTRO']['KEYWORDS'],'institutions'=>$response['_source']['INTRO']['INSTITUTION']]);
+		}else{
+			return $responseSlim->withRedirect('accueil');
+		}
+
+
+	
+});
+
 
 
 

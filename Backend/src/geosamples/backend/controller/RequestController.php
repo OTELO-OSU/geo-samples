@@ -1,6 +1,7 @@
 <?php
 namespace geosamples\backend\controller;
 use \geosamples\backend\controller\UserController as User;
+use \geosamples\backend\controller\FileController as File;
 use MongoDB;
 use MongoDuplicateKeyException;
 
@@ -12,6 +13,27 @@ class RequestController
         $config = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . '/../config.ini');
         return $config;
     }
+
+    function Request_data_awaiting(){
+        $file    = new File();
+        $config  = $file->ConfigFile();
+        $bdd     = strtolower($config['authSource']);
+        $url     = 'http://' . $config['ESHOST'] . '/' . $bdd . '/'.$config['COLLECTION_NAME'].'_sandbox/TEST_RT';
+        $curlopt = array(
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_PORT           => $config['ESPORT'],
+            CURLOPT_ENCODING       => "",
+            CURLOPT_MAXREDIRS      => 10,
+            CURLOPT_TIMEOUT        => 40,
+            CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST  => "GET",
+        );
+        $response = self::Curlrequest($url, $curlopt);
+        $response = json_decode($response, true);
+        return $response;
+    }
+
+
     /**
      *  Methode d'execution des Requetes CURL
      *
@@ -584,7 +606,97 @@ echo $generatedfile;
 
     function Post_Processing($POST)
     {
-        var_dump($POST);
+        $config = self::ConfigFile();
+
+                    $UPLOAD_FOLDER    = $config["CSV_FOLDER"];
+                if ($_FILES['data']['error'][0] != '0') {
+
+                }
+                else{
+                      for ($i = 0; $i < count($_FILES['data']['name']); $i++) {
+                        // on parcourt les fichiers uploader
+                        $size = $_FILES["data"]["size"][$i];
+                        $repertoireDestination         = $UPLOAD_FOLDER;
+                        $nomDestination                = str_replace(' ', '_', $_FILES["data"]["name"][$i]);
+                        $data["FILES"][$i]["DATA_URL"] = $nomDestination;
+                        
+                            if (file_exists($repertoireDestination . $_FILES["data"]["name"][$i])) {
+                                $returnarray[] = "false";
+                                $returnarray[] = $array['dataform'];
+                                return $returnarray;
+                            } else {
+                                if (is_uploaded_file($_FILES["data"]["tmp_name"][$i])) {
+                                    if (is_dir($repertoireDestination . 'test') == false) {
+                                        mkdir($repertoireDestination . 'test');
+                                    }
+                                    if (!file_exists($repertoireDestination . 'test')) {
+                                        mkdir($repertoireDestination . 'test');
+                                    }
+                                    if (rename($_FILES["data"]["tmp_name"][$i], $repertoireDestination . 'test' . "/" . $nomDestination)) {
+                                        $extension = new \SplFileInfo($repertoireDestination . 'test' . "/" . $nomDestination);
+                                        $filetypes = $extension->getExtension();
+                                        if (strlen($filetypes) == 0 or strlen($filetypes) > 4) {
+                                            $filetypes = 'unknow';
+                                        }
+                                        $data["FILES"][$i]["FILETYPE"] = $filetypes;
+                                        //$collection                    = "Manual_Depot";
+                                       // $collectionObject              = $this->db->selectCollection($config["authSource"], $collection);
+                                       var_dump($data);
+                                    } else {
+                                        $returnarray[] = "false";
+                                        $returnarray[] = $array['dataform'];
+                                        return $returnarray;
+                                    }
+                                }
+                            }
+                
+            }
+        }
+
+            if ($_FILES['pictures']['error'][0] != '0') {
+                }
+            else{
+             for ($i = 0; $i < count($_FILES['pictures']['name']); $i++) {
+                        // on parcourt les fichiers uploader
+                        $size = $_FILES["pictures"]["size"][$i];
+                        $repertoireDestination         = $UPLOAD_FOLDER;
+                        $nomDestination                = str_replace(' ', '_', $_FILES["pictures"]["name"][$i]);
+                        $data["FILES"][$i]["DATA_URL"] = $nomDestination;
+                        
+                            if (file_exists($repertoireDestination . $_FILES["pictures"]["name"][$i])) {
+                                $returnarray[] = "false";
+                                $returnarray[] = $array['dataform'];
+                                return $returnarray;
+                            } else {
+                                if (is_uploaded_file($_FILES["pictures"]["tmp_name"][$i])) {
+                                    if (is_dir($repertoireDestination . 'test') == false) {
+                                        mkdir($repertoireDestination . 'test');
+                                    }
+                                    if (!file_exists($repertoireDestination . 'test')) {
+                                        mkdir($repertoireDestination . 'test');
+                                    }
+                                    if (rename($_FILES["pictures"]["tmp_name"][$i], $repertoireDestination . 'test' . "/" . $nomDestination)) {
+                                        $extension = new \SplFileInfo($repertoireDestination . 'test' . "/" . $nomDestination);
+                                        $filetypes = $extension->getExtension();
+                                        if (strlen($filetypes) == 0 or strlen($filetypes) > 4) {
+                                            $filetypes = 'unknow';
+                                        }
+                                        $data["FILES"][$i]["FILETYPE"] = $filetypes;
+                                        $collection                    = "Manual_Depot";
+                                       // $collectionObject              = $this->db->selectCollection($config["authSource"], $collection);
+                                       var_dump($data);
+                                    } else {
+                                        $returnarray[] = "false";
+                                        $returnarray[] = $array['dataform'];
+                                        return $returnarray;
+                                    }
+                                }
+                            }
+            }
+                
+            }
+
+
         $SUPPLEMENTARY_FIELDS=array('HOST_LITHOLOGY_OR_PROTOLITH','LITHOLOGY1','LITHOLOGY2','LITHOLOGY3','ORETYPE1','ORETYPE2','ORETYPE3','TEXTURE1','TEXTURE2','TEXTURE3','SUBSTANCE','STORAGE_DETAILS','HOST_AGE','MAIN_EVENT_AGE','OTHER_EVENT_AGE','ALTERATION_DEGREE','SAMPLE_NAME','BLOCK','PULP','SAFETY_CONSTRAINTS','SAMPLE_LOCATION_FACILITY','DESCRIPTION');
 
 
@@ -616,7 +728,26 @@ echo $generatedfile;
 
                             case "measurements":
                                 foreach ($value as $key2 => $value2) {
-                                    $arrKey['MEASUREMENT'][] = array_change_key_case ($value2 ,  CASE_UPPER  );
+
+                                    $arrKey['MEASUREMENT'][$key2]['NATURE'] =$value2[0] ;
+                                    $arrKey['MEASUREMENT'][$key2]['ABBREVIATION'] =$value2[1] ;
+                                    $arrKey['MEASUREMENT'][$key2]['UNIT'] =$value2[2] ;
+                                }
+                                break;
+
+                             case "methodology":
+                                foreach ($value as $key2 => $value2) {
+                                    if ($key2==0) {
+                                       $name='SAMPLING_METHOD';
+                                    }elseif($key2==1){
+                                       $name='CONDITIONNING';
+                                    }
+                                    elseif($key2==2){
+                                        $name='SAMPLE_STORAGE';
+                                    }
+
+                                    $arrKey['METHODOLOGY'][$key2]['NAME'] =$name ;
+                                    $arrKey['METHODOLOGY'][$key2]['DESCRIPTION'] =$value2 ;
                                 }
                                 break;
 
@@ -639,7 +770,17 @@ echo $generatedfile;
                                 break;
                             case "sampling_points":
                                 foreach ($value as $key2 => $value2) {
-                                    $arrKey['SAMPLING_POINT'][strtoupper($key2)] = array_change_key_case ($value2 ,  CASE_UPPER  );
+                                    $arrKey['SAMPLING_POINT'][$key2]['NAME'] =$value2[0] ;
+                                    $arrKey['SAMPLING_POINT'][$key2]['COORDINATE_SYTEM'] =$value2[1] ;
+                                    $arrKey['SAMPLING_POINT'][$key2]['ABBREVIATION'] =$value2[2] ;                                    
+                                    $arrKey['SAMPLING_POINT'][$key2]['LONGITUDE'] =$value2[3] ;
+                                    $arrKey['SAMPLING_POINT'][$key2]['LATITUDE'] =$value2[4] ;
+                                    $arrKey['SAMPLING_POINT'][$key2]['ELEVATION'] =$value2[5] ;
+                                    $arrKey['SAMPLING_POINT'][$key2]['SAMPLING'] =$value2[6] ;
+                                    $arrKey['SAMPLING_POINT'][$key2]['DESCRIPTION'] =$value2[7] ;
+
+
+                                    //$arrKey['SAMPLING_POINT'][strtoupper($key2)] = array_change_key_case ($value2 ,  CASE_UPPER  );
                                 }
                                 
                                
@@ -667,7 +808,6 @@ echo $generatedfile;
 
 
         }
-        $config = self::ConfigFile();
             $user= New User();
             $referents=$user->getProjectReferent($config['COLLECTION_NAME']);
            
@@ -701,7 +841,7 @@ echo $generatedfile;
         $arrKey["UPLOAD_DATE"]  = date('Y-m-d');
         $arrKey["METADATA_DATE"]  = date('Y-m-d');
         $arrKey["STATUS"]  = "Awaiting";
-             $sample_name=$sample_name.'_'.$value['abbreviation'];
+             $sample_name=$sample_name.'_'.$value[1];
         $insert=array('_id' => strtoupper($sample_name),"INTRO"=>$arrKey);
 
          echo   json_encode($arrKey);

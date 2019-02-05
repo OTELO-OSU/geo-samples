@@ -466,7 +466,7 @@ jsonform.elementTypes = {
     }
   },
   'file':{
-    'template':'<input class="input-file" id="<%= id %>" name="<%= node.name %>" type="file" ' +
+    'template':'<input class="input-file" id="<%= id %>" name="<%= node.name %>[]" type="file" multiple ' +
       '<%= (node.schemaElement && node.schemaElement.required ? " required=\'required\'" : "") %>' +
       '/>',
     'fieldtemplate': true,

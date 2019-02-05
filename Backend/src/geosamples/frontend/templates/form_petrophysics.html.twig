@@ -47,6 +47,8 @@ title: 'HOST_LITHOLOGY_OR_PROTOLITH',
 			"type": "array",
 			"minItems":1,
 			"items": {
+			"type": "array",
+				"items":{
 				"properties": {
 					"NAME": {
 						"type": "string",
@@ -98,6 +100,7 @@ title: 'HOST_LITHOLOGY_OR_PROTOLITH',
 
 					}
 				}
+			}
 			}
 		},
 "methodology": {
@@ -191,103 +194,69 @@ type: 'string',
 {%endset%}
 
 
+
+
 {%set supplementary_fields_form%}
 {
-"key": "sampling_date",
-"htmlClass": "ui-input",
-"value":""
-},
-{
-"key": "sample_location_facility",
-"htmlClass": "ui-input",
-"value":""
-},
-{
-"key": "SAFETY_CONSTRAINTS",
-"htmlClass": "ui-input",
-"value":""
-},
-{
-"key": "STORAGE_DETAILS",
-"htmlClass": "ui-input",
-"value":""
-},
-{
-"key": "SUBSTANCE",
-"htmlClass": "ui-input",
-"value":""
-},
-{
-"key": "HOST_AGE",
-"htmlClass": "ui-input",
-"value":""
-},
-{
-"key": "MAIN_EVENT_AGE",
-"htmlClass": "ui-input",
-"value":""
-},
-{
-"key": "OTHER_EVENT_AGE",
-"htmlClass": "ui-input",
-"value":""
-},
-
-
-
-
-{
-"key": "ALTERATION_DEGREE",
-"htmlClass": "ui-input",
-"value":""
-},
-{
-"key": "HOST_LITHOLOGY_OR_PROTOLITH",
-"htmlClass": "ui-input",
-"value":""
-},
-{
 	      "type": "advancedfieldset",
-	      "title":"Sampling points",
+	      "title":"Supplementary fields",
 	      "items": [
-			{
-			"type": "array",
-			"items": {
-				"type": "section",
-				"items": [
-					"sampling_points[].NAME",
-					"sampling_points[].COORDINATE_SYSTEM",
-					"sampling_points[].ABBREVIATION",
-					"sampling_points[].LONGITUDE",
-					"sampling_points[].LATITUDE",
-					"sampling_points[].ELEVATION_M",
-					"sampling_points[].sampling",
-					"sampling_points[].DESCRIPTION"
+
+				{
+				"key": "sampling_date",
+				"htmlClass": "ui-input",
+				"value":""
+				},
+				{
+				"key": "sample_location_facility",
+				"htmlClass": "ui-input",
+				"value":""
+				},
+				{
+				"key": "SAFETY_CONSTRAINTS",
+				"htmlClass": "ui-input",
+				"value":""
+				},
+				{
+				"key": "STORAGE_DETAILS",
+				"htmlClass": "ui-input",
+				"value":""
+				},
+				{
+				"key": "SUBSTANCE",
+				"htmlClass": "ui-input",
+				"value":""
+				},
+				{
+				"key": "HOST_AGE",
+				"htmlClass": "ui-input",
+				"value":""
+				},
+				{
+				"key": "MAIN_EVENT_AGE",
+				"htmlClass": "ui-input",
+				"value":""
+				},
+				{
+				"key": "OTHER_EVENT_AGE",
+				"htmlClass": "ui-input",
+				"value":""
+				},
 
 
-				]
-			}
-		}]
-		},
-		{
-	      "type": "advancedfieldset",
-	      "title":"Methodology",
-	      "items": [
-			{
-			"type": "section",
-			"items": {
-				"type": "section",
-				"items": [
-					"methodology[].SAMPLING_METHOD",
-					"methodology[].CONDITIONNING",
-					"methodology[].SAMPLE_STORAGE"
 
 
-				]
-			}
-		}]
-		},
-{
+				{
+				"key": "ALTERATION_DEGREE",
+				"htmlClass": "ui-input",
+				"value":""
+				},
+				{
+				"key": "HOST_LITHOLOGY_OR_PROTOLITH",
+				"htmlClass": "ui-input",
+				"value":""
+				},
+				{
 "key": "core",
 "type":"radios",
  "onChange": function (evt) {
@@ -319,8 +288,53 @@ type: 'string',
 },
 {
 "key": "block",
-"type":"radios"
+"type":"radios",
+"value":"{{block}}"
 },
+				]
+			},
+{
+	      "type": "advancedfieldset",
+	      "title":"Sampling point",
+	      "items": [
+			{
+			"type": "array",
+			"items": {
+				"type": "section",
+				"items": [
+					"sampling_points[][].NAME",
+					"sampling_points[][].COORDINATE_SYSTEM",
+					"sampling_points[][].ABBREVIATION",
+					"sampling_points[][].LONGITUDE",
+					"sampling_points[][].LATITUDE",
+					"sampling_points[][].ELEVATION_M",
+					"sampling_points[][].sampling",
+					"sampling_points[][].DESCRIPTION"
+
+
+				]
+			}
+		}]
+		},
+		{
+	      "type": "advancedfieldset",
+	      "title":"Methodology",
+	      "items": [
+			{
+			"type": "section",
+			"items": {
+				"type": "section",
+				"items": [
+					"methodology[].SAMPLING_METHOD",
+					"methodology[].CONDITIONNING",
+					"methodology[].SAMPLE_STORAGE"
+
+
+				]
+			}
+		}]
+		},
+
 {
 	      "type": "advancedfieldset",
 	      "title":"Lithology",

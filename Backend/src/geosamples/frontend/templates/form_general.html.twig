@@ -18,7 +18,12 @@
 
 		data: {
 			type: 'file',
-			title: 'data'
+			title: 'Data'
+
+		},
+		pictures: {
+			type: 'file',
+			title: 'Pictures'
 
 		},
 
@@ -119,6 +124,8 @@
 			"type": "array",
 			"minItems":1,
 			"items": {
+				"type": "array",
+				"items":{
 				"properties": {
 					"nature": {
 						"type": "string",
@@ -140,6 +147,9 @@
 
 					}
 				}
+					
+				}
+
 			}
 		},
 
@@ -177,6 +187,32 @@
 		{{supplementary_fields_schema}}
 
 	},
+	{%if edit%}
+	"value": {
+    "keywords": [
+    {%for keyword in keywords%}
+      { "keyword": "{{keyword.NAME}}"},
+    {%endfor%}
+    ],
+
+     "institution": [
+    {%for institution in institutions%}
+      { "institution": "{{institution.NAME}}"},
+    {%endfor%}
+    ],
+ 
+    "title": "{{title}}",
+     "description": "{{description}}",
+     "sample_name": "{{sample_name}}",
+     "language": "{{language}}",
+
+
+    
+  },
+  
+    {%endif%}
+    
+    
 
 	"form": [
 
@@ -215,6 +251,12 @@
 		},
 
 		{
+			"key": "pictures"
+			
+			
+		},
+
+		{
 			"key": "csrf_value",
 			value:"{{value_CSRF}}"
 			
@@ -239,9 +281,9 @@
 			"items": {
 				"type": "section",
 				"items": [
-					"measurements[].nature",
-					"measurements[].abbreviation",
-					"measurements[].unit"
+					"measurements[][].nature",
+					"measurements[][].abbreviation",
+					"measurements[][].unit"
 
 
 				]
@@ -331,20 +373,10 @@
 
 
 
-		}
-	],
-	"onSubmit": function (errors, values) {
-		console.log(errors)
-		if (errors) {
-			alert('Check the form for invalid values!');
-			return;
-		}
-		if( $('.ui.form').form('is valid')) {
+		},
 
-		$.post( "upload", {data:values} )
-	}
-     console.log(values);
- }
+	],
+	
 }
 
 
