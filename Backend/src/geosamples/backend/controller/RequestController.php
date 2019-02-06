@@ -18,7 +18,7 @@ class RequestController
         $file    = new File();
         $config  = $file->ConfigFile();
         $bdd     = strtolower($config['authSource']);
-        $url     = 'http://' . $config['ESHOST'] . '/' . $bdd . '/'.$config['COLLECTION_NAME'].'_sandbox/TEST_RT';
+        $url     = 'http://' . $config['ESHOST'] . '/' . $bdd . '/'.$config['COLLECTION_NAME'].'_sandbox/SAMP-02-5_TCOND-D';
         $curlopt = array(
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_PORT           => $config['ESPORT'],
@@ -606,7 +606,6 @@ echo $generatedfile;
 
     function Post_Processing($POST)
     {
-        var_dump($POST);
         $config = self::ConfigFile();
 
                     $UPLOAD_FOLDER    = $config["CSV_FOLDER"];
@@ -644,7 +643,6 @@ echo $generatedfile;
 
                                         //$collection                    = "Manual_Depot";
                                        // $collectionObject              = $this->db->selectCollection($config["authSource"], $collection);
-                                       var_dump($data);
                                     } else {
                                         $returnarray[] = "false";
                                         $returnarray[] = $array['dataform'];
@@ -689,7 +687,6 @@ echo $generatedfile;
 
                                         //$collection                    = "Manual_Depot";
                                        // $collectionObject              = $this->db->selectCollection($config["authSource"], $collection);
-                                       var_dump($data);
                                     } else {
                                         $returnarray[] = "false";
                                         $returnarray[] = $array['dataform'];
@@ -703,6 +700,40 @@ echo $generatedfile;
 
 
         $SUPPLEMENTARY_FIELDS=array('HOST_LITHOLOGY_OR_PROTOLITH','LITHOLOGY1','LITHOLOGY2','LITHOLOGY3','ORETYPE1','ORETYPE2','ORETYPE3','TEXTURE1','TEXTURE2','TEXTURE3','SUBSTANCE','STORAGE_DETAILS','HOST_AGE','MAIN_EVENT_AGE','OTHER_EVENT_AGE','ALTERATION_DEGREE','SAMPLE_NAME','BLOCK','PULP','SAFETY_CONSTRAINTS','SAMPLE_LOCATION_FACILITY','DESCRIPTION');
+        var_dump($_POST);
+        $error=null;
+
+             $required = array(
+                'title',
+                'language',
+                'sample_name',
+                'keywords',
+                'institution',
+                'scientific_fields',
+                'sampling_points',
+             
+            );
+
+        foreach ($required as $field) {
+            //Verif des champs à traiter
+            if (empty($_POST[$field]) or empty($_POST[$field][0]) or empty($_POST[$field][0][0])) {
+                $fields[] = $field;
+            }
+        }
+            if (count($fields) != 0) {
+        //Affichage des champs manquants
+                    $txt = null;
+                    foreach ($fields as $key => $value) {
+                        $txt .= "  " . $value;
+                    }
+                    $error = "Warning there are empty fields: " . $txt;
+                }
+
+          
+
+
+
+
 
 
         foreach ($POST as $key => $value) {
@@ -712,7 +743,7 @@ echo $generatedfile;
                             
                             case "keywords":
                                 foreach ($value as $key2 => $value2) {
-                                    $arrKey[strtoupper($key)][]['NAME'] = $value2['keyword'];
+                                    $arrKey[strtoupper($key)][]['NAME'] = htmlspecialchars($value2['keyword'], ENT_QUOTES);;
                                 }
                                 break;
                             case "core":
@@ -720,15 +751,15 @@ echo $generatedfile;
                                
                                 break;
                             case "core_depth":
-                                    $arrKey['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][0]['DEPTH'] = $value;
+                                    $arrKey['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][0]['DEPTH'] = htmlspecialchars($value, ENT_QUOTES);;
                             
                             break;
                             case "core_azimut":
-                                    $arrKey['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][0]['AZIMUT'] = $value;
+                                    $arrKey['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][0]['AZIMUT'] = htmlspecialchars($value, ENT_QUOTES);;
                             
                                 break;
                             case "sampling_date":
-                                    $arrKey[strtoupper($key)][] = $value;
+                                    $arrKey[strtoupper($key)][] = htmlspecialchars($value, ENT_QUOTES);;
                             break;
 
                             case "measurements":
@@ -743,7 +774,7 @@ echo $generatedfile;
                                     }
 
                                     
-                                    $arrKey['MEASUREMENT'][0][$name] =$value2 ;
+                                    $arrKey['MEASUREMENT'][0][$name] =htmlspecialchars($value2, ENT_QUOTES); ;
 
                                     /*$arrKey['MEASUREMENT'][$key2]['NATURE'] =$value2[0] ;
                                     $arrKey['MEASUREMENT'][$key2]['ABBREVIATION'] =$value2[1] ;
@@ -763,20 +794,20 @@ echo $generatedfile;
                                     }
 
                                     $arrKey['METHODOLOGY'][$key2]['NAME'] =$name ;
-                                    $arrKey['METHODOLOGY'][$key2]['DESCRIPTION'] =$value2 ;
+                                    $arrKey['METHODOLOGY'][$key2]['DESCRIPTION'] =htmlspecialchars($value2, ENT_QUOTES); ;
                                 }
                                 break;
 
                              case "institution":
                                 foreach ($value as $key2 => $value2) {
-                                    $arrKey[strtoupper($key)][]['NAME'] = $value2;
+                                    $arrKey[strtoupper($key)][]['NAME'] = htmlspecialchars($value2, ENT_QUOTES);;
                                 }
                                 
                                
                                 break;
                             case "scientific_fields":
                                 foreach ($value as $key2 => $value2) {
-                                    $sc=$value2;
+                                    $sc=htmlspecialchars($value2, ENT_QUOTES);;
 
                                     $arrKey[strtoupper($key)][]['NAME'] = $sc;
                                 }
@@ -785,35 +816,35 @@ echo $generatedfile;
                                
                                 break;
                             case "sampling_points":
-                                foreach ($value as $key2 => $value2) {
-                                    $arrKey['SAMPLING_POINT'][$key2]['NAME'] =$value2[0] ;
-                                    $arrKey['SAMPLING_POINT'][$key2]['COORDINATE_SYTEM'] =$value2[1] ;
-                                    $arrKey['SAMPLING_POINT'][$key2]['ABBREVIATION'] =$value2[2] ;                                    
-                                    $arrKey['SAMPLING_POINT'][$key2]['LONGITUDE'] =$value2[3] ;
-                                    $arrKey['SAMPLING_POINT'][$key2]['LATITUDE'] =$value2[4] ;
-                                    $arrKey['SAMPLING_POINT'][$key2]['ELEVATION'] =$value2[5] ;
-                                    $arrKey['SAMPLING_POINT'][$key2]['SAMPLING'] =$value2[6] ;
-                                    $arrKey['SAMPLING_POINT'][$key2]['DESCRIPTION'] =$value2[7] ;
+                                    $arrKey['SAMPLING_POINT'][$key2]['NAME'] =$value[0] ;
+                                    $arrKey['SAMPLING_POINT'][$key2]['COORDINATE_SYTEM'] =$value[1] ;
+                                    $arrKey['SAMPLING_POINT'][$key2]['ABBREVIATION'] =$value[2] ;                                    
+                                    $arrKey['SAMPLING_POINT'][$key2]['LONGITUDE'] =$value[3] ;
+                                    $arrKey['SAMPLING_POINT'][$key2]['LATITUDE'] =$value[4] ;
+                                    $arrKey['SAMPLING_POINT'][$key2]['ELEVATION'] =$value[5] ;
+                                    $arrKey['SAMPLING_POINT'][$key2]['SAMPLING'] =$value[6] ;
+                                    $arrKey['SAMPLING_POINT'][$key2]['DESCRIPTION'] =$value[7] ;
+                              /*  foreach ($value as $key2 => $value2) {
 
 
-                                    //$arrKey['SAMPLING_POINT'][strtoupper($key2)] = array_change_key_case ($value2 ,  CASE_UPPER  );
-                                }
+                                   // $arrKey['SAMPLING_POINT'][strtoupper($key2)] = array_change_key_case ($value2 ,  CASE_UPPER  );
+                                }*/
                                 
                                
                                 break;
 
                             case "sample_name":
-                            $arrKey['SUPPLEMENTARY_FIELDS'][strtoupper($key)] =strtoupper($value);
-                                $sample_name=$value;
+                            $arrKey['SUPPLEMENTARY_FIELDS'][strtoupper($key)] =strtoupper(htmlspecialchars($value, ENT_QUOTES));
+                                $sample_name=htmlspecialchars($value, ENT_QUOTES);;
                                 $sample_name_old=$sample_name;
                                 break;
 
                                 default:
                             if (in_array(strtoupper($key), $SUPPLEMENTARY_FIELDS)) {
-                                $arrKey['SUPPLEMENTARY_FIELDS'][strtoupper($key)] = $value;
+                                $arrKey['SUPPLEMENTARY_FIELDS'][strtoupper($key)] = htmlspecialchars($value, ENT_QUOTES);
                             }else{
 
-                            $arrKey[strtoupper($key)] = $value;
+                            $arrKey[strtoupper($key)] = htmlspecialchars($value, ENT_QUOTES);
                             }
 
 
@@ -829,9 +860,9 @@ echo $generatedfile;
            
             foreach ($referents as $key => $value) {
               
-                 $arrKey['SUPPLEMENTARY_FIELDS']['REFERENTS'][$key]['NAME_REFERENT'] = $value->name;
-                 $arrKey['SUPPLEMENTARY_FIELDS']['REFERENTS'][$key]['FIRST_NAME_REFERENT'] = $value->firstname;
-                 $arrKey['SUPPLEMENTARY_FIELDS']['REFERENTS'][$key]['MAIL'] = $value->mail;
+                 $arrKey['SUPPLEMENTARY_FIELDS']['REFERENT'][$key]['NAME_REFERENT'] = $value->name;
+                 $arrKey['SUPPLEMENTARY_FIELDS']['REFERENT'][$key]['FIRST_NAME_REFERENT'] = $value->firstname;
+                 $arrKey['SUPPLEMENTARY_FIELDS']['REFERENT'][$key]['MAIL'] = $value->mail;
 
                  $arrKey['FILE_CREATOR'][$key]['NAME'] = $value->name;
                  $arrKey['FILE_CREATOR'][$key]['FIRST_NAME'] = $value->firstname;
@@ -861,25 +892,31 @@ echo $generatedfile;
         $sample_name = $sample_name.'_'.$_POST['measurements'][1];
         $insert=array('_id' => strtoupper($sample_name),"INTRO"=>$arrKey,'DATA'=>$data);
 
-         echo   json_encode($arrKey);
+        //echo   json_encode($arrKey);
+var_dump($error);
+        if (!$error == null) {
+         //si on rencontre une erreur on retourne le tableau et on l'affiche
+                $array['dataform'] = $arrKey;
+                $array['error']    = $error;
+                return $array;
+        }else{
 
-
-
-
-         try {
-                if(empty($config['authSource']) && empty($config['username']) && empty($config['password'])) {
-                    $this->db = new MongoDB\Driver\Manager("mongodb://" . $config['host'] . ':' . $config['port'], array('journal' => false));
-                } else {
-                    $this->db= new MongoDB\Driver\Manager("mongodb://" . $config['host'] . ':' . $config['port'], array('journal' => false, 'authSource' => $config['authSource'], 'username' => $config['username'], 'password' => $config['password']));
-                }
-       } catch (Exception $e) {
-            echo $e->getMessage();
-            $this->logger->error($e->getMessage());
+             try {
+                    if(empty($config['authSource']) && empty($config['username']) && empty($config['password'])) {
+                        $this->db = new MongoDB\Driver\Manager("mongodb://" . $config['host'] . ':' . $config['port'], array('journal' => false));
+                    } else {
+                        $this->db= new MongoDB\Driver\Manager("mongodb://" . $config['host'] . ':' . $config['port'], array('journal' => false, 'authSource' => $config['authSource'], 'username' => $config['username'], 'password' => $config['password']));
+                    }
+           } catch (Exception $e) {
+                echo $e->getMessage();
+                $this->logger->error($e->getMessage());
+            }
+             $bulk = new MongoDB\Driver\BulkWrite;
+           
+                $bulk->insert($insert);
+                $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $bulk);
         }
-         $bulk = new MongoDB\Driver\BulkWrite;
-       
-            $bulk->insert($insert);
-            $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $bulk);
+
                                                
             
    // }

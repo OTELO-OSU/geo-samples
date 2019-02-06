@@ -199,7 +199,8 @@ title: 'Sampling date'
 					"institution": {
 						"type": "string",
 						"title": "Institution",
-						enum:["ADIT Agency for the dissemination of technological information",
+
+						enum:["","ADIT Agency for the dissemination of technological information",
 							"ANDRA National Agency for Radioactive Waste Management",
 							"B.R.G.M. THE FRENCH GEOLOGICAL SURVEY",
 							"C.E.A. The French Alternative Energies and Atomic Energy Commission",
@@ -249,7 +250,7 @@ title: 'Sampling date'
 					"scientific_field": {
 						"type": "string",
 						"title": "Scientific field",
-						enum:[ "Addresses",
+						enum:["", "Addresses",
 								"Hydrography",
 								"Administrative units",
 								"Land cover",
@@ -306,10 +307,23 @@ title: 'Sampling date'
     {%endfor%}
     ],
  
-    "title": "{{title}}",
-     "description": "{{description}}",
-     "sample_name": "{{sample_name}}",
+    "title": "{{title|raw}}",
+     "description": "{{description|raw}}",
+     "sample_name": "{{sample_name|raw}}",
      "language": "{{language}}",
+
+       "measurements": [
+
+      { "abbreviation": "{{measurement_abbv|raw}}"
+
+      },
+
+
+    ],
+		"sampling_date": "{{sampling_date|raw}}",
+
+
+    
 
 
     
@@ -323,7 +337,7 @@ title: 'Sampling date'
 
 		 {
 	      "type": "fieldset",
-	      "title":"Basic informations",
+	      "title":"<i class=\"database icon\"></i>Basic informations",
 	      "items": [
 	        "title","sample_name","description","language",
 	         /*{
@@ -401,6 +415,7 @@ title: 'Sampling date'
 	      "items": [
 			{
 			"type": "section",
+			"maxItems":1,
 	      
 			"items": {
 				"type": "section",

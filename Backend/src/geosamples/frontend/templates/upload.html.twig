@@ -5,11 +5,17 @@
 <script type="text/javascript" src="jsonform/jsv.js"></script>
 <script type="text/javascript" src="jsonform/jsonform.js"></script>
 <script type="text/javascript" src="js/jquery.chained.js"></script>
+<script type="text/javascript" src="js/jquery.csv.js"></script>
   <script src="/css/semantic/dist/semantic.min.js">
   </script>
 <link rel="stylesheet" type="text/css" href="jsonform/css/bootstrap.css" />
 <div class="ui grid">
 	<div class="ui height wide column centered ">
+	<!--<div id="inputs" class="ui ten wide column">
+   <a href="/template_meta/template_metadata.csv"> <div class="text" >Download metadata template<i  id="donwloadmetadata" class="download large blue icon"> </i></div> </a>
+   <div class="text" id="file-select-button">Click here to import metadata from a csv file<i id="uploadmetadata" class="upload large green icon"></i></div> 
+   <input hidden type="file" id="metadatafile" name="metadata" />
+  </div>-->
 		<form method="post" action="upload" class="ui form" name="form" enctype="multipart/form-data">
 
 
@@ -142,6 +148,58 @@ $('.ui.form')
           }
         ]
       },
+       sample_name: {
+        identifier: 'sample_name',
+        rules: [
+          {
+            type   : 'regExp[/^(?!_)[A-z0-9](?!_)*((-|)(?!_)*(?!_)[A-z0-9])*$/]',
+            prompt : 'Please enter a sample name'
+          }
+        ]
+      },
+       sampling_date: {
+        identifier: 'sampling_date',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Please enter a sampling date'
+          }
+        ]
+      },
+       keywords: {
+        identifier: 'keywords[0].keyword',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Please enter at least one keyword'
+          }
+        ]
+      },
+       institutions: {
+        identifier: 'institution[0].institution',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Please enter at least one institution'
+          }
+        ]
+      },
+
+       description: {
+                          identifier: 'description',
+                          rules: [{
+                              type: 'empty',
+                              prompt: 'Please enter description'
+                          }]
+                      },
+       scientific_field: {
+                          identifier: 'scientific_fields[0].scientific_field',
+                          rules: [{
+                              type: 'empty',
+                              prompt: 'Please enter a scientific field'
+                          }]
+        },
+
        institutions: {
                           identifier: 'institution[0].institution',
                           rules: [{
@@ -149,6 +207,41 @@ $('.ui.form')
                               prompt: 'Please enter institution'
                           }]
                       },
+        sampling_points_name: {
+                          identifier: 'sampling_points.NAME',
+                          rules: [{
+                              type: 'empty',
+                              prompt: 'Please enter sampling point name'
+                          }]
+                      },
+          sampling_points_COORDINATE_SYSTEM: {
+                          identifier: 'sampling_points.COORDINATE_SYSTEM',
+                          rules: [{
+                              type: 'empty',
+                              prompt: 'Please enter sampling point COORDINATE SYSTEM'
+                          }]
+                      },
+           sampling_points_LONGITUDE: {
+                          identifier: 'sampling_points.LONGITUDE',
+                          rules: [{
+                              type: 'regExp[/^(\\-?\\d+(\\.\\d+)?).\\s*(\\-?\\d+(\\.\\d+)?)$/]',
+                              prompt: 'Please enter sampling point LONGITUDE'
+                          }]
+             },
+            sampling_points_LATITUDE: {
+                          identifier: 'sampling_points.LATITUDE',
+                          rules: [{
+                              type: 'regExp[/^(\\-?\\d+(\\.\\d+)?).\\s*(\\-?\\d+(\\.\\d+)?)$/]',
+                              prompt: 'Please enter sampling point LATITUDE'
+                          }]
+             },
+             sampling_points_ELEVATION: {
+                          identifier: 'sampling_points.ELEVATION_M',
+                          rules: [{
+                              type: 'number',
+                              prompt: 'Please enter sampling point ELEVATION'
+                          }]
+             },
         
       
     }
@@ -164,6 +257,58 @@ $('.ui.dropdown[name*="institution"]')
     allowAdditions: true
   })
 ;
+
+  {%for key,institution in institutions%}
+  if ($('input.search')[{{key}}].value=="") {
+      $('input.search')[{{key}}].value='{{institution.NAME}}'
+  }
+;
+    {%endfor%}
+/*function handleFileSelect(evt) {
+                  $('#inputs #filenamemetadata').remove();
+                  var files = evt.target.files; // FileList object
+                  var file = files[0];
+                  if (file['type'] == 'text/csv') {
+                      var reader = new FileReader();
+                      reader.readAsText(file);
+                      reader.onload = function(event) {
+                          var csv = event.target.result;
+                          console.log(csv)
+                          var data = $.csv.toArrays(csv);
+                          if (data.length == 0) {
+                              alert('Your CSV file is empty!')
+                          } else {
+                              if ($("input[name='title']").val() != "") {
+                                  $('form')[1].reset();
+                              }
+                              $('.delete').parent().remove();
+                              name = "";
+                              firstname = "";
+                              mail = "";
+                              $.each(data, function(index, values) {
+                                  $.each(values, function(index, value) {
+                                      if (value != "") {
+                                          if (value == "TITLE") {
+                                              $("input[name='title']").val(values[1]);
+                                          }
+                                          if (value == "LANGUAGE") {
+                                            
+                                              $("select[name='language']").val(values[1]);
+                                          }
+                                         
+                                         
+                                          
+                                      }
+                                  });
+                              });
+                          }
+                      }
+                      $('#inputs').append('<div class="text" id="filenamemetadata">' + file['name'] + ' successfully loaded!</div>')
+                  } else {
+                      alert("Only CSV file are supported!")
+                  }
+              }
+              document.getElementById('metadatafile').addEventListener('change', handleFileSelect, false);*/
 
 
 

@@ -365,7 +365,30 @@ $app->post('/upload', function (Request $req, Response $responseSlim) {
 		$referent= $user->is_referent($_SESSION['mail'],$config['COLLECTION_NAME']);
 		if (($feeder===true )OR ($referent===true) OR $_SESSION['admin']==1) {
 		$request      = new RequestApi();
-		$request->Post_Processing($_POST);
+		$response=$request->Post_Processing($_POST);
+		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
+		$twig   = new Twig_Environment($loader);
+			echo $twig->render('upload.html.twig',[ 
+			'edit'=>true,'name_CSRF' => $namecsrf,
+			 'value_CSRF' => $valuecsrf, 
+			 'mail' => $_SESSION['mail'],
+			  'admin' => $_SESSION['admin'],
+			  'access'=>$_SESSION['admin'],
+			  'title'=>$response['dataform']['TITLE'],
+			  'description'=>$response['dataform']['DESCRIPTION'],
+			  'sample_name'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME'],
+			  'language'=>$response['dataform']['LANGUAGE'],
+			  'block'=>$response['dataform']['BLOCK'],
+			  'language'=>$response['dataform']['LANGUAGE'],
+			  'keywords'=>$response['dataform']['KEYWORDS'],
+			  'institutions'=>$response['dataform']['INSTITUTION'],
+			   'measurement_abbv'=>$response['dataform']['MEASUREMENT'][0]['ABBREVIATION'],
+			   'sampling_date'=>$response['dataform']['SAMPLING_DATE'][0],
+			   'lithology1'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['LITHOLOGY1'],
+			   	'lithology2'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['LITHOLOGY2'],
+			   'lithology3'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['LITHOLOGY3'],
+
+			]);
 	
 		}else{
 			return $responseSlim->withRedirect('accueil');
@@ -393,8 +416,29 @@ $app->get('/modify', function (Request $req, Response $responseSlim) {
 		$request = new RequestApi();
 
 			$response=$request->Request_data_awaiting();
-			var_dump($response);
-		echo $twig->render('upload.html.twig',[ 'edit'=>true,'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'], 'admin' => $_SESSION['admin'],'access'=>$_SESSION['admin'],'title'=>$response['_source']['INTRO']['TITLE'],'description'=>$response['_source']['INTRO']['DATA_DESCRIPTION'],'sample_name'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME'],'language'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['LANGUAGE'],'block'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['BLOCK'],'keywords'=>$response['_source']['INTRO']['KEYWORDS'],'institutions'=>$response['_source']['INTRO']['INSTITUTION']]);
+		echo $twig->render('upload.html.twig',[ 
+			'edit'=>true,'name_CSRF' => $namecsrf,
+			 'value_CSRF' => $valuecsrf, 
+			 'mail' => $_SESSION['mail'],
+			  'admin' => $_SESSION['admin'],
+			  'access'=>$_SESSION['admin'],
+			  'title'=>$response['_source']['INTRO']['TITLE'],
+			  'description'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['DESCRIPTION'],
+			  'sample_name'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME'],
+			  'language'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['LANGUAGE'],
+			  'block'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['BLOCK'],
+			  'language'=>$response['_source']['INTRO']['LANGUAGE'],
+			  'keywords'=>$response['_source']['INTRO']['KEYWORDS'],
+			  'institutions'=>$response['_source']['INTRO']['INSTITUTION'],
+			   'measurement_abbv'=>$response['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION'],
+			   'sampling_date'=>$response['_source']['INTRO']['SAMPLING_DATE'][0],
+			   'lithology1'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['LITHOLOGY1'],
+			   	'lithology2'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['LITHOLOGY2'],
+			   'lithology3'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['LITHOLOGY3'],
+
+
+
+			]);
 		}else{
 			return $responseSlim->withRedirect('accueil');
 		}

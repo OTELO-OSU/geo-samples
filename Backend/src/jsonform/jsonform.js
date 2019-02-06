@@ -244,7 +244,7 @@ var inputFieldTemplate = function (type) {
   return {
     'template': '<input type="' + type + '" ' +
       'class=\'form-control<%= (fieldHtmlClass ? " " + fieldHtmlClass : "") %>\'' +
-      'name="<%= node.name %>" value="<%= escape(value) %>" id="<%= id %>"' +
+      'name="<%= node.name %>" data-validate="<%= node.name.replace("[]","") %>" value="<%= escape(value) %>" id="<%= id %>"' +
       '<%= (node.disabled? " disabled" : "")%>' +
       '<%= (node.readOnly ? " readonly=\'readonly\'" : "") %>' +
       '<%= (node.schemaElement && node.schemaElement.maxLength ? " maxlength=\'" + node.schemaElement.maxLength + "\'" : "") %>' +
