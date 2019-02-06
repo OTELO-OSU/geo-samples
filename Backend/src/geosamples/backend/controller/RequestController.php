@@ -606,6 +606,7 @@ echo $generatedfile;
 
     function Post_Processing($POST)
     {
+        var_dump($POST);
         $config = self::ConfigFile();
 
                     $UPLOAD_FOLDER    = $config["CSV_FOLDER"];
@@ -626,19 +627,21 @@ echo $generatedfile;
                                 return $returnarray;
                             } else {
                                 if (is_uploaded_file($_FILES["data"]["tmp_name"][$i])) {
-                                    if (is_dir($repertoireDestination . 'test') == false) {
-                                        mkdir($repertoireDestination . 'test');
+                                    if (is_dir($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]) == false) {
+                                        mkdir($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]);
                                     }
-                                    if (!file_exists($repertoireDestination . 'test')) {
-                                        mkdir($repertoireDestination . 'test');
+                                    if (!file_exists($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1])) {
+                                        mkdir($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]);
                                     }
-                                    if (rename($_FILES["data"]["tmp_name"][$i], $repertoireDestination . 'test' . "/" . $nomDestination)) {
-                                        $extension = new \SplFileInfo($repertoireDestination . 'test' . "/" . $nomDestination);
+                                    if (rename($_FILES["data"]["tmp_name"][$i], $repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]. "/" . $nomDestination)) {
+                                        $extension = new \SplFileInfo($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1] ."/" . $nomDestination);
                                         $filetypes = $extension->getExtension();
                                         if (strlen($filetypes) == 0 or strlen($filetypes) > 4) {
                                             $filetypes = 'unknow';
                                         }
                                         $data["FILES"][$i]["FILETYPE"] = $filetypes;
+                                        $data["FILES"][$i]["ORIGINAL_DATA_URL"] = $repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1] ."/" . $nomDestination;
+
                                         //$collection                    = "Manual_Depot";
                                        // $collectionObject              = $this->db->selectCollection($config["authSource"], $collection);
                                        var_dump($data);
@@ -669,20 +672,22 @@ echo $generatedfile;
                                 return $returnarray;
                             } else {
                                 if (is_uploaded_file($_FILES["pictures"]["tmp_name"][$i])) {
-                                    if (is_dir($repertoireDestination . 'test') == false) {
-                                        mkdir($repertoireDestination . 'test');
+                                    if (is_dir($repertoireDestination  ."/". $_POST['sample_name']."_META") == false) {
+                                        mkdir($repertoireDestination  ."/". $_POST['sample_name']."_META");
                                     }
-                                    if (!file_exists($repertoireDestination . 'test')) {
-                                        mkdir($repertoireDestination . 'test');
+                                    if (!file_exists($repertoireDestination  ."/". $_POST['sample_name']."_META")) {
+                                        mkdir($repertoireDestination  ."/". $_POST['sample_name']."_META");
                                     }
-                                    if (rename($_FILES["pictures"]["tmp_name"][$i], $repertoireDestination . 'test' . "/" . $nomDestination)) {
-                                        $extension = new \SplFileInfo($repertoireDestination . 'test' . "/" . $nomDestination);
+                                    if (rename($_FILES["pictures"]["tmp_name"][$i], $repertoireDestination ."/". $_POST['sample_name'] . "_META/" . $nomDestination)) {
+                                        $extension = new \SplFileInfo($repertoireDestination  ."/". $_POST['sample_name'] . "_META/" . $nomDestination);
                                         $filetypes = $extension->getExtension();
                                         if (strlen($filetypes) == 0 or strlen($filetypes) > 4) {
                                             $filetypes = 'unknow';
                                         }
                                         $data["FILES"][$i]["FILETYPE"] = $filetypes;
-                                        $collection                    = "Manual_Depot";
+                                        $data["FILES"][$i]["ORIGINAL_DATA_URL"] = $repertoireDestination  ."/". $_POST['sample_name'] . "_META/" . $nomDestination;
+
+                                        //$collection                    = "Manual_Depot";
                                        // $collectionObject              = $this->db->selectCollection($config["authSource"], $collection);
                                        var_dump($data);
                                     } else {
@@ -728,10 +733,21 @@ echo $generatedfile;
 
                             case "measurements":
                                 foreach ($value as $key2 => $value2) {
+                                      if ($key2==0) {
+                                       $name='NATURE';
+                                    }elseif($key2==1){
+                                       $name='ABBREVIATION';
+                                    }
+                                    elseif($key2==2){
+                                        $name='UNIT';
+                                    }
 
-                                    $arrKey['MEASUREMENT'][$key2]['NATURE'] =$value2[0] ;
+                                    
+                                    $arrKey['MEASUREMENT'][0][$name] =$value2 ;
+
+                                    /*$arrKey['MEASUREMENT'][$key2]['NATURE'] =$value2[0] ;
                                     $arrKey['MEASUREMENT'][$key2]['ABBREVIATION'] =$value2[1] ;
-                                    $arrKey['MEASUREMENT'][$key2]['UNIT'] =$value2[2] ;
+                                    $arrKey['MEASUREMENT'][$key2]['UNIT'] =$value2[2] ;*/
                                 }
                                 break;
 
@@ -753,14 +769,14 @@ echo $generatedfile;
 
                              case "institution":
                                 foreach ($value as $key2 => $value2) {
-                                    $arrKey[strtoupper($key)][]['NAME'] = $value2['institution'];
+                                    $arrKey[strtoupper($key)][]['NAME'] = $value2;
                                 }
                                 
                                
                                 break;
                             case "scientific_fields":
                                 foreach ($value as $key2 => $value2) {
-                                    $sc=$value2['scientific_field'];
+                                    $sc=$value2;
 
                                     $arrKey[strtoupper($key)][]['NAME'] = $sc;
                                 }
@@ -835,14 +851,15 @@ echo $generatedfile;
 
 
 
-        foreach ($POST['measurements'] as $key => $value) {
+       // foreach ($POST['measurements'] as $key => $value) {
         $sample_name=$sample_name_old;
         $arrKey["ACCESS_RIGHT"] = "Draft";
         $arrKey["UPLOAD_DATE"]  = date('Y-m-d');
         $arrKey["METADATA_DATE"]  = date('Y-m-d');
         $arrKey["STATUS"]  = "Awaiting";
-             $sample_name=$sample_name.'_'.$value[1];
-        $insert=array('_id' => strtoupper($sample_name),"INTRO"=>$arrKey);
+            // $sample_name=$sample_name.'_'.$value[1];
+        $sample_name = $sample_name.'_'.$_POST['measurements'][1];
+        $insert=array('_id' => strtoupper($sample_name),"INTRO"=>$arrKey,'DATA'=>$data);
 
          echo   json_encode($arrKey);
 
@@ -865,7 +882,7 @@ echo $generatedfile;
             $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $bulk);
                                                
             
-    }
+   // }
         }
 
 

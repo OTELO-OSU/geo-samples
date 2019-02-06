@@ -40,6 +40,94 @@
 		$("#jsonform-1-elt-texture3").chained("#jsonform-1-elt-texture2");
 		$("#jsonform-1-elt-oretype2").chained("#jsonform-1-elt-oretype1");
 		$("#jsonform-1-elt-oretype3").chained("#jsonform-1-elt-oretype2");
+		$( "select[name='measurements[].abbreviation']" ).change(function() {
+				value= $( "select[name='measurements[].abbreviation']" ).val();
+				switch (value) {
+				  case 'AMS':
+					  nature="Anisotropy of Magnetic Susceptibility without ferrofluid" ;
+					  unit="SI" ;
+				   break;
+				   case 'Tcond-D':
+					  nature="Thermal Conductivity dry" ;
+					  unit="W/m/K" ;
+				   break;
+				   case 'Tdif-D':
+					  nature="Thermal Diffusivity dry" ;
+					  unit="mm2/s" ;
+				   break;
+				   case 'P-Wave-D':
+					  nature="P-wave Velocity dry" ;
+					  unit="m/s" ;
+				   break;
+				   case 'S-Wave-D':
+					  nature="S-wave Velocity dry" ;
+					  unit="m/s" ;
+				   break;
+				   case 'GD':
+					  nature="Grain Density";
+					  unit="g/cm3" ;
+				   break;
+				   case 'Porosity-TW':
+					  nature="Triple Weight Porosity" ;
+					  unit="%" ;
+				   break;
+				   case 'Porosity-He':
+					  nature="Helium Porosity" ;
+					  unit="%" ;
+				   break;
+				   case 'Perm-Ni':
+					  nature="Permeability Nitrogen" ;
+					  unit="m2" ;
+				   break;
+				   case 'AMS-ferro':
+					  nature="Anisotropty of Magnetic Susceptibility with ferrofluid saturation" ;
+					  unit="SI" ;
+				   break;
+				   case 'Porosity-Hg':
+					  nature="Mercury Porosity" ;
+					  unit="%" ;
+				   break;
+				   case 'GD-powder':
+					  nature="Grain Density with powder porphyriser" ;
+					  unit="g/cm3" ;
+				   break;
+				   case 'S-Wave-W':
+					  nature="S-wave Velocity wet" ;
+					  unit="m/s" ;
+				   break;
+				   case 'SHC':
+					  nature="Specific Heat Capacity" ;
+					  unit="kJ/kg/K" ;
+				   break;
+				   case 'Tdif-W':
+					  nature="Thermal Diffusivity wet" ;
+					  unit="mm2/s" ;
+				   break;
+				   case 'Tcond-W':
+					  nature="Thermal Conductivity wet" ;
+					  unit="W/m/K" ;
+				   break;
+				   case 'Perm-F':
+					  nature="Field Permeameter" ;
+					  unit="m2" ;
+				   break;
+				   case 'P-Wave-W':
+					  nature="P-wave Velocity wet" ;
+					  unit="m/s" ;
+				   break;
+				     case 'MS':
+					  nature="Magnetic susceptibility" ;
+					  unit="SI" ;
+				   break;
+
+				
+				 
+				}
+				$( "input[name='measurements[].nature']" ).val(nature);
+				$( "input[name='measurements[].unit']" ).val(unit);
+		  
+		});
+
 	});
 
 $('.ui.form')
@@ -66,6 +154,19 @@ $('.ui.form')
     }
   })
 ;
+$('.ui.dropdown[name*="scientific_fields"]')
+  .dropdown({
+    allowAdditions: true
+  })
+;
+$('.ui.dropdown[name*="institution"]')
+  .dropdown({
+    allowAdditions: true
+  })
+;
+
+
+
 	</script>
 	<style type="text/css">
 		label{

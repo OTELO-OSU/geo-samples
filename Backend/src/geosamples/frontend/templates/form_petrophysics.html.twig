@@ -1,10 +1,7 @@
 
 
 {%set supplementary_fields_schema%}
-sampling_date: {
-type: 'date',
-title: 'Sampling date'
-},
+
 sample_location_facility: {
 type: 'string',
 title: 'SAMPLE LOCATION FACILITY'
@@ -202,11 +199,7 @@ type: 'string',
 	      "title":"Supplementary fields",
 	      "items": [
 
-				{
-				"key": "sampling_date",
-				"htmlClass": "ui-input",
-				"value":""
-				},
+				
 				{
 				"key": "sample_location_facility",
 				"htmlClass": "ui-input",
@@ -376,6 +369,30 @@ type: 'string',
 {%endset%}
 
 
+
+{%set list_measurements%}
+["Select abbreviation","Tcond-D",
+"Tcond-W",
+"Tdif-D",
+"Tdif-W",
+"SHC",
+"P-Wave-D",
+"P-Wave-W",
+"S-Wave-D",
+"S-Wave-W",
+"GD",
+"GD-powder",
+"Porosity-TW",
+"Porosity-Hg",
+"Porosity-He",
+"MS",
+"AMS",
+"AMS-ferro",
+"Perm-Ni",
+"Perm-F" ]
+
+
+{%endset%}
 
 
 

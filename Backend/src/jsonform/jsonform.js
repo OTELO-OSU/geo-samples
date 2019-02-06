@@ -631,6 +631,17 @@ jsonform.elementTypes = {
   },
   'select':{
     'template':'<select name="<%= node.name %>" id="<%= id %>"' +
+      'class=\'ui fluid search dropdown form-control<%= (fieldHtmlClass ? " " + fieldHtmlClass : "") %>\'' +
+      '<%= (node.schemaElement && node.schemaElement.disabled? " disabled" : "")%>' +
+      '<%= (node.schemaElement && node.schemaElement.required ? " required=\'required\'" : "") %>' +
+      '> ' +
+      '<% _.each(node.options, function(key, val) { if(key instanceof Object) { if (value === key.value) { %> <option selected value="<%= key.value %>"><%= key.title %></option> <% } else { %> <option value="<%= key.value %>"><%= key.title %></option> <% }} else { if (value === key) { %> <option selected value="<%= key %>"><%= key %></option> <% } else { %><option value="<%= key %>"><%= key %></option> <% }}}); %> ' +
+      '</select>',
+    'fieldtemplate': true,
+    'inputfield': true
+  },
+ 'list':{
+    'template':'<h1>test</h1><select name="<%= node.name %>" id="<%= id %>"' +
       'class=\'form-control<%= (fieldHtmlClass ? " " + fieldHtmlClass : "") %>\'' +
       '<%= (node.schemaElement && node.schemaElement.disabled? " disabled" : "")%>' +
       '<%= (node.schemaElement && node.schemaElement.required ? " required=\'required\'" : "") %>' +
@@ -640,6 +651,8 @@ jsonform.elementTypes = {
     'fieldtemplate': true,
     'inputfield': true
   },
+
+
   'imageselect': {
     'template': '<div>' +
       '<input type="hidden" name="<%= node.name %>" id="<%= node.id %>" value="<%= value %>" />' +
@@ -857,6 +870,7 @@ jsonform.elementTypes = {
       }
     },
     'onInsert': function (evt, node) {
+
       var $nodeid = $(node.el).find('#' + escapeSelector(node.id));
       var boundaries = node.getArrayBoundaries();
 
@@ -918,6 +932,16 @@ jsonform.elementTypes = {
           $nodeid.find('> span > a._jsonform-array-deletelast')
             .removeClass('disabled');
         }
+$('.ui.dropdown[name*="institution"]')
+  .dropdown({
+    allowAdditions: true
+  })
+;
+$('.ui.dropdown[name*="scientific_fields"]')
+  .dropdown({
+    allowAdditions: true
+  })
+;
       });
 
       //Simulate Users click to setup the form with its minItems

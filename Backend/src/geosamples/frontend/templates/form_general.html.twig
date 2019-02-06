@@ -38,7 +38,8 @@
 		},
 		language: {
 			type: 'string',
-			title: 'Language'
+			title: 'Language',
+			"enum": [ "English","French" ]
 		},
 		"keywords": {
 
@@ -119,7 +120,7 @@
 				}
 			}
 		},*/
-		"measurements": {
+		/*"measurements": {
 
 			"type": "array",
 			"minItems":1,
@@ -151,7 +152,42 @@
 				}
 
 			}
+		},*/
+
+"measurements": {
+			"type": "array",
+			"maxItems":1,
+			"items": {
+				"properties": {
+					"nature": {
+						"type": "hidden",
+						"title": "Nature",
+
+
+					},
+					"abbreviation": {
+
+
+						"type": "string",
+						"title": "Abbreviation",
+						"enum":{{list_measurements}}
+
+
+					},
+					"unit": {
+						"type": "hidden",
+						"title": "Unit",
+
+					}
+				}
+			}
 		},
+		sampling_date: {
+type: 'date',
+title: 'Sampling date'
+},
+
+
 
 		"institution": {
 
@@ -162,7 +198,42 @@
 				"properties": {
 					"institution": {
 						"type": "string",
-						"title": "Institution"
+						"title": "Institution",
+						enum:["ADIT Agency for the dissemination of technological information",
+							"ANDRA National Agency for Radioactive Waste Management",
+							"B.R.G.M. THE FRENCH GEOLOGICAL SURVEY",
+							"C.E.A. The French Alternative Energies and Atomic Energy Commission",
+							"C.E.E. Center for Employment Studies",
+							"CEPH Human plymorphism Study Center",
+							"CIRAD Agricultural Research for development",
+							"Cité des sciences et Palais de la découverte",
+							"National Museum of the History of Immigration",
+							"CNES National Center for Space Studies",
+							"CNRS National Center for Scientific Research",
+							"GENOPOLE France’s leading biocluster for biotechnologies and research in genomics and genetics",
+							"IFE French Institute of Education",
+							"IFREMER French Research Institute for Exploitation of the Sea",
+							"IFPEN Research and training player in the ﬁelds of energy, transport and the environment",
+							"IFSTTAR French Institute of science and technology for transport, development and networks",
+							"INCA National Institute of cancer",
+							"INED National Institute for Demographic Studies",
+							"INERIS National Institute for the Industrial Environment and Risks",
+							"INRA National Institute of Agronomic Research",
+							"INRIA National Institute for Research in Computer Science and Automation",
+							"INSERM National Institute of Health and Medical Research",
+							"Curie Institute",
+							"Pasteur Institute",
+							"IPEV French Polar Institute Paul Emile Victor",
+							"I.R.D. Research Institute for Development",
+							"I.R.S.N. Institute for Radiation Protection and Nuclear Safety",
+							"IRSTEA National Science and Technology Research Institute for Environment and Agriculture",
+							"M.N.H.N National Museum of Natural History",
+							"Quai Branly Museum",
+							"ONERA National Office for Aeronautical Studies and Research",
+							"OSEO",
+							"O.S.T. Science and Technology Observatory",
+							"RENATER National Telecommunication Network for Technology, Education and Research",
+							]
 
 
 					}
@@ -177,7 +248,41 @@
 				"properties": {
 					"scientific_field": {
 						"type": "string",
-						"title": "Scientific field"
+						"title": "Scientific field",
+						enum:[ "Addresses",
+								"Hydrography",
+								"Administrative units",
+								"Land cover",
+								"Agricultural and aquaculture facilities",
+								"Land use",
+								"Area management/restriction/regulation zones and reporting units",
+								"Meteorological geographical features",
+								"Atmospheric conditions",
+								"Mineral resources",
+								"Bio-geographical regions",
+								"Natural risk zones",
+								"Buildings",
+								"Oceanographic geographical features",
+								"Cadastral parcels",
+								"Orthoimagery",
+								"Coordinate reference systems",
+								"Population distribution — demography",
+								"Elevation",
+								"Production and industrial facilities",
+								"Energy resources",
+								"Protected sites",
+								"Environmental monitoring facilities",
+								"Sea regions",
+								"Geographical grid systems",
+								"Soil",
+								"Geographical names",
+								"Species distribution",
+								"Geology",
+								"Statistical units",
+								"Habitats and biotopes",
+								"Transport networks",
+								"Human health and safety",
+								"Utility and governmental services" ]
 
 
 					}
@@ -272,7 +377,7 @@
 
 
 
-		{
+		/*{
 	      "type": "fieldset",
 	      "title":"Measurements",
 	      "items": [
@@ -289,7 +394,32 @@
 				]
 			}
 		}]
+		},*/
+		{
+	      "type": "fieldset",
+	      "title":"Measurement",
+	      "items": [
+			{
+			"type": "section",
+	      
+			"items": {
+				"type": "section",
+				"items": [
+					"measurements[].nature",
+					"measurements[].abbreviation",
+					"measurements[].unit"
+
+
+				]
+			}
+		}]
 		},
+		{
+				"key": "sampling_date",
+				"htmlClass": "ui-input",
+				"value":""
+				},
+
 		{
 	      "type": "advancedfieldset",
 	      "title":"Keywords",
@@ -334,8 +464,10 @@
 			"type": "array",
 			"items": {
 				"type": "section",
+
 				"items": [
 					"scientific_fields[].scientific_field"
+
 
 				]
 			}
@@ -375,7 +507,9 @@
 
 		},
 
+
 	],
+	"validate": false
 	
 }
 
