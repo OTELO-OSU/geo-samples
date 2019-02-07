@@ -18,7 +18,7 @@ class RequestController
         $file    = new File();
         $config  = $file->ConfigFile();
         $bdd     = strtolower($config['authSource']);
-        $url     = 'http://' . $config['ESHOST'] . '/' . $bdd . '/'.$config['COLLECTION_NAME'].'_sandbox/SAMP-02-5_TCOND-D';
+        $url     = 'http://' . $config['ESHOST'] . '/' . $bdd . '/'.$config['COLLECTION_NAME'].'_sandbox/TEST-3_SHC';
         $curlopt = array(
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_PORT           => $config['ESPORT'],
@@ -817,7 +817,7 @@ echo $generatedfile;
                                 break;
                             case "sampling_points":
                                     $arrKey['SAMPLING_POINT'][$key2]['NAME'] =$value[0] ;
-                                    $arrKey['SAMPLING_POINT'][$key2]['COORDINATE_SYTEM'] =$value[1] ;
+                                    $arrKey['SAMPLING_POINT'][$key2]['COORDINATE_SYSTEM'] =$value[1] ;
                                     $arrKey['SAMPLING_POINT'][$key2]['ABBREVIATION'] =$value[2] ;                                    
                                     $arrKey['SAMPLING_POINT'][$key2]['LONGITUDE'] =$value[3] ;
                                     $arrKey['SAMPLING_POINT'][$key2]['LATITUDE'] =$value[4] ;

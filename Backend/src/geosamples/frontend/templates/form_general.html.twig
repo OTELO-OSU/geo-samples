@@ -21,6 +21,8 @@
 			title: 'Data'
 
 		},
+
+
 		pictures: {
 			type: 'file',
 			title: 'Pictures'
@@ -303,7 +305,13 @@ title: 'Sampling date'
 
      "institution": [
     {%for institution in institutions%}
-      { "institution": "{{institution.NAME}}"},
+      { "institution": ""},
+    {%endfor%}
+    ],
+
+      "scientific_fields": [
+    {%for scientific_field in scientific_fields%}
+      { "scientific_field": ""},
     {%endfor%}
     ],
  
@@ -321,6 +329,11 @@ title: 'Sampling date'
 
     ],
 		"sampling_date": "{{sampling_date|raw}}",
+		
+		{{supplementary_fields_value}}
+
+
+
 
 
     
@@ -454,6 +467,7 @@ title: 'Sampling date'
 		{
 	      "type": "advancedfieldset",
 	      "title":"Institutions",
+	      "htmlClass":"institutions",
 	      "items": [
 			{
 		
@@ -472,6 +486,7 @@ title: 'Sampling date'
 		{
 	      "type": "advancedfieldset",
 	      "title":"Scientific fields",
+	      	"htmlClass":"scientific_fields",
 	      "items": [
 			{
 		

@@ -340,7 +340,7 @@ $app->get('/upload', function (Request $req, Response $responseSlim) {
 		$feeder= $user->is_feeder($_SESSION['mail'],$config['COLLECTION_NAME']);
 		$referent= $user->is_referent($_SESSION['mail'],$config['COLLECTION_NAME']);
 		if (($feeder===true )OR ($referent===true) OR $_SESSION['admin']==1) {
-		echo $twig->render('upload.html.twig',[ 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'], 'admin' => $_SESSION['admin'],'access'=>$_SESSION['admin']]);
+		echo $twig->render('upload.html.twig',['collection_name'=>$config['COLLECTION_NAME'], 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'], 'admin' => $_SESSION['admin'],'access'=>$_SESSION['admin']]);
 		}else{
 			return $responseSlim->withRedirect('accueil');
 		}
@@ -361,6 +361,8 @@ $app->post('/upload', function (Request $req, Response $responseSlim) {
 		$namecsrf  = $req->getAttribute($nameKey);
 		$valuecsrf = $req->getAttribute($valueKey);
 		$user      = new User();
+		$file   = new File();
+		$config = $file->ConfigFile();
 		$feeder= $user->is_feeder($_SESSION['mail'],$config['COLLECTION_NAME']);
 		$referent= $user->is_referent($_SESSION['mail'],$config['COLLECTION_NAME']);
 		if (($feeder===true )OR ($referent===true) OR $_SESSION['admin']==1) {
@@ -369,6 +371,7 @@ $app->post('/upload', function (Request $req, Response $responseSlim) {
 		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
 		$twig   = new Twig_Environment($loader);
 			echo $twig->render('upload.html.twig',[ 
+				'collection_name'=>$config['COLLECTION_NAME'],
 			'edit'=>true,'name_CSRF' => $namecsrf,
 			 'value_CSRF' => $valuecsrf, 
 			 'mail' => $_SESSION['mail'],
@@ -417,6 +420,7 @@ $app->get('/modify', function (Request $req, Response $responseSlim) {
 
 			$response=$request->Request_data_awaiting();
 		echo $twig->render('upload.html.twig',[ 
+			'collection_name'=>$config['COLLECTION_NAME'],
 			'edit'=>true,'name_CSRF' => $namecsrf,
 			 'value_CSRF' => $valuecsrf, 
 			 'mail' => $_SESSION['mail'],
@@ -427,14 +431,42 @@ $app->get('/modify', function (Request $req, Response $responseSlim) {
 			  'sample_name'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME'],
 			  'language'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['LANGUAGE'],
 			  'block'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['BLOCK'],
+			  'pulp'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['PULP'],
+			  'core'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][0]['CORE'],
+
 			  'language'=>$response['_source']['INTRO']['LANGUAGE'],
 			  'keywords'=>$response['_source']['INTRO']['KEYWORDS'],
 			  'institutions'=>$response['_source']['INTRO']['INSTITUTION'],
+			  'scientific_fields'=>$response['_source']['INTRO']['SCIENTIFIC_FIELDS'],
 			   'measurement_abbv'=>$response['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION'],
 			   'sampling_date'=>$response['_source']['INTRO']['SAMPLING_DATE'][0],
 			   'lithology1'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['LITHOLOGY1'],
 			   	'lithology2'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['LITHOLOGY2'],
 			   'lithology3'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['LITHOLOGY3'],
+			   'oretype1'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['ORETYPE1'],
+			   	'oretype2'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['ORETYPE2'],
+			   'oretype3'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['ORETYPE3'],
+			   'texture1'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['TEXTURE1'],
+			   	'texture2'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['TEXTURE2'],
+			   'texture3'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['TEXTURE3'],
+			    'sample_location_facility'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_LOCATION_FACILITY'],
+
+			    'safety_constraints'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAFETY_CONSTRAINTS'],
+			    'storage_details'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['STORAGE_DETAILS'],
+			    'substance'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SUBSTANCE'],
+			    'host_age'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['HOST_AGE'],
+			    'main_event_age'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['MAIN_EVENT_AGE'],
+			    'other_event_age'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['OTHER_EVENT_AGE'],
+			    'alteration_degree'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['ALTERATION_DEGREE'],
+			    'host_lithology_or_protolith'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['HOST_LITHOLOGY_OR_PROTOLITH'],
+
+			    'methodology_sampling'=>$response['_source']['INTRO']['METHODOLOGY'][0]['DESCRIPTION'],
+			     'methodology_conditionning'=>$response['_source']['INTRO']['METHODOLOGY'][1]['DESCRIPTION'],
+			      'methodology_sample_storage'=>$response['_source']['INTRO']['METHODOLOGY'][2]['DESCRIPTION'],
+			       'sampling_points'=>$response['_source']['INTRO']['SAMPLING_POINT'],
+
+
+
 
 
 

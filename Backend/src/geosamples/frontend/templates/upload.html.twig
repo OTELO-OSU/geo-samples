@@ -37,17 +37,13 @@
 		JSONForm.fieldTypes['ore_type'] = {
 		  template: '<%=node.value%>'
 		};
-		$('form').jsonForm({% include 'form_petrophysics.html.twig' %});
+		
+		$('form').jsonForm({% include 'form_'~collection_name~'.html.twig' %});
 
-		 $(function() {
-		$("#jsonform-1-elt-lithology2").chained("#jsonform-1-elt-lithology1");
-		$("#jsonform-1-elt-lithology3").chained("#jsonform-1-elt-lithology2");
-		$("#jsonform-1-elt-texture2").chained("#jsonform-1-elt-texture1");
-		$("#jsonform-1-elt-texture3").chained("#jsonform-1-elt-texture2");
-		$("#jsonform-1-elt-oretype2").chained("#jsonform-1-elt-oretype1");
-		$("#jsonform-1-elt-oretype3").chained("#jsonform-1-elt-oretype2");
-		$( "select[name='measurements[].abbreviation']" ).change(function() {
+		function switch_measurement(){
+
 				value= $( "select[name='measurements[].abbreviation']" ).val();
+				{%if collection_name == 'petrophysics'%}
 				switch (value) {
 				  case 'AMS':
 					  nature="Anisotropy of Magnetic Susceptibility without ferrofluid" ;
@@ -125,13 +121,58 @@
 					  nature="Magnetic susceptibility" ;
 					  unit="SI" ;
 				   break;
-
-				
 				 
 				}
+				{%endif%}
+
+				{%if collection_name == 'scandium'%}
+				switch (value) {
+				 
+				   case 'BGC':
+					  nature="BULK_GEOCHEM" ;
+					  unit="%WT_AND_PPMWT" ;
+				   break;
+				   case 'EMPA':
+					  nature="ELECTRONIC_MICROPROBE" ;
+					  unit="%WT" ;
+				   break;
+				   case 'LAICPMS':
+					  nature="LA-ICP-MS" ;
+					  unit="PPMWT" ;
+				   break;
+				 
+				}
+
+				{%endif%}
+
+
+				{%if collection_name == 'acev'%}
+				switch (value) {
+				   case 'PHY-CHEM':
+					  nature="PHY-CHEM" ;
+					  unit="Text" ;
+				   break;				 
+				}
+
+				{%endif%}
+
+
 				$( "input[name='measurements[].nature']" ).val(nature);
 				$( "input[name='measurements[].unit']" ).val(unit);
 		  
+		
+		}
+
+		 $(function() {
+		$("#jsonform-1-elt-lithology2").chained("#jsonform-1-elt-lithology1");
+		$("#jsonform-1-elt-lithology3").chained("#jsonform-1-elt-lithology2");
+		$("#jsonform-1-elt-texture2").chained("#jsonform-1-elt-texture1");
+		$("#jsonform-1-elt-texture3").chained("#jsonform-1-elt-texture2");
+		$("#jsonform-1-elt-oretype2").chained("#jsonform-1-elt-oretype1");
+		$("#jsonform-1-elt-oretype3").chained("#jsonform-1-elt-oretype2");
+		$( "select[name='measurements[].abbreviation']" ).change(function() {
+			switch_measurement();
+
 		});
 
 	});
@@ -242,6 +283,23 @@ $('.ui.form')
                               prompt: 'Please enter sampling point ELEVATION'
                           }]
              },
+               core: {
+                          identifier: 'core',
+                          rules: [{
+                              type: 'checked',
+                              prompt: 'Please specify core'
+                          }]
+             },
+        
+          block: {
+                          identifier: 'block',
+                          rules: [{
+                              type: 'checked',
+                              prompt: 'Please specify block'
+                          }]
+             },
+            
+        
         
       
     }
@@ -259,11 +317,62 @@ $('.ui.dropdown[name*="institution"]')
 ;
 
   {%for key,institution in institutions%}
-  if ($('input.search')[{{key}}].value=="") {
-      $('input.search')[{{key}}].value='{{institution.NAME}}'
+  if ($('.institutions input.search')[{{key}}].value=="") {
+ 
+      $('.institutions input.search')[{{key}}].value='{{institution.NAME}}'
   }
 ;
     {%endfor%}
+
+   {%for key,scientific_field in scientific_fields%}
+
+  if ($('.scientific_fields input.search')[{{key}}].value=="") {
+      $('.scientific_fields input.search')[{{key}}].value='{{scientific_field.NAME}}'
+   
+  }
+;
+    {%endfor%}
+
+      {%if measurement_abbv%}
+
+     $('select[name*=measurements]').val('{{measurement_abbv}}');
+     switch_measurement();
+  
+
+    {%endif%}
+
+     {%if methodology_sampling%}
+
+     $('input[name*=methodology]')[0].value='{{methodology_sampling}}';
+  
+
+    {%endif%}
+
+     {%if methodology_conditionning%}
+
+     $('input[name*=methodology]')[1].value='{{methodology_conditionning}}';
+  
+
+    {%endif%}
+
+     {%if methodology_sample_storage%}
+
+     $('input[name*=methodology]')[2].value='{{methodology_sample_storage}}';
+  
+
+    {%endif%}
+
+	{%if sampling_points%}
+	{%for key,sampling_point in sampling_points%}
+		{%for key,sampling_point in sampling_point%}
+
+     $('.sampling_point input[name*={{key}}]').val('{{sampling_point}}');
+     {%endfor%}
+      {%endfor%}
+  
+
+    {%endif%}
+
 /*function handleFileSelect(evt) {
                   $('#inputs #filenamemetadata').remove();
                   var files = evt.target.files; // FileList object
