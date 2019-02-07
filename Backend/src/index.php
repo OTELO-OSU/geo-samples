@@ -153,12 +153,33 @@ $app->get('/test', function (Request $req, Response $responseSlim) {
 	//var_dump($_SESSION['projects_access_right']);
 	
 		//var_dump($value);
-	
+		/*$file   = new File();
+        $config = $file->ConfigFile();
 	$user = new User();
+		$feeder= $user->is_feeder($_SESSION['mail'],$config['COLLECTION_NAME']);
+		$referent= $user->is_referent($_SESSION['mail'],$config['COLLECTION_NAME']);
+		var_dump($feeder);
+		var_dump($_SESSION);*/
+		$request = new RequestApi();
+		$response=$request->Request_all_data_awaiting();
+		var_dump($response);
+
+
 	//var_dump($user->getProjectReferent('petrophysics'));
 	//var_dump($user->is_referent('petrophysics@referent.fr','petrophysics'));
 
 });
+
+
+$app->get('/validation', function (Request $req, Response $responseSlim) {
+		$request = new RequestApi();
+		$response=$request->Request_all_data_awaiting();
+		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
+		$twig   = new Twig_Environment($loader);
+		echo $twig->render('validation.html.twig', ['data' => $response]);
+
+});
+
 
 
 
@@ -399,7 +420,7 @@ $app->post('/upload', function (Request $req, Response $responseSlim) {
 });
 
 
-$app->get('/modify', function (Request $req, Response $responseSlim) {
+$app->get('/modify/{id}', function (Request $req, Response $responseSlim,$args) {
 	$nameKey = $this
 		->csrf
 		->getTokenNameKey();
@@ -418,10 +439,12 @@ $app->get('/modify', function (Request $req, Response $responseSlim) {
 		if (($feeder===true )OR ($referent===true) OR $_SESSION['admin']==1) {
 		$request = new RequestApi();
 
-			$response=$request->Request_data_awaiting();
+			$response=$request->Request_data_awaiting($args['id']);
 		echo $twig->render('upload.html.twig',[ 
 			'collection_name'=>$config['COLLECTION_NAME'],
-			'edit'=>true,'name_CSRF' => $namecsrf,
+			'edit'=>true,
+			'id'=>$args['id'],
+			'name_CSRF' => $namecsrf,
 			 'value_CSRF' => $valuecsrf, 
 			 'mail' => $_SESSION['mail'],
 			  'admin' => $_SESSION['admin'],

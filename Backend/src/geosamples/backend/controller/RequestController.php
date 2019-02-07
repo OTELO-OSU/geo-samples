@@ -14,11 +14,11 @@ class RequestController
         return $config;
     }
 
-    function Request_data_awaiting(){
+    function Request_data_awaiting($id){
         $file    = new File();
         $config  = $file->ConfigFile();
         $bdd     = strtolower($config['authSource']);
-        $url     = 'http://' . $config['ESHOST'] . '/' . $bdd . '/'.$config['COLLECTION_NAME'].'_sandbox/TEST-3_SHC';
+        $url     = 'http://' . $config['ESHOST'] . '/' . $bdd . '/'.$config['COLLECTION_NAME'].'_sandbox/'.$id;
         $curlopt = array(
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_PORT           => $config['ESPORT'],
@@ -31,6 +31,34 @@ class RequestController
         $response = self::Curlrequest($url, $curlopt);
         $response = json_decode($response, true);
         return $response;
+    }
+
+
+    function Request_all_data_awaiting(){
+        $file    = new File();
+        $config  = $file->ConfigFile();
+        $bdd     = strtolower($config['authSource']);
+        $url     = 'http://' . $config['ESHOST'] . '/' . $bdd . '/_search?type='.$config['COLLECTION_NAME'].'_sandbox';
+        $curlopt = array(
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_PORT           => $config['ESPORT'],
+            CURLOPT_ENCODING       => "",
+            CURLOPT_MAXREDIRS      => 10,
+            CURLOPT_TIMEOUT        => 40,
+            CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST  => "GET",
+        );
+        $response = self::Curlrequest($url, $curlopt);
+        $response = json_decode($response, true);
+       // var_dump($response['hits']['hits']);
+        $array=array();
+        foreach ($response['hits']['hits'] as $key => $value) {
+            if ($value['_source']['INTRO']['STATUS']=='Awaiting') {
+               
+           $array[]=$value['_id'];
+            }
+        }
+        return $array;
     }
 
 
@@ -444,16 +472,17 @@ echo $generatedfile;
         );
         $response = self::Curlrequest($url, $curlopt);
         $response = json_decode($response, true);
+
         foreach ($response['hits']['hits'][0]['_source']['DATA']['FILES'] as $key => $value)
         {
 
             if ($value['DATA_URL'] == $picturename)
             {
-                $response = $value['ORIGINAL_DATA_URL'];
+                $img = $value['ORIGINAL_DATA_URL'];
             }
 
         }
-        return $response;
+        return $img;
     }
 
     /**

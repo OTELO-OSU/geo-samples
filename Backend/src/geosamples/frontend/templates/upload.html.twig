@@ -1,16 +1,19 @@
 {% include 'header.html.twig' %}
 	
-<script type="text/javascript" src="jsonform/jquery.min.js"></script>
-<script type="text/javascript" src="jsonform/underscore.js"></script>
-<script type="text/javascript" src="jsonform/jsv.js"></script>
-<script type="text/javascript" src="jsonform/jsonform.js"></script>
-<script type="text/javascript" src="js/jquery.chained.js"></script>
-<script type="text/javascript" src="js/jquery.csv.js"></script>
+<script type="text/javascript" src="/jsonform/jquery.min.js"></script>
+<script type="text/javascript" src="/jsonform/underscore.js"></script>
+<script type="text/javascript" src="/jsonform/jsv.js"></script>
+<script type="text/javascript" src="/jsonform/jsonform.js"></script>
+<script type="text/javascript" src="/js/jquery.chained.js"></script>
+<script type="text/javascript" src="/js/jquery.csv.js"></script>
   <script src="/css/semantic/dist/semantic.min.js">
   </script>
-<link rel="stylesheet" type="text/css" href="jsonform/css/bootstrap.css" />
-<div class="ui grid">
-	<div class="ui height wide column centered ">
+<link rel="stylesheet" type="text/css" href="/jsonform/css/bootstrap.css" />
+<div class="ui grid container">
+	<div class="row">
+    <h1 class="ui dividing header">Upload new data</h1>
+  </div>
+	<div class="ui twelve wide column centered ">
 	<!--<div id="inputs" class="ui ten wide column">
    <a href="/template_meta/template_metadata.csv"> <div class="text" >Download metadata template<i  id="donwloadmetadata" class="download large blue icon"> </i></div> </a>
    <div class="text" id="file-select-button">Click here to import metadata from a csv file<i id="uploadmetadata" class="upload large green icon"></i></div> 
@@ -23,11 +26,33 @@
 
 
 		<div class="ui error message"></div>
-
-		</form>		
+		<a href="javascript:history.back();" class="ui red button"><i class="cancel icon"></i>Cancel</a>
+<button type="submit" class="ui submit right floated green  button"><i class="checkmark icon"></i>Submit</button>
+{%if edit%}
+		<a onclick="remove();" class="ui  black  button"><i class="trash alternate icon"></i>Remove</a>		
+{%endif%}
+</form>		
 	</div>
 </div>
+
+ <div class="ui modal remove">
+     <i class="close icon"></i>
+     <div class="header">
+     </div>
+     <div class="content">       
+     </div>
+ </div>
+
 <script type="text/javascript">
+	function remove(){
+		 $(".modal.remove .header").empty();
+         $(".modal.remove .content").empty();
+         $(".modal.remove .header").append('Are you sure to remove {{id}} ?  ');
+         $(".modal.remove .content").append('<form class="ui form " action="delete_data" method="post"><input type="hidden" name="csrf_name" value=""><input type="hidden" name="csrf_value" value=""><input type="hidden" name="id" value="{{id}}"> <div class="actions"> <div class="ui black deny button"> Cancel </div> <button class="ui submit green button" >Yes</button> </div> </form>');
+         $('.ui.modal.remove').modal('show');
+	}
+
+
 	JSONForm.fieldTypes['lithology'] = {
 		  template: '<%=node.value%>'
 		};
@@ -305,9 +330,12 @@ $('.ui.form')
     }
   })
 ;
+
+
+
 $('.ui.dropdown[name*="scientific_fields"]')
   .dropdown({
-    allowAdditions: true
+    allowAdditions: true,
   })
 ;
 $('.ui.dropdown[name*="institution"]')
@@ -315,8 +343,12 @@ $('.ui.dropdown[name*="institution"]')
     allowAdditions: true
   })
 ;
+      $('.institutions div.text').html('Select a field or type one ')
+      $('.scientific_fields div.text').html('Select a field or type one')
 
   {%for key,institution in institutions%}
+        $('.institutions div.text').html('')
+
   if ($('.institutions input.search')[{{key}}].value=="") {
  
       $('.institutions input.search')[{{key}}].value='{{institution.NAME}}'
@@ -325,6 +357,8 @@ $('.ui.dropdown[name*="institution"]')
     {%endfor%}
 
    {%for key,scientific_field in scientific_fields%}
+         $('.scientific_fields div.text').html('')
+
 
   if ($('.scientific_fields input.search')[{{key}}].value=="") {
       $('.scientific_fields input.search')[{{key}}].value='{{scientific_field.NAME}}'
@@ -423,14 +457,28 @@ $('.ui.dropdown[name*="institution"]')
 
 	</script>
 	<style type="text/css">
-		label{
-			font-size: 1.3em!important;
+
+	._jsonform-array-buttons{
+
+		float:right;
+	}
+
+		html{
+			font-size: 14px!important;
 		}
+		.modal{
+			bottom:inherit!important;			
+		}
+		
+
 		.expandable{
 			cursor:  pointer;
 		}
 		select:disabled{
 			background-color: #e8e8e8!important;
+		}
+		.ui.error.message{
+			margin-top:9%;
 		}
 
 	</style>

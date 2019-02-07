@@ -271,7 +271,22 @@ var APP = (function() {
                             APP.data_raw=k2;
                             var samples= new Array();
                             var show_popup=null;
+                            var picture_localisation = null;
+                            var name_localisation = null;
                             $.map(k2, function(k, v) {  
+                        if (k.PICTURES) {
+                            for (key in k.PICTURES) {
+                                picture = k.PICTURES[key].DATA_URL;
+                                name = k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME;
+                                if ((new RegExp('_LOCALISATION')).test(picture)) {
+                                picture_localisation = k.PICTURES[key].DATA_URL;
+                                name_localisation = k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME;
+
+
+                                }
+                            }
+                        }
+
                             if (k.SUPPLEMENTARY_FIELDS) {
                                 if (k.SUPPLEMENTARY_FIELDS.CORE_DETAILS || k.SUPPLEMENTARY_FIELDS.BLOCK) {
                                     if (k.SUPPLEMENTARY_FIELDS.CORE_DETAILS[0].CORE.toUpperCase() == 'YES' && k.SUPPLEMENTARY_FIELDS.CORE_DETAILS[0].DEPTH != null) {
@@ -299,6 +314,7 @@ var APP = (function() {
                                 show_popup=true;
                         }else{
                                  if (k.SUPPLEMENTARY_FIELDS) {
+
                             APP.modules.map.affichageinfo(k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME);
                                 show_popup=false;
                                 }
@@ -322,8 +338,17 @@ var APP = (function() {
                              
 
                              if (show_popup===true) {
-                                $('.ui.modal.preview').modal('show');
+                                 if (picture_localisation !== null) {
+                                    $('#preview.scrolling.content').prepend('<img class="ui fluid  image" src="/preview_img/' + name_localisation + '/' + picture_localisation + '""</img>');
+                                }
+                                $('.ui.longer.modal.preview').modal({
+    onVisible: function () {
+        $(".ui.longer.modal.preview").modal("refresh");
+    }
+}).modal('show');
+
                              }
+
                     });
                        marker.on('mouseover', function(e) {
                         this.openPopup();

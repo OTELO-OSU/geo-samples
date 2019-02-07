@@ -36,6 +36,7 @@
 }
 
 #preview iframe img{
+  overflow: auto;
 	height: 100%!important;
 	width: 100%!important;
 }
@@ -47,4 +48,6 @@
 #signup{
   max-width: 450px;
 }
+
+
 

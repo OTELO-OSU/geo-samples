@@ -243,13 +243,13 @@ var fileDisplayTemplate = '<div class="_jsonform-preview">' +
 var inputFieldTemplate = function (type) {
   return {
     'template': '<input type="' + type + '" ' +
-      'class=\'form-control<%= (fieldHtmlClass ? " " + fieldHtmlClass : "") %>\'' +
+      'class=\'form-control input-lg <%= (fieldHtmlClass ? " " + fieldHtmlClass : "") %>\'' +
       'name="<%= node.name %>" data-validate="<%= node.name.replace("[]","") %>" value="<%= escape(value) %>" id="<%= id %>"' +
       '<%= (node.disabled? " disabled" : "")%>' +
       '<%= (node.readOnly ? " readonly=\'readonly\'" : "") %>' +
       '<%= (node.schemaElement && node.schemaElement.maxLength ? " maxlength=\'" + node.schemaElement.maxLength + "\'" : "") %>' +
       '<%= (node.schemaElement && node.schemaElement.required && (node.schemaElement.type !== "boolean") ? " required=\'required\'" : "") %>' +
-      '<%= (node.placeholder? " placeholder=" + \'"\' + escape(node.placeholder) + \'"\' : "")%>' +
+      '<%= (node.title? " placeholder=" + \'"\' + escape(node.title) + \'"\' : "")%>' +
       ' />',
     'fieldtemplate': true,
     'inputfield': true
@@ -848,8 +848,8 @@ jsonform.elementTypes = {
   'array': {
     'template': '<div id="<%= id %>"><ul class="_jsonform-array-ul" style="list-style-type:none;"><%= children %></ul>' +
       '<span class="_jsonform-array-buttons">' +
-        '<a href="#" class="btn btn-default _jsonform-array-addmore"><i class="glyphicon glyphicon-plus-sign" title="Add new"></i></a> ' +
-        '<a href="#" class="btn btn-default _jsonform-array-deletelast"><i class="glyphicon glyphicon-minus-sign" title="Delete last"></i></a>' +
+        '<a href="#" class="ui button green _jsonform-array-addmore"><i class="glyphicon glyphicon-plus-sign" title="Add new"></i></a> ' +
+        '<a href="#" class="ui button red _jsonform-array-deletelast"><i class="glyphicon glyphicon-minus-sign" title="Delete last"></i></a>' +
       '</span>' +
       '</div>',
     'fieldtemplate': true,
