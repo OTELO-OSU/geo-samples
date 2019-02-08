@@ -633,7 +633,7 @@ echo $generatedfile;
 
     }
 
-    function Post_Processing($POST)
+    function Post_Processing($POST,$route)
     {
         $config = self::ConfigFile();
 
@@ -729,7 +729,6 @@ echo $generatedfile;
 
 
         $SUPPLEMENTARY_FIELDS=array('HOST_LITHOLOGY_OR_PROTOLITH','LITHOLOGY1','LITHOLOGY2','LITHOLOGY3','ORETYPE1','ORETYPE2','ORETYPE3','TEXTURE1','TEXTURE2','TEXTURE3','SUBSTANCE','STORAGE_DETAILS','HOST_AGE','MAIN_EVENT_AGE','OTHER_EVENT_AGE','ALTERATION_DEGREE','SAMPLE_NAME','BLOCK','PULP','SAFETY_CONSTRAINTS','SAMPLE_LOCATION_FACILITY','DESCRIPTION');
-        var_dump($_POST);
         $error=null;
 
              $required = array(
@@ -919,10 +918,8 @@ echo $generatedfile;
         $arrKey["STATUS"]  = "Awaiting";
             // $sample_name=$sample_name.'_'.$value[1];
         $sample_name = $sample_name.'_'.$_POST['measurements'][1];
-        $insert=array('_id' => strtoupper($sample_name),"INTRO"=>$arrKey,'DATA'=>$data);
 
         //echo   json_encode($arrKey);
-var_dump($error);
         if (!$error == null) {
          //si on rencontre une erreur on retourne le tableau et on l'affiche
                 $array['dataform'] = $arrKey;
@@ -941,15 +938,93 @@ var_dump($error);
                 $this->logger->error($e->getMessage());
             }
              $bulk = new MongoDB\Driver\BulkWrite;
-           
+
+             if ($route=='modify') {
+                  try{
+                     unset($arrKey["STATUS"]);
+                $insert=array('_id' => strtoupper($sample_name),"INTRO"=>$arrKey,'DATA'=>$data);
+                $bulk->insert($insert);
+                $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'], $bulk);
+                $bulk = new MongoDB\Driver\BulkWrite;
+                $bulk->delete(['_id' => strtoupper($sample_name)]);
+                $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $bulk);
+
+                return true;
+           }
+           catch (MongoDB\Driver\Exception\BulkWriteException  $e) {
+                     $array['dataform'] = $arrKey;
+                    $array['error']    = 'Sample name already in database';
+                    return $array;
+                }
+             }
+             elseif($route=='upload') {
+
+           try{
+            $filter=array();
+                $filter = ['_id' => strtoupper($sample_name)];
+               
+
+                $query = new MongoDB\Driver\Query($filter);
+                $cursor = $this->db->executeQuery($config['dbname'].'.'.$config['COLLECTION_NAME'], $query);
+
+                foreach ($cursor as $document) {
+                    if($document->_id== strtoupper($sample_name)){
+                    $array['dataform'] = $arrKey;
+                    $array['error']    = 'Sample name already in database';
+                    return $array;
+                    }
+                }
+
+                
+
+                $insert=array('_id' => strtoupper($sample_name),"INTRO"=>$arrKey,'DATA'=>$data);
                 $bulk->insert($insert);
                 $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $bulk);
+                return true;
+           }
+           catch (MongoDB\Driver\Exception\BulkWriteException  $e) {
+                     $array['dataform'] = $arrKey;
+                    $array['error']    = 'Sample name already in database';
+                    return $array;
+                }
+             }
         }
 
                                                
             
    // }
         }
+
+
+
+        function delete_data($id)
+        {
+                    $config = self::ConfigFile();
+
+            try {
+                    if(empty($config['authSource']) && empty($config['username']) && empty($config['password'])) {
+                        $this->db = new MongoDB\Driver\Manager("mongodb://" . $config['host'] . ':' . $config['port'], array('journal' => false));
+                    } else {
+                        $this->db= new MongoDB\Driver\Manager("mongodb://" . $config['host'] . ':' . $config['port'], array('journal' => false, 'authSource' => $config['authSource'], 'username' => $config['username'], 'password' => $config['password']));
+                    }
+           } catch (Exception $e) {
+                echo $e->getMessage();
+                $this->logger->error($e->getMessage());
+            }
+
+            $data=self::Request_data_awaiting($id);
+            foreach ($data['_source']['DATA']['FILES'] as $key => $value) {
+                unlink($value['ORIGINAL_DATA_URL']);
+            }
+            $bulk = new MongoDB\Driver\BulkWrite;
+            $bulk->delete(['_id' => strtoupper($id)]);
+
+            $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $bulk);
+                          
+
+        }
+
+
 
 
 

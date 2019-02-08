@@ -361,7 +361,7 @@ $app->get('/upload', function (Request $req, Response $responseSlim) {
 		$feeder= $user->is_feeder($_SESSION['mail'],$config['COLLECTION_NAME']);
 		$referent= $user->is_referent($_SESSION['mail'],$config['COLLECTION_NAME']);
 		if (($feeder===true )OR ($referent===true) OR $_SESSION['admin']==1) {
-		echo $twig->render('upload.html.twig',['collection_name'=>$config['COLLECTION_NAME'], 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'], 'admin' => $_SESSION['admin'],'access'=>$_SESSION['admin']]);
+		echo $twig->render('upload.html.twig',['collection_name'=>$config['COLLECTION_NAME'],'route'=>'upload', 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'], 'admin' => $_SESSION['admin'],'access'=>$_SESSION['admin']]);
 		}else{
 			return $responseSlim->withRedirect('accueil');
 		}
@@ -388,16 +388,24 @@ $app->post('/upload', function (Request $req, Response $responseSlim) {
 		$referent= $user->is_referent($_SESSION['mail'],$config['COLLECTION_NAME']);
 		if (($feeder===true )OR ($referent===true) OR $_SESSION['admin']==1) {
 		$request      = new RequestApi();
-		$response=$request->Post_Processing($_POST);
+		$response=$request->Post_Processing($_POST,'upload');
 		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
 		$twig   = new Twig_Environment($loader);
+
+		if ($response === true) {
+					echo $twig->render('display_actions.html.twig',['message'=>'Data submitted to referents']);
+
+		}else{
+
 			echo $twig->render('upload.html.twig',[ 
 				'collection_name'=>$config['COLLECTION_NAME'],
 			'edit'=>true,'name_CSRF' => $namecsrf,
+			'route'=>'upload',
 			 'value_CSRF' => $valuecsrf, 
 			 'mail' => $_SESSION['mail'],
 			  'admin' => $_SESSION['admin'],
 			  'access'=>$_SESSION['admin'],
+			  'error'=>$response['error'],
 			  'title'=>$response['dataform']['TITLE'],
 			  'description'=>$response['dataform']['DESCRIPTION'],
 			  'sample_name'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME'],
@@ -414,6 +422,7 @@ $app->post('/upload', function (Request $req, Response $responseSlim) {
 
 			]);
 	
+		}
 		}else{
 			return $responseSlim->withRedirect('accueil');
 		}
@@ -443,6 +452,7 @@ $app->get('/modify/{id}', function (Request $req, Response $responseSlim,$args) 
 		echo $twig->render('upload.html.twig',[ 
 			'collection_name'=>$config['COLLECTION_NAME'],
 			'edit'=>true,
+			'route'=>'modify',
 			'id'=>$args['id'],
 			'name_CSRF' => $namecsrf,
 			 'value_CSRF' => $valuecsrf, 
@@ -487,6 +497,8 @@ $app->get('/modify/{id}', function (Request $req, Response $responseSlim,$args) 
 			     'methodology_conditionning'=>$response['_source']['INTRO']['METHODOLOGY'][1]['DESCRIPTION'],
 			      'methodology_sample_storage'=>$response['_source']['INTRO']['METHODOLOGY'][2]['DESCRIPTION'],
 			       'sampling_points'=>$response['_source']['INTRO']['SAMPLING_POINT'],
+			       	'files' => $response['_source']['DATA']['FILES'],
+
 
 
 
@@ -502,6 +514,61 @@ $app->get('/modify/{id}', function (Request $req, Response $responseSlim,$args) 
 	
 });
 
+$app->post('/modify', function (Request $req, Response $responseSlim) {
+	
+		$nameKey = $this
+		->csrf
+		->getTokenNameKey();
+		$valueKey = $this
+		->csrf
+		->getTokenValueKey();
+		$namecsrf  = $req->getAttribute($nameKey);
+		$valuecsrf = $req->getAttribute($valueKey);
+		$user      = new User();
+		$file   = new File();
+		$config = $file->ConfigFile();
+		$referent= $user->is_referent($_SESSION['mail'],$config['COLLECTION_NAME']);
+		if (($referent===true) OR $_SESSION['admin']==1) {
+		$request      = new RequestApi();
+		$response=$request->Post_Processing($_POST,'modify');
+		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
+		$twig   = new Twig_Environment($loader);
+
+		if ($response === true) {
+					echo $twig->render('display_actions.html.twig',['message'=>'Data approved']);
+
+		}else{
+
+			echo $twig->render('upload.html.twig',[ 
+				'collection_name'=>$config['COLLECTION_NAME'],
+			'edit'=>true,'name_CSRF' => $namecsrf,
+			'route'=>'modify',
+			 'value_CSRF' => $valuecsrf, 
+			 'mail' => $_SESSION['mail'],
+			  'admin' => $_SESSION['admin'],
+			  'access'=>$_SESSION['admin'],
+			  'error'=>$response['error'],
+			  'title'=>$response['dataform']['TITLE'],
+			  'description'=>$response['dataform']['DESCRIPTION'],
+			  'sample_name'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME'],
+			  'language'=>$response['dataform']['LANGUAGE'],
+			  'block'=>$response['dataform']['BLOCK'],
+			  'language'=>$response['dataform']['LANGUAGE'],
+			  'keywords'=>$response['dataform']['KEYWORDS'],
+			  'institutions'=>$response['dataform']['INSTITUTION'],
+			   'measurement_abbv'=>$response['dataform']['MEASUREMENT'][0]['ABBREVIATION'],
+			   'sampling_date'=>$response['dataform']['SAMPLING_DATE'][0],
+			   'lithology1'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['LITHOLOGY1'],
+			   	'lithology2'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['LITHOLOGY2'],
+			   'lithology3'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['LITHOLOGY3'],
+
+			]);
+	
+		}
+		}else{
+			return $responseSlim->withRedirect('accueil');
+		}
+});
 
 
 
@@ -537,6 +604,20 @@ $app->post('/recover', function (Request $req, Response $responseSlim) {
 	echo $twig->render('recover.html.twig', ['error' => $error, 'post' => 'true']);
 
 })->add($mw);
+
+
+$app->post('/delete_data', function (Request $req, Response $responseSlim) {
+
+		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
+		$twig   = new Twig_Environment($loader);
+		$id  = $req->getparam('id');
+		$req   = new RequestApi();
+		$error  = $req->delete_data($id);
+	
+
+});
+
+
 
 $app->post('/resetpassword', function (Request $req, Response $responseSlim) {
 	$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');

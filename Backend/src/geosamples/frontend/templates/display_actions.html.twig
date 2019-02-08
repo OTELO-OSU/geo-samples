@@ -1,0 +1,20 @@
+{% include 'header.html.twig' %}
+<div class="ui grid">
+	<div class="ui eight wide centered column">
+	<div class="row"></div>
+<div class="ui message success ">
+	{{message|raw}}
+</div>
+<h2> You will be redirected in 3 seconds</h2>
+</div>
+</div>
+
+
+{% include 'footer.html.twig' %}
+
+
+<script type="text/javascript">
+setTimeout(function(){
+window.location.href="/myaccount";
+}, 3000);
+</script>

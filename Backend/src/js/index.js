@@ -68,10 +68,10 @@ var APP = (function() {
             $('.ui.modal.preview').modal('hide');
             k=k.toUpperCase();
             console.log(APP.data_raw);
+            console.log(k)
             k=APP.data_raw[k]
 
 
-            console.log(k)
             measurements = '';
             rawdatas = '';
             supplementary_fields='';
@@ -288,8 +288,11 @@ var APP = (function() {
                         }
 
                             if (k.SUPPLEMENTARY_FIELDS) {
-                                if (k.SUPPLEMENTARY_FIELDS.CORE_DETAILS || k.SUPPLEMENTARY_FIELDS.BLOCK) {
+                                     
+                                if (k.SUPPLEMENTARY_FIELDS.CORE_DETAILS || k.SUPPLEMENTARY_FIELDS.BLOCK ) {
                                     if (k.SUPPLEMENTARY_FIELDS.CORE_DETAILS[0].CORE.toUpperCase() == 'YES' && k.SUPPLEMENTARY_FIELDS.CORE_DETAILS[0].DEPTH != null) {
+                                        $('.preview .header').empty();
+                                        $('.preview .header').append('Core');
                                         $('#preview').append('<div id="line"></div><style>.event{top:-30px!important;}</style>');
                                         object= new Object();
                                         object.date=k.SUPPLEMENTARY_FIELDS.CORE_DETAILS[0].DEPTH;
@@ -299,6 +302,8 @@ var APP = (function() {
                                         
                                     }
                                     else if (k.SUPPLEMENTARY_FIELDS.BLOCK.toUpperCase() == 'YES' && k.SAMPLING_POINT[0].ELEVATION != null){
+                                        $('.preview .header').empty();
+                                        $('.preview .header').append('OUTCROP');
                                         $('#preview').append('<div id="line"></div>');
                                         object= new Object();
                                         object.date=k.SAMPLING_POINT[0].ELEVATION;
@@ -306,6 +311,19 @@ var APP = (function() {
                                         samples.push(object);
                                         orientation='horizontal';
                                     }
+                                }
+                                if (k.SUPPLEMENTARY_FIELDS.STATION) {
+                                     if (k.SUPPLEMENTARY_FIELDS.STATION.toUpperCase() == 'YES' && k.SAMPLING_DATE[0] != null){
+                                        $('.preview .header').empty();
+                                        $('.preview .header').append('Samples by sampling date');
+                                        $('#preview').append('<div id="line"></div>');
+                                        object= new Object();
+                                        object.date=k.SAMPLING_DATE[0];
+                                        object.content='<a onclick=\"APP.modules.map.affichageinfo(\''+k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME+'\');\">'+k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME+'</a>';
+                                        samples.push(object);
+                                        orientation='horizontal';
+                                    }
+
                                 }
                            
                             $(".actions a").remove();

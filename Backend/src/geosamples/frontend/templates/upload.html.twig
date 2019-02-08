@@ -19,7 +19,28 @@
    <div class="text" id="file-select-button">Click here to import metadata from a csv file<i id="uploadmetadata" class="upload large green icon"></i></div> 
    <input hidden type="file" id="metadatafile" name="metadata" />
   </div>-->
-		<form method="post" action="upload" class="ui form" name="form" enctype="multipart/form-data">
+   <div id="warning" class="ui fourteen wide column centered">
+      {% if error %}
+      <div class="ui warning message">
+         <div class="header">
+            Warning!  
+         </div>
+         {{error}}
+      </div>
+      {% endif %}
+		<form method="post" action="/{{route}}" class="ui form" name="form" enctype="multipart/form-data">
+			{%if files%}
+			   <div class="ui grid">
+         
+            	<h1>Linked files</h1>
+            {%for file in files%}
+               <div class="ui input">
+                     <input id="text" type="text" name="file_already_uploaded[]" value={{file.DATA_URL}} readonly><div class="ui icon delete"><i class="remove icon"></i></div>
+               </div>
+            {%endfor%}
+       
+    </div>
+            {%endif%}
 
 
 
@@ -44,11 +65,14 @@
  </div>
 
 <script type="text/javascript">
+	 $("body").on("click", ".delete", function(e) {
+                  $(this).parent("div").remove();
+              });
 	function remove(){
 		 $(".modal.remove .header").empty();
          $(".modal.remove .content").empty();
          $(".modal.remove .header").append('Are you sure to remove {{id}} ?  ');
-         $(".modal.remove .content").append('<form class="ui form " action="delete_data" method="post"><input type="hidden" name="csrf_name" value=""><input type="hidden" name="csrf_value" value=""><input type="hidden" name="id" value="{{id}}"> <div class="actions"> <div class="ui black deny button"> Cancel </div> <button class="ui submit green button" >Yes</button> </div> </form>');
+         $(".modal.remove .content").append('<form class="ui form " action="/delete_data" method="post"><input type="hidden" name="csrf_name" value=""><input type="hidden" name="csrf_value" value=""><input type="hidden" name="id" value="{{id}}"> <div class="actions"> <div class="ui black deny button"> Cancel </div> <button class="ui submit green button" >Yes</button> </div> </form>');
          $('.ui.modal.remove').modal('show');
 	}
 
