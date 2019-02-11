@@ -2,6 +2,11 @@
 
 {%set supplementary_fields_schema%}
 
+rawdata: {
+			type: 'files',
+			title: 'RawData'
+
+		},
 sample_location_facility: {
 type: 'string',
 title: 'SAMPLE LOCATION FACILITY'
@@ -193,6 +198,11 @@ type: 'string',
 
 
 {%set supplementary_fields_form%}
+{
+			"key": "rawdata"
+			
+			
+		},
 {
 	      "type": "advancedfieldset",
 	      "title":"Supplementary fields",

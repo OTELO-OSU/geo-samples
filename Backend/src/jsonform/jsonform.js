@@ -414,7 +414,6 @@ jsonform.elementTypes = {
         }
         editor.getSession().setTabSize(2);
 
-        // Set the contents of the initial manifest file
         editor.getSession().setValue(node.value||"");
 
         //TODO this is clearly sub-optimal
@@ -466,6 +465,13 @@ jsonform.elementTypes = {
     }
   },
   'file':{
+    'template':'<input class="input-file" id="<%= id %>" name="<%= node.name %>[]" data-validate="<%= node.name %>" type="file" ' +
+      '<%= (node.schemaElement && node.schemaElement.required ? " required=\'required\'" : "") %>' +
+      '/>',
+    'fieldtemplate': true,
+    'inputfield': true
+  },
+  'files':{
     'template':'<input class="input-file" id="<%= id %>" name="<%= node.name %>[]" type="file" multiple ' +
       '<%= (node.schemaElement && node.schemaElement.required ? " required=\'required\'" : "") %>' +
       '/>',

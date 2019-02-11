@@ -229,6 +229,18 @@
 $('.ui.form')
   .form({
     fields: {
+
+data:{
+	identifier: 'data',
+	rules:[
+	{
+        type   : 'regExp',
+        value  : '/^(.*.((csv|xlsx)$))?[^.]*$/i',
+        prompt : 'Please upload a file in suggested format (CSV,XLSX)'
+      }
+ ]
+},
+
       title: {
         identifier: 'title',
         rules: [

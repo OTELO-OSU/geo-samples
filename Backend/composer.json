@@ -3,7 +3,8 @@
 	"illuminate/database": "5.0.*",
         "slim/slim": "^3.5",
 	"slim/csrf": "*",
-	"twig/twig": "~1.0"
+	"twig/twig": "~1.0",
+    "phpoffice/phpexcel" : ">=1.8.1"
     },
   "autoload": {
 

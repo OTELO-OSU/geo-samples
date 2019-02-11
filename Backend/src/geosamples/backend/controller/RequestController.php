@@ -636,7 +636,9 @@ echo $generatedfile;
     function Post_Processing($POST,$route)
     {
         $config = self::ConfigFile();
-
+        $rawdata=null;
+        $data=null;
+        $pictures=null;
                     $UPLOAD_FOLDER    = $config["CSV_FOLDER"];
                 if ($_FILES['data']['error'][0] != '0') {
 
@@ -664,12 +666,136 @@ echo $generatedfile;
                                     if (rename($_FILES["data"]["tmp_name"][$i], $repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]. "/" . $nomDestination)) {
                                         $extension = new \SplFileInfo($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1] ."/" . $nomDestination);
                                         $filetypes = $extension->getExtension();
-                                        if (strlen($filetypes) == 0 or strlen($filetypes) > 4) {
-                                            $filetypes = 'unknow';
+                                        $file=$repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1] ."/" . $nomDestination;
+                                       if ($filetypes == 'csv' or $filetypes == 'xlsx') {
+                                        if ($filetypes == 'csv') {
+                                            
+                                           $type = \PHPExcel_IOFactory::identify($file);
+                                            $objReader = \PHPExcel_IOFactory::createReader($type);
+
+                                            $objPHPExcel = $objReader->load($file);
+                                             $sheet         = $objPHPExcel->getActiveSheet();
+                                            $highestColumn = \PHPExcel_Cell::columnIndexFromString($sheet->getHighestColumn());
+
+                                             $rowIterator   = $sheet->getRowIterator();
+                                                $units         = array();
+                                                $keys          = array();
+                                                $obj           = array();
+                                                $data_samples  = array();
+                                          
+                                                
+                                                $startFields = 2;
+                                                
+                                                foreach ($rowIterator as $ligne => $row) {
+                                                    $cellIterator = $row->getCellIterator();
+                                                    $cellIterator->setIterateOnlyExistingCells(false);
+                                                    foreach ($cellIterator as $cell) {
+                                                        $indice = \PHPExcel_Cell::columnIndexFromString($cell->getColumn());
+                                                        if ($ligne == 1) {
+                                                            $key = trim($cell->getValue());
+                                                            if (strpos($key, ".") !== false) {
+                                                                $msg = "\t Caractere '.' detecte dans la clef [$key] : suppression";
+                                                                echo PHP_EOL . $msg . PHP_EOL;
+                                                                $this->logger->warning($msg);
+                                                                $key = preg_replace('/./', '', $key);
+                                                            }
+                                                            $units[$key] = $sheet->getCellByColumnAndRow($indice - 1, $ligne + 1)->getValue();
+                                                            
+                                                            if ($indice == $highestColumn) {
+                                                                $keys = array_keys($units);
+                                                            }
+                                                        } else if ($ligne > $startFields) {
+                                                            $value = $cell->getValue();
+                                                            if (!empty($keys[$indice - 1])) {
+                                                              
+                                                                        $obj[$keys[$indice - 1]] = $value;
+                                                                }
+                                                            
+                                                            if ($indice == $highestColumn) {
+                                                                
+                                                               // $arrKey["SAMPLES"][] = $obj;
+                                                                $data_samples["SAMPLES"][]=$obj;
+                                                            }
+                                                        }
+                                                    }
+                                                    
+                                                }
+
+                                                $data["SAMPLES"]=$data_samples["SAMPLES"];
+                                        }
+                                        if ($filetypes == 'xlsx') {
+
+
+                                            
+                                           $type = \PHPExcel_IOFactory::identify($file);
+                                            $objReader = \PHPExcel_IOFactory::createReader($type);
+                                            $objPHPExcel = $objReader->load($file);
+                                             $sheet         = $objPHPExcel->getActiveSheet();
+                                            $highestColumn = \PHPExcel_Cell::columnIndexFromString($sheet->getHighestColumn());
+
+
+                                             $rowIterator   = $sheet->getRowIterator();
+                                                $units         = array();
+                                                $keys          = array();
+                                                $obj           = array();
+                                                $data_samples  = array();
+                                          
+                                                
+                                                $startFields = 2;
+                                                foreach ($rowIterator as $ligne => $row) {
+                                                    $cellIterator = $row->getCellIterator();
+                                                    $cellIterator->setIterateOnlyExistingCells(false);
+                                                    foreach ($cellIterator as $cell) {
+                                                        $indice = \PHPExcel_Cell::columnIndexFromString($cell->getColumn());
+                                                        if ($ligne == 1) {
+                                                            $key = trim($cell->getValue());
+                                                            if (strpos($key, ".") !== false) {
+                                                                $msg = "\t Caractere '.' detecte dans la clef [$key] : suppression";
+                                                                echo PHP_EOL . $msg . PHP_EOL;
+                                                                $this->logger->warning($msg);
+                                                                $key = preg_replace('/./', '', $key);
+                                                            }
+                                                            $units[$key] = $sheet->getCellByColumnAndRow($indice - 1, $ligne + 1)->getValue();
+                                                            
+                                                            if ($indice == $highestColumn) {
+                                                                $keys = array_keys($units);
+                                                            }
+                                                        } else if ($ligne > $startFields) {
+                                                            $value = $cell->getValue();
+                                                            if (!empty($keys[$indice - 1])) {
+                                                              
+                                                                        $obj[$keys[$indice - 1]] = $value;
+                                                                }
+                                                            
+                                                            if ($indice == $highestColumn) {
+                                                                
+                                                               // $arrKey["SAMPLES"][] = $obj;
+                                                                $data_samples["SAMPLES"][]=$obj;
+                                                            }
+                                                        }
+                                                    }
+                                                    
+                                                }
+
+                                                $data["SAMPLES"]=$data_samples["SAMPLES"];
+                                        
+
+
+
+                                        }
+
+                                         
+                                           
+
+                                  
+
+                                        }
+                                        else{
+                                            $error='Bad extension';
                                         }
                                         $data["FILES"][$i]["FILETYPE"] = $filetypes;
                                         $data["FILES"][$i]["ORIGINAL_DATA_URL"] = $repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1] ."/" . $nomDestination;
-
+                                        //var_dump($data);
                                         //$collection                    = "Manual_Depot";
                                        // $collectionObject              = $this->db->selectCollection($config["authSource"], $collection);
                                     } else {
@@ -682,7 +808,6 @@ echo $generatedfile;
                 
             }
         }
-
             if ($_FILES['pictures']['error'][0] != '0') {
                 }
             else{
@@ -691,7 +816,7 @@ echo $generatedfile;
                         $size = $_FILES["pictures"]["size"][$i];
                         $repertoireDestination         = $UPLOAD_FOLDER;
                         $nomDestination                = str_replace(' ', '_', $_FILES["pictures"]["name"][$i]);
-                        $data["FILES"][$i]["DATA_URL"] = $nomDestination;
+                        $pictures["FILES"][$i]["DATA_URL"] = $nomDestination;
                         
                             if (file_exists($repertoireDestination . $_FILES["pictures"]["name"][$i])) {
                                 $returnarray[] = "false";
@@ -711,8 +836,8 @@ echo $generatedfile;
                                         if (strlen($filetypes) == 0 or strlen($filetypes) > 4) {
                                             $filetypes = 'unknow';
                                         }
-                                        $data["FILES"][$i]["FILETYPE"] = $filetypes;
-                                        $data["FILES"][$i]["ORIGINAL_DATA_URL"] = $repertoireDestination  ."/". $_POST['sample_name'] . "_META/" . $nomDestination;
+                                        $pictures["FILES"][$i]["FILETYPE"] = $filetypes;
+                                        $pictures["FILES"][$i]["ORIGINAL_DATA_URL"] = $repertoireDestination  ."/". $_POST['sample_name'] . "_META/" . $nomDestination;
 
                                         //$collection                    = "Manual_Depot";
                                        // $collectionObject              = $this->db->selectCollection($config["authSource"], $collection);
@@ -726,7 +851,63 @@ echo $generatedfile;
             }
                 
             }
+              if ($_FILES['rawdata']['error'][0] != '0') {
 
+                }
+                else{
+                      for ($i = 0; $i < count($_FILES['rawdata']['name']); $i++) {
+                        // on parcourt les fichiers uploader
+                        $size = $_FILES["rawdata"]["size"][$i];
+                        $repertoireDestination         = $UPLOAD_FOLDER;
+                        $nomDestination                = str_replace(' ', '_', $_FILES["rawdata"]["name"][$i]);
+                        $rawdata["FILES"][$i]["DATA_URL"] = $nomDestination;
+                        
+                            if (file_exists($repertoireDestination . $_FILES["rawdata"]["name"][$i])) {
+                                $returnarray[] = "false";
+                                $returnarray[] = $array['dataform'];
+                                return $returnarray;
+                            } else {
+                                if (is_uploaded_file($_FILES["rawdata"]["tmp_name"][$i])) {
+                                    if (is_dir($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]) == false) {
+                                        mkdir($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]);
+                                    }
+                                    if (!file_exists($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1])) {
+                                        mkdir($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]);
+                                    }
+                                    if (rename($_FILES["rawdata"]["tmp_name"][$i], $repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]. "/" . $nomDestination)) {
+                                        $extension = new \SplFileInfo($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1] ."/" . $nomDestination);
+                                        $filetypes = $extension->getExtension();
+                                        $file=$repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1] ."/" . $nomDestination;
+                                       /* if ($filetypes == 'csv' or $filetypes == 'xlsx') {
+                                        var_dump($file);
+                                         
+                                            $excelReader = PHPExcel_IOFactory::createReaderForFile($file);
+                                            $excelObj = $excelReader->load($file);
+                                            $worksheet = $excelObj->getSheet(0);
+                                            $lastRow = $worksheet->getHighestRow();
+                                            var_dump($excelReader);
+
+                                    exit();
+
+                                        }
+                                        else{
+                                            $error='Bad extension';
+                                        }*/
+                                        $rawdata["FILES"][$i]["FILETYPE"] = $filetypes;
+                                        $rawdata["FILES"][$i]["ORIGINAL_DATA_URL"] = $repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1] ."/" . $nomDestination;
+
+                                        //$collection                    = "Manual_Depot";
+                                       // $collectionObject              = $this->db->selectCollection($config["authSource"], $collection);
+                                    } else {
+                                        $returnarray[] = "false";
+                                        $returnarray[] = $array['dataform'];
+                                        return $returnarray;
+                                    }
+                                }
+                            }
+
+            }
+        }
 
         $SUPPLEMENTARY_FIELDS=array('HOST_LITHOLOGY_OR_PROTOLITH','LITHOLOGY1','LITHOLOGY2','LITHOLOGY3','ORETYPE1','ORETYPE2','ORETYPE3','TEXTURE1','TEXTURE2','TEXTURE3','SUBSTANCE','STORAGE_DETAILS','HOST_AGE','MAIN_EVENT_AGE','OTHER_EVENT_AGE','ALTERATION_DEGREE','SAMPLE_NAME','BLOCK','PULP','SAFETY_CONSTRAINTS','SAMPLE_LOCATION_FACILITY','DESCRIPTION');
         $error=null;
@@ -909,7 +1090,6 @@ echo $generatedfile;
             
 
 
-
        // foreach ($POST['measurements'] as $key => $value) {
         $sample_name=$sample_name_old;
         $arrKey["ACCESS_RIGHT"] = "Draft";
@@ -937,9 +1117,9 @@ echo $generatedfile;
                 echo $e->getMessage();
                 $this->logger->error($e->getMessage());
             }
-             $bulk = new MongoDB\Driver\BulkWrite;
 
              if ($route=='modify') {
+             $bulk = new MongoDB\Driver\BulkWrite;
                   try{
                      unset($arrKey["STATUS"]);
                 $insert=array('_id' => strtoupper($sample_name),"INTRO"=>$arrKey,'DATA'=>$data);
@@ -960,6 +1140,7 @@ echo $generatedfile;
              elseif($route=='upload') {
 
            try{
+            $bulk = new MongoDB\Driver\BulkWrite;
             $filter=array();
                 $filter = ['_id' => strtoupper($sample_name)];
                
@@ -974,18 +1155,52 @@ echo $generatedfile;
                     return $array;
                     }
                 }
-
-                
-
+                $data =array_merge_recursive($data,$pictures);
                 $insert=array('_id' => strtoupper($sample_name),"INTRO"=>$arrKey,'DATA'=>$data);
                 $bulk->insert($insert);
                 $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $bulk);
-                return true;
            }
            catch (MongoDB\Driver\Exception\BulkWriteException  $e) {
                      $array['dataform'] = $arrKey;
                     $array['error']    = 'Sample name already in database';
                     return $array;
+                }
+
+                if ($rawdata) {
+                            try{
+                                             $bulk = new MongoDB\Driver\BulkWrite;
+
+                          $filter=array();
+                        $filter = ['_id' => strtoupper($sample_name).'_RAW'];
+                       
+
+                        $query = new MongoDB\Driver\Query($filter);
+                        $cursor = $this->db->executeQuery($config['dbname'].'.'.$config['COLLECTION_NAME'], $query);
+
+                        foreach ($cursor as $document) {
+                            if($document->_id== strtoupper($sample_name)){
+                            $array['dataform'] = $arrKey;
+                            $array['error']    = 'Sample name already in database';
+                            return $array;
+                            }
+                        }
+
+                        $rawdata =array_merge_recursive($rawdata,$pictures);
+
+
+                        $insert=array('_id' => strtoupper($sample_name).'_RAW',"INTRO"=>$arrKey,'DATA'=>$rawdata);
+                        $bulk->insert($insert);
+                        $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $bulk);
+                        exit();
+                        return true;
+                   }
+                   catch (MongoDB\Driver\Exception\BulkWriteException  $e) {
+                             $array['dataform'] = $arrKey;
+                            $array['error']    = 'Sample name already in database';
+                            return $array;
+                        }
+                }else{
+                    return true;
                 }
              }
         }
