@@ -6,8 +6,11 @@
 <script type="text/javascript" src="/jsonform/jsonform.js"></script>
 <script type="text/javascript" src="/js/jquery.chained.js"></script>
 <script type="text/javascript" src="/js/jquery.csv.js"></script>
+<script type="text/javascript" src="/js/datepicker.js"></script>
+
   <script src="/css/semantic/dist/semantic.min.js">
   </script>
+<link rel="stylesheet" type="text/css" href="/css/datepicker.css" />
 <link rel="stylesheet" type="text/css" href="/jsonform/css/bootstrap.css" />
 <div class="ui grid container">
 	<div class="row">
@@ -213,6 +216,46 @@
 		}
 
 		 $(function() {
+		 	$('.ui.accordion')
+			  .accordion()
+			  $( ".submit" ).click(function() {
+				 $('.ui.accordion').each(function(i){
+				    $(this).parent().accordion('open',i);
+				});
+			});
+			  $('[name="sampling_date"]').datepicker({ format: 'yyyy-mm-dd'});
+
+			$("input[name='core']").click(function(){
+
+			var core=$("input[name='core']:checked").val();
+            if(core=='Yes'){
+                var radios = $('input:radio[name=block]');
+                radios.filter('[value=No]').prop('checked', true);
+
+            }else{
+            	 var radios = $('input:radio[name=block]');
+                radios.filter('[value=No]').prop('checked', false);
+
+            }
+        });
+				$("input[name='block']").click(function(){
+
+			var core=$("input[name='block']:checked").val();
+            if(core=='Yes'){
+                var radios = $('input:radio[name=core]');
+                radios.filter('[value=No]').prop('checked', true);
+                $('.form-group.jsonform-error-core_depth').addClass("hidden field");
+        $('.form-group.jsonform-error-core_azimut').addClass("hidden field");
+        $('.form-group.jsonform-error-core_dip').addClass("hidden field");
+
+            }else{
+            	 var radios = $('input:radio[name=core]');
+                radios.filter('[value=No]').prop('checked', false);
+
+            }
+        });
+
+			
 		$("#jsonform-1-elt-lithology2").chained("#jsonform-1-elt-lithology1");
 		$("#jsonform-1-elt-lithology3").chained("#jsonform-1-elt-lithology2");
 		$("#jsonform-1-elt-texture2").chained("#jsonform-1-elt-texture1");
@@ -236,6 +279,16 @@ data:{
 	{
         type   : 'regExp',
         value  : '/^(.*.((csv|xlsx)$))?[^.]*$/i',
+        prompt : 'Please upload a file in suggested format (CSV,XLSX)'
+      }
+ ]
+},
+pictures:{
+	identifier: 'pictures',
+	rules:[
+	{
+        type   : 'regExp',
+        value  : '/^(.*.((jpeg|gif|png|tiff|jpg)$))?[^.]*$/i',
         prompt : 'Please upload a file in suggested format (CSV,XLSX)'
       }
  ]
@@ -498,6 +551,13 @@ $('.ui.dropdown[name*="institution"]')
 
 		float:right;
 	}
+	legend{
+		border-bottom: none!important;
+	}
+	.accordion{
+		padding-bottom: 10px;
+	}
+
 
 		html{
 			font-size: 14px!important;

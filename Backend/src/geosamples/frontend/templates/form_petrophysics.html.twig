@@ -59,7 +59,9 @@ title: 'HOST_LITHOLOGY_OR_PROTOLITH',
 					},
 					"COORDINATE_SYSTEM": {
 						"type": "string",
-						"title": "COORDINATE SYSTEM"
+						"title": "COORDINATE SYSTEM",
+						"enum": [ "","Lambert93", "WGS84 Greenwich" ]
+
 
 
 					},
@@ -71,25 +73,25 @@ title: 'HOST_LITHOLOGY_OR_PROTOLITH',
 					},
 					"LONGITUDE": {
 						"type": "string",
-						"title": "LONGITUDE"
+						"title": "LONGITUDE (decimal)"
 
 
 					},
 					"LATITUDE": {
 						"type": "string",
-						"title": "LATITUDE"
+						"title": "LATITUDE (decimal)"
 
 
 					},
 					"ELEVATION_M": {
 						"type": "string",
-						"title": "ELEVATION_M"
+						"title": "ELEVATION (meter)"
 
 					},
 					
 					"SAMPLING": {
 						"type": "string",
-						"title": "sampling",
+						"title": "sampling (centimeter)",
 
 
 					},
@@ -129,6 +131,8 @@ title: 'HOST_LITHOLOGY_OR_PROTOLITH',
 				}
 			}
 		},
+
+
 
 
 
@@ -174,6 +178,9 @@ core_depth: {
 type: 'string',
 },
 core_azimut: {
+type: 'string',
+},
+core_dip: {
 type: 'string',
 },
 
@@ -266,10 +273,12 @@ type: 'string',
         if (value=='Yes') {
         $('.form-group.jsonform-error-core_depth').removeClass("hidden field");
         $('.form-group.jsonform-error-core_azimut').removeClass("hidden field");
+        $('.form-group.jsonform-error-core_dip').removeClass("hidden field");
         }
         else{
-         $('.form-group.jsonform-error-core_depth').addClass("hidden field");
+        $('.form-group.jsonform-error-core_depth').addClass("hidden field");
         $('.form-group.jsonform-error-core_azimut').addClass("hidden field");
+        $('.form-group.jsonform-error-core_dip').addClass("hidden field");
         }
       }
 },
@@ -280,6 +289,11 @@ type: 'string',
 },
 {
 "key": "core_azimut",
+"htmlClass": "hidden field",
+"value":""
+},
+{
+"key": "core_dip",
 "htmlClass": "hidden field",
 "value":""
 },

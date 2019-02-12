@@ -38,7 +38,7 @@ class RequestController
         $file    = new File();
         $config  = $file->ConfigFile();
         $bdd     = strtolower($config['authSource']);
-        $url     = 'http://' . $config['ESHOST'] . '/' . $bdd . '/_search?type='.$config['COLLECTION_NAME'].'_sandbox';
+        $url     = 'http://' . $config['ESHOST'] . '/' . $bdd . '/_search?type='.$config['COLLECTION_NAME'].'_sandbox&size=10000';
         $curlopt = array(
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_PORT           => $config['ESPORT'],
@@ -1119,6 +1119,20 @@ echo $generatedfile;
             }
 
              if ($route=='modify') {
+                var_dump($POST['file_already_uploaded']);
+               $data=$arrKey['DATA'];
+               var_dump($data);
+            foreach ($data as $key => $value) {
+                    var_dump($value);
+                foreach ($POST['file_already_uploaded'] as $key => $value2) {
+                    var_dump($value2);
+                    if($value['DATA_URL']!=$value2['DATA_URL']){
+                        unset($data[$key]);
+                    }
+                }
+            }
+            var_dump($data);
+            exit();
              $bulk = new MongoDB\Driver\BulkWrite;
                   try{
                      unset($arrKey["STATUS"]);

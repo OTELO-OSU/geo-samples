@@ -261,7 +261,7 @@ jsonform.elementTypes = {
     'template': ''
   },
   'root': {
-    'template': '<div><%= children %></div>'
+    'template': '<div class="ui grid"><%= children %></div>'
   },
   'text': inputFieldTemplate('text'),
   'password': inputFieldTemplate('password'),
@@ -472,7 +472,7 @@ jsonform.elementTypes = {
     'inputfield': true
   },
   'files':{
-    'template':'<input class="input-file" id="<%= id %>" name="<%= node.name %>[]" type="file" multiple ' +
+    'template':'<input class="input-file" id="<%= id %>" data-validate="<%= node.name %>" name="<%= node.name %>[]" type="file" multiple ' +
       '<%= (node.schemaElement && node.schemaElement.required ? " required=\'required\'" : "") %>' +
       '/>',
     'fieldtemplate': true,
@@ -1192,17 +1192,15 @@ $('.ui.dropdown[name*="scientific_fields"]')
     }
   },
   'advancedfieldset': {
-    'template': '<fieldset' +
+    'template': '<div class="ui fluid styled accordion"> <div class=" title"><i class="dropdown icon"></i>' +
       '<% if (id) { %> id="<%= id %>"<% } %>' +
-      ' class="expandable <%= elt.htmlClass?elt.htmlClass:"" %>">' +
-      '<legend> <%= elt.title?elt.title:"" %> <i class="angle down icon"></i></legend>' +
-      '<div class="form-group">' +
+      
+      '<label><%= elt.title?elt.title:"" %></label> </div>' +
+      '<div class="content"><fieldset  class=" <%= elt.htmlClass?elt.htmlClass:"" %>"><div class="form-group">' +
       '<%= children %>' +
-      '</div>' +
-      '</fieldset>',
-    onInsert: function (evt, node) {
-      $('.expandable > div, .expandable > fieldset', node.el).hide();
-    }
+      '</div></fieldset>' +
+      '</div></div><div class="row"></div>',
+ 
   },
   'authfieldset': {
     'template': '<fieldset' +
