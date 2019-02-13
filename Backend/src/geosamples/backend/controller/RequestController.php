@@ -639,6 +639,8 @@ echo $generatedfile;
         $rawdata=null;
         $data=null;
         $pictures=null;
+       
+      
                     $UPLOAD_FOLDER    = $config["CSV_FOLDER"];
                 if ($_FILES['data']['error'][0] != '0') {
 
@@ -794,6 +796,7 @@ echo $generatedfile;
                                             $error='Bad extension';
                                         }
                                         $data["FILES"][$i]["FILETYPE"] = $filetypes;
+                                        $data["FILES"][$i]["TYPE_DATA"] = 'Data';
                                         $data["FILES"][$i]["ORIGINAL_DATA_URL"] = $repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1] ."/" . $nomDestination;
                                         //var_dump($data);
                                         //$collection                    = "Manual_Depot";
@@ -837,6 +840,7 @@ echo $generatedfile;
                                             $filetypes = 'unknow';
                                         }
                                         $pictures["FILES"][$i]["FILETYPE"] = $filetypes;
+                                        $pictures["FILES"][$i]["TYPE_DATA"] = 'Pictures';
                                         $pictures["FILES"][$i]["ORIGINAL_DATA_URL"] = $repertoireDestination  ."/". $_POST['sample_name'] . "_META/" . $nomDestination;
 
                                         //$collection                    = "Manual_Depot";
@@ -868,16 +872,16 @@ echo $generatedfile;
                                 return $returnarray;
                             } else {
                                 if (is_uploaded_file($_FILES["rawdata"]["tmp_name"][$i])) {
-                                    if (is_dir($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]) == false) {
-                                        mkdir($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]);
+                                    if (is_dir($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1].'_RAW') == false) {
+                                        mkdir($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1].'_RAW');
                                     }
-                                    if (!file_exists($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1])) {
-                                        mkdir($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]);
+                                    if (!file_exists($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1].'_RAW')) {
+                                        mkdir($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1].'_RAW');
                                     }
-                                    if (rename($_FILES["rawdata"]["tmp_name"][$i], $repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]. "/" . $nomDestination)) {
-                                        $extension = new \SplFileInfo($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1] ."/" . $nomDestination);
+                                    if (rename($_FILES["rawdata"]["tmp_name"][$i], $repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1].'_RAW'. "/" . $nomDestination)) {
+                                        $extension = new \SplFileInfo($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1].'_RAW' ."/" . $nomDestination);
                                         $filetypes = $extension->getExtension();
-                                        $file=$repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1] ."/" . $nomDestination;
+                                        $file=$repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1].'_RAW' ."/" . $nomDestination;
                                        /* if ($filetypes == 'csv' or $filetypes == 'xlsx') {
                                         var_dump($file);
                                          
@@ -894,7 +898,8 @@ echo $generatedfile;
                                             $error='Bad extension';
                                         }*/
                                         $rawdata["FILES"][$i]["FILETYPE"] = $filetypes;
-                                        $rawdata["FILES"][$i]["ORIGINAL_DATA_URL"] = $repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1] ."/" . $nomDestination;
+                                        $rawdata["FILES"][$i]["TYPE_DATA"] = 'Rawdata';
+                                        $rawdata["FILES"][$i]["ORIGINAL_DATA_URL"] = $repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1].'_RAW'."/" . $nomDestination;
 
                                         //$collection                    = "Manual_Depot";
                                        // $collectionObject              = $this->db->selectCollection($config["authSource"], $collection);
@@ -952,7 +957,7 @@ echo $generatedfile;
                             
                             case "keywords":
                                 foreach ($value as $key2 => $value2) {
-                                    $arrKey[strtoupper($key)][]['NAME'] = htmlspecialchars($value2['keyword'], ENT_QUOTES);;
+                                    $arrKey[strtoupper($key)][]['NAME'] = htmlspecialchars($value2, ENT_QUOTES);
                                 }
                                 break;
                             case "core":
@@ -965,6 +970,10 @@ echo $generatedfile;
                             break;
                             case "core_azimut":
                                     $arrKey['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][0]['AZIMUT'] = htmlspecialchars($value, ENT_QUOTES);;
+                            
+                                break;
+                            case "core_dip":
+                                    $arrKey['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][0]['DIP'] = htmlspecialchars($value, ENT_QUOTES);;
                             
                                 break;
                             case "sampling_date":
@@ -1047,6 +1056,8 @@ echo $generatedfile;
                                 $sample_name=htmlspecialchars($value, ENT_QUOTES);;
                                 $sample_name_old=$sample_name;
                                 break;
+                             case "original_sample_name":
+                             break;
 
                                 default:
                             if (in_array(strtoupper($key), $SUPPLEMENTARY_FIELDS)) {
@@ -1119,28 +1130,74 @@ echo $generatedfile;
             }
 
              if ($route=='modify') {
+                  if ($_POST['original_sample_name']) {
+                    if ($_POST['sample_name'].'_'.strtoupper($_POST['measurements'][1])!=$_POST['original_sample_name']) {
+                        //$sample_name=$_POST['sample_name'];
+                        $original_sample_name=$_POST['sample_name'].'_'.$_POST['measurements'][1];
+                        if (strpos($_POST['original_sample_name'], '_RAW') !== false) {
+                             $original_sample_name=$_POST['sample_name'].'_'.$_POST['measurements'][1].'_RAW';
+                        }
+                    }
+                    else{
+                        //$sample_name=$_POST['sample_name'];
+                        $original_sample_name=$_POST['original_sample_name'];
+                        
+                    }
+                }
+
                 var_dump($POST['file_already_uploaded']);
-               $data=$arrKey['DATA'];
-               var_dump($data);
-            foreach ($data as $key => $value) {
-                    var_dump($value);
-                foreach ($POST['file_already_uploaded'] as $key => $value2) {
-                    var_dump($value2);
-                    if($value['DATA_URL']!=$value2['DATA_URL']){
-                        unset($data[$key]);
+              // $data=$arrKey['DATA'];
+                $filter = ['_id' => strtoupper($original_sample_name)];
+               // var_dump($filter);
+                $query = new MongoDB\Driver\Query($filter);
+                $cursor = $this->db->executeQuery($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $query);
+                 foreach ($cursor as $document) {
+                //($document);
+                $tmp_array=$document->DATA;
+              // var_dump($data);
+           }
+            foreach ($POST['file_already_uploaded'] as $key => $value) {
+                $file_already_uploaded[$key]['DATA_URL'] = $value;
+            }
+
+$intersect = array();
+    if (isset($tmp_array)) {
+            foreach ($tmp_array->FILES as $key => $value) {
+                    
+                foreach ($file_already_uploaded as $key => $value2) {
+                  // var_dump($value->DATA_URL);
+                    if($value->DATA_URL==$value2['DATA_URL']){
+                        $intersect['FILES'][]=$value;
+                        //unset($data[$key]);
                     }
                 }
             }
+    }
+            var_dump($intersect);
             var_dump($data);
-            exit();
+            $data_samples=$data['SAMPLES'];
+
+            if (count($intersect) != 0 and $data != 0) { //si il y a eu des suppressions et des ajouts
+                    $merge = array_merge($intersect, $data['FILES']); // on merge les tableaux
+                    $merge=array_merge($merge,$data_samples);
+                } else if (count($intersect) != 0) {
+// si il y a eu seulement des suppressions
+                    $merge = $intersect;
+                } else {
+                    //si il y a eu seuelement des ajouts
+                    $merge = $data;
+                    $merge =array_merge_recursive($merge,$pictures);
+                }
+
+            //print_r($merge);
              $bulk = new MongoDB\Driver\BulkWrite;
                   try{
                      unset($arrKey["STATUS"]);
-                $insert=array('_id' => strtoupper($sample_name),"INTRO"=>$arrKey,'DATA'=>$data);
+                $insert=array('_id' => strtoupper($original_sample_name),"INTRO"=>$arrKey,'DATA'=>$merge);
                 $bulk->insert($insert);
                 $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'], $bulk);
                 $bulk = new MongoDB\Driver\BulkWrite;
-                $bulk->delete(['_id' => strtoupper($sample_name)]);
+                $bulk->delete(['_id' => strtoupper($_POST['original_sample_name'])]);
                 $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $bulk);
 
                 return true;

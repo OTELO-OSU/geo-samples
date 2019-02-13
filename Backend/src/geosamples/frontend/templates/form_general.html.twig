@@ -5,8 +5,12 @@
 
 		title: {
 			type: 'string',
-			title: 'Title'
+			title: 'Title',
+			'required':true
 
+		},
+		original_sample_name: {
+			type: 'hidden'
 		},
 		csrf_name: {
 			type: 'hidden'
@@ -22,6 +26,10 @@
 
 		},
 
+		file_data_already_uploaded:{
+			type:'string'
+		},
+
 		
 
 
@@ -33,17 +41,20 @@
 
 		sample_name: {
 			type: 'string',
-			title: 'Sample name'
+			title: 'Sample name',
+			'required':true
 			
 		},
 		description: {
 			type: 'textarea',
-			title: 'Description'
+			title: 'Description',
+			'required':true
 		},
 		language: {
 			type: 'string',
 			title: 'Language',
-			"enum": [ "English","French" ]
+			"enum": [ "ENGLISH","FRENCH" ],
+			'required':true
 		},
 		"keywords": {
 
@@ -54,7 +65,8 @@
 				"properties": {
 					"keyword": {
 						"type": "string",
-						"title": "Keyword"
+						"title": "Keyword",
+						'required':true
 
 
 					}
@@ -190,7 +202,7 @@
 type: 'string',
 title: 'Sampling date'
 },
-
+		
 
 
 		"institution": {
@@ -203,6 +215,7 @@ title: 'Sampling date'
 					"institution": {
 						"type": "string",
 						"title": "Institution",
+						'required':true,
 
 						enum:["","ADIT Agency for the dissemination of technological information",
 							"ANDRA National Agency for Radioactive Waste Management",
@@ -245,6 +258,8 @@ title: 'Sampling date'
 				}
 			}
 		},
+
+
 		"scientific_fields": {
 
 			"type": "array",
@@ -254,6 +269,7 @@ title: 'Sampling date'
 					"scientific_field": {
 						"type": "string",
 						"title": "Scientific field",
+						'required':true,
 						enum:["", "Addresses",	"Administrative units",	"Agricultural and aquaculture facilities",	"Area management/restriction/regulation zones and reporting units",	"Atmospheric conditions",	"Bio-geographical regions",	"Buildings",	"Cadastral parcels",	"Coordinate reference systems",	"Elevation",	"Energy resources",	"Environmental monitoring facilities",	"Geographical grid systems",	"Geographical names",	"Geology",	"Habitats and biotopes",	"Human health and safety",	"Hydrography",	"Land cover",	"Land use",	"Meteorological geographical features",	"Mineral resources",	"Natural risk zones",	"Oceanographic geographical features",	"Orthoimagery",	"Population distribution — demography",	"Production and industrial facilities",	"Protected sites",	"Sea regions",	"Soil",	"Species distribution",	"Statistical units",	"Transport networks",	"Utility and governmental services" ]
 
 
@@ -352,10 +368,19 @@ title: 'Sampling date'
 		},
 
 		{
+			"type":"file_data_already_uploaded",
+			"value":"{%if files%}{%for file in files%}<div class=\"ui input\"><input id=\"text\" type=\"text\" name=\"file_already_uploaded[]\" value={{file.DATA_URL}} readonly><div class=\"ui icon delete\"><i class=\"remove icon\"></i></div></div>{%endfor%}{%endif%}"
+		},
+		{
 			"key": "pictures"
 			
 			
 		},
+		{
+			"key": "original_sample_name",
+			value:"{{original_sample_name}}"			
+		},
+
 
 		{
 			"key": "csrf_value",

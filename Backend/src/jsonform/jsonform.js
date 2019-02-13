@@ -1192,7 +1192,7 @@ $('.ui.dropdown[name*="scientific_fields"]')
     }
   },
   'advancedfieldset': {
-    'template': '<div class="ui fluid styled accordion"> <div class=" title"><i class="dropdown icon"></i>' +
+    'template': '<div class="ui fluid styled accordion <%= elt.title?elt.title:"" %>"> <div class=" title"><i class="dropdown icon"></i>' +
       '<% if (id) { %> id="<%= id %>"<% } %>' +
       
       '<label><%= elt.title?elt.title:"" %></label> </div>' +

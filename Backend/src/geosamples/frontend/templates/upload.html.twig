@@ -17,11 +17,11 @@
     <h1 class="ui dividing header">Upload new data</h1>
   </div>
 	<div class="ui twelve wide column centered ">
-	<!--<div id="inputs" class="ui ten wide column">
+	<div id="inputs" class="ui ten wide column">
    <a href="/template_meta/template_metadata.csv"> <div class="text" >Download metadata template<i  id="donwloadmetadata" class="download large blue icon"> </i></div> </a>
    <div class="text" id="file-select-button">Click here to import metadata from a csv file<i id="uploadmetadata" class="upload large green icon"></i></div> 
    <input hidden type="file" id="metadatafile" name="metadata" />
-  </div>-->
+  </div>
    <div id="warning" class="ui fourteen wide column centered">
       {% if error %}
       <div class="ui warning message">
@@ -32,18 +32,7 @@
       </div>
       {% endif %}
 		<form method="post" action="/{{route}}" class="ui form" name="form" enctype="multipart/form-data">
-			{%if files%}
-			   <div class="ui grid">
-         
-            	<h1>Linked files</h1>
-            {%for file in files%}
-               <div class="ui input">
-                     <input id="text" type="text" name="file_already_uploaded[]" value={{file.DATA_URL}} readonly><div class="ui icon delete"><i class="remove icon"></i></div>
-               </div>
-            {%endfor%}
-       
-    </div>
-            {%endif%}
+			
 
 
 
@@ -78,7 +67,9 @@
          $(".modal.remove .content").append('<form class="ui form " action="/delete_data" method="post"><input type="hidden" name="csrf_name" value=""><input type="hidden" name="csrf_value" value=""><input type="hidden" name="id" value="{{id}}"> <div class="actions"> <div class="ui black deny button"> Cancel </div> <button class="ui submit green button" >Yes</button> </div> </form>');
          $('.ui.modal.remove').modal('show');
 	}
-
+	JSONForm.fieldTypes['file_data_already_uploaded'] = {
+		  template: '<%=node.value%>'
+		};
 
 	JSONForm.fieldTypes['lithology'] = {
 		  template: '<%=node.value%>'
@@ -227,10 +218,12 @@
 
 			$("input[name='core']").click(function(){
 
-			var core=$("input[name='core']:checked").val();
-            if(core=='Yes'){
+			var block=$("input[name='core']:checked").val();
+            if(block=='Yes'){
                 var radios = $('input:radio[name=block]');
                 radios.filter('[value=No]').prop('checked', true);
+                console.log("test")
+                
 
             }else{
             	 var radios = $('input:radio[name=block]');
@@ -496,7 +489,7 @@ $('.ui.dropdown[name*="institution"]')
 
     {%endif%}
 
-/*function handleFileSelect(evt) {
+function handleFileSelect(evt) {
                   $('#inputs #filenamemetadata').remove();
                   var files = evt.target.files; // FileList object
                   var file = files[0];
@@ -517,16 +510,214 @@ $('.ui.dropdown[name*="institution"]')
                               name = "";
                               firstname = "";
                               mail = "";
+                              keyword=0;
+                              institutions=0;
                               $.each(data, function(index, values) {
                                   $.each(values, function(index, value) {
                                       if (value != "") {
                                           if (value == "TITLE") {
                                               $("input[name='title']").val(values[1]);
                                           }
+                                           if (value == "SAMPLE_NAME") {
+                                              $("input[name='sample_name']").val(values[1]);
+                                          }
+                                           if (value == "SAMPLING_DATE") {
+                                              $("input[name='sampling_date']").val(values[1]);
+                                          }
+
+                                            if (value == "SAMPLE_LOCATION_FACILITY") {
+                                              $("input[name='sample_location_facility']").val(values[1]);
+                                          }
+                                            if (value == "SAFETY_CONSTRAINTS") {
+                                              $("input[name='SAFETY_CONSTRAINTS']").val(values[1]);
+                                          }
+                                            if (value == "STORAGE_DETAILS") {
+                                              $("input[name='STORAGE_DETAILS']").val(values[1]);
+                                          }
+                                            if (value == "SUBSTANCE") {
+                                              $("input[name='SUBSTANCE']").val(values[1]);
+                                          }
+                                            if (value == "HOST_AGE") {
+                                              $("input[name='HOST_AGE']").val(values[1]);
+                                          }
+                                            if (value == "MAIN_EVENT_AGE") {
+                                              $("input[name='MAIN_EVENT_AGE']").val(values[1]);
+                                          }
+                                            if (value == "OTHER_EVENT_AGE") {
+                                              $("input[name='OTHER_EVENT_AGE']").val(values[1]);
+                                          }
+                                            if (value == "ALTERATION_DEGREE") {
+                                              $("input[name='ALTERATION_DEGREE']").val(values[1]);
+                                          }
+                                            if (value == "HOST_LITHOLOGY_OR_PROTOLITH") {
+                                              $("input[name='HOST_LITHOLOGY_OR_PROTOLITH']").val(values[1]);
+                                          }
+
+                                           if (value == "LITHOLOGY") {
+                                              $("select[name='lithology1']").val(values[1]);
+                                          }
+                                           if (value == "LITHOLOGY_2") {
+                                           	   $("select[name='lithology2']").prop('disabled', false);
+                                           	   var o = new Option(values[1], values[1]);
+												$(o).html(values[1]);
+												$("select[name='lithology2']").append(o);
+												$("select[name='lithology2']").val(values[1]);
+
+                                          }
+                                           if (value == "LITHOLOGY_3") {
+                                           	$("select[name='lithology3']").prop('disabled', false);
+                                           	var o = new Option(values[1], values[1]);
+												$(o).html(values[1]);
+												$("select[name='lithology3']").append(o);
+												$("select[name='lithology3']").val(values[1]);
+                                          }
+
+                                           if (value == "TEXTURE_STRUCTURE_1") {
+                                              $("select[name='texture1']").val(values[1]);
+                                          }
+                                           if (value == "TEXTURE_STRUCTURE_2") {
+                                           	   $("select[name='texture2']").prop('disabled', false);
+                                           	   var o = new Option(values[1], values[1]);
+												$(o).html(values[1]);
+												$("select[name='texture2']").append(o);
+												$("select[name='texture2']").val(values[1]);
+
+                                          }
+                                           if (value == "TEXTURE_STRUCTURE_3") {
+                                           	$("select[name='texture3']").prop('disabled', false);
+                                           	var o = new Option(values[1], values[1]);
+												$(o).html(values[1]);
+												$("select[name='texture3']").append(o);
+												$("select[name='texture3']").val(values[1]);
+                                          }
+
+                                          if (value == "ORE_TYPE_1") {
+                                              $("select[name='oretype1']").val(values[1]);
+                                          }
+                                           if (value == "ORE_TYPE_2") {
+                                           	   $("select[name='oretype2']").prop('disabled', false);
+                                           	   var o = new Option(values[1], values[1]);
+												$(o).html(values[1]);
+												$("select[name='oretype2']").append(o);
+												$("select[name='oretype2']").val(values[1]);
+
+                                          }
+                                           if (value == "ORE_TYPE_3") {
+                                           	$("select[name='oretype3']").prop('disabled', false);
+                                           	var o = new Option(values[1], values[1]);
+												$(o).html(values[1]);
+												$("select[name='oretype3']").append(o);
+												$("select[name='oretype3']").val(values[1]);
+                                          }
+                                          
+
+                                           if (value == "SAMPLING_POINT") {
+                                              $("input[name='sampling_points[].NAME']").val(values[1]);
+                                              $("select[name='sampling_points[].COORDINATE_SYSTEM']").val(values[2]);
+                                              $("input[name='sampling_points[].ABBREVIATION']").val(values[3]);
+                                              $("input[name='sampling_points[].LONGITUDE']").val(values[4]);
+                                              $("input[name='sampling_points[].LATITUDE']").val(values[5]);
+                                              $("input[name='sampling_points[].ELEVATION_M']").val(values[6]);
+                                              $("input[name='sampling_points[].DESCRIPTION']").val(values[7]);
+                                              $("input[name='sampling_points[].SAMPLING']").val(values[8]);
+
+
+
+
+                                          }
+                                           if (value == "MEASUREMENT") {
+                                              $("input[name='measurements[].nature']").val(values[1]);
+                                              $("select[name='measurements[].abbreviation']").val(values[2]);
+                                              $("input[name='measurements[].unit']").val(values[3]);
+                                          }
+                                           if (value == "CORE") {
+
+                                           	if(values[1].toUpperCase()=='YES'){
+								                var radios = $('input:radio[name=core]');
+								                radios.filter('[value=Yes]').prop('checked', true);
+								                 $('.form-group.jsonform-error-core_depth').removeClass("hidden field");
+										        $('.form-group.jsonform-error-core_azimut').removeClass("hidden field");
+										        $('.form-group.jsonform-error-core_dip').removeClass("hidden field");
+										      $("input[name='core_depth']").val(values[2]);
+                                              $("input[name='core_azimut']").val(values[3]);
+                                              $("input[name='core_dip']").val(values[4]);
+
+
+								            }else{
+								            	 var radios = $('input:radio[name=core]');
+								                radios.filter('[value=No]').prop('checked', true);
+
+								            }
+                                              
+                                          }
+                                           if (value == "BLOCK") {
+                                           	if(values[1].toUpperCase()=='YES'){
+								                var radios = $('input:radio[name=block]');
+								                radios.filter('[value=Yes]').prop('checked', true);
+
+								            }else{
+								            	 var radios = $('input:radio[name=block]');
+								                radios.filter('[value=No]').prop('checked', true);
+
+								            }
+                                              
+                                           
+                                          }
+                                          if (value == "PULP") {
+                                           	if(values[1].toUpperCase()=='YES'){
+								                var radios = $('input:radio[name=pulp]');
+								                radios.filter('[value=Yes]').prop('checked', true);
+
+								            }else{
+								            	 var radios = $('input:radio[name=pulp]');
+								                radios.filter('[value=No]').prop('checked', false);
+
+								            }
+                                              
+                                           
+                                          }
+
+                                          if (value == "KEYWORD") {
+                                          	    keyword = $('.Keywords input').length;
+                                          	    console.log(keyword)
+                                              if (keyword <= 2) {
+                                                  if ($("input[name='keywords[0].keyword']").val() != "") {
+                                                      $(".Keywords fieldset ul").append('<li data-idx="'+keyword+'"><div id="jsonform-1-elt-counter-3"><div class="form-group jsonform-error-keywords[0]---keyword jsonform-required required field"><label for="jsonform-1-elt-keywords['+keyword+'].keyword">Keyword</label><div class="controls field"><input type="text" class="form-control input-lg " name="keywords['+keyword+'].keyword" data-validate="keywords['+keyword+'].keyword" value="'+values[1]+'" id="jsonform-1-elt-keywords[0].keyword" required="required" placeholder="Keyword"><span class="help-block jsonform-errortext" style="display:none;"></span></div></div></div></li>');
+                                                  } else {
+                                                      $("input[name='keywords[0].keyword']").val(values[1]);
+                                                  }
+                                              }
+
+
+                                          }
+                                           if (value == "INSTITUTION") {
+                                          	    institutions = $('.Institutions select').length;
+                                          	    console.log(institutions)
+                                              if (institutions <= 2) {
+                                                  if ($(".institutions input.search").val() != "") {
+                                                      $(".Institutions fieldset ul").append('<li data-idx="'+institutions+'"><div id="jsonform-1-elt-counter-5"><div class="form-group jsonform-error-institution['+institutions+']---institution jsonform-required required field"><label for="jsonform-1-elt-institution['+institutions+'].institution">Institution</label><div class="controls field"><div class="ui fluid search dropdown form-control selection"><select name="institution['+institutions+'].institution" id="jsonform-1-elt-institution['+institutions+'].institution" required="required">  <option selected="" value="'+value[1]+'"></option> <option value="ADIT Agency for the dissemination of technological information">ADIT Agency for the dissemination of technological information</option> <option value="ANDRA National Agency for Radioactive Waste Management">ANDRA National Agency for Radioactive Waste Management</option> <option value="B.R.G.M. THE FRENCH GEOLOGICAL SURVEY">B.R.G.M. THE FRENCH GEOLOGICAL SURVEY</option> <option value="C.E.A. The French Alternative Energies and Atomic Energy Commission">C.E.A. The French Alternative Energies and Atomic Energy Commission</option> <option value="C.E.E. Center for Employment Studies">C.E.E. Center for Employment Studies</option> <option value="CEPH Human plymorphism Study Center">CEPH Human plymorphism Study Center</option> <option value="CIRAD Agricultural Research for development">CIRAD Agricultural Research for development</option> <option value="Cité des sciences et Palais de la découverte">Cité des sciences et Palais de la découverte</option> <option value="National Museum of the History of Immigration">National Museum of the History of Immigration</option> <option value="CNES National Center for Space Studies">CNES National Center for Space Studies</option> <option value="CNRS National Center for Scientific Research">CNRS National Center for Scientific Research</option> <option value="GENOPOLE France’s leading biocluster for biotechnologies and research in genomics and genetics">GENOPOLE France’s leading biocluster for biotechnologies and research in genomics and genetics</option> <option value="IFE French Institute of Education">IFE French Institute of Education</option> <option value="IFREMER French Research Institute for Exploitation of the Sea">IFREMER French Research Institute for Exploitation of the Sea</option> <option value="IFPEN Research and training player in the ﬁelds of energy, transport and the environment">IFPEN Research and training player in the ﬁelds of energy, transport and the environment</option> <option value="IFSTTAR French Institute of science and technology for transport, development and networks">IFSTTAR French Institute of science and technology for transport, development and networks</option> <option value="INCA National Institute of cancer">INCA National Institute of cancer</option> <option value="INED National Institute for Demographic Studies">INED National Institute for Demographic Studies</option> <option value="INERIS National Institute for the Industrial Environment and Risks">INERIS National Institute for the Industrial Environment and Risks</option> <option value="INRA National Institute of Agronomic Research">INRA National Institute of Agronomic Research</option> <option value="INRIA National Institute for Research in Computer Science and Automation">INRIA National Institute for Research in Computer Science and Automation</option> <option value="INSERM National Institute of Health and Medical Research">INSERM National Institute of Health and Medical Research</option> <option value="Curie Institute">Curie Institute</option> <option value="Pasteur Institute">Pasteur Institute</option> <option value="IPEV French Polar Institute Paul Emile Victor">IPEV French Polar Institute Paul Emile Victor</option> <option value="I.R.D. Research Institute for Development">I.R.D. Research Institute for Development</option> <option value="I.R.S.N. Institute for Radiation Protection and Nuclear Safety">I.R.S.N. Institute for Radiation Protection and Nuclear Safety</option> <option value="IRSTEA National Science and Technology Research Institute for Environment and Agriculture">IRSTEA National Science and Technology Research Institute for Environment and Agriculture</option> <option value="M.N.H.N National Museum of Natural History">M.N.H.N National Museum of Natural History</option> <option value="Quai Branly Museum">Quai Branly Museum</option> <option value="ONERA National Office for Aeronautical Studies and Research">ONERA National Office for Aeronautical Studies and Research</option> <option value="OSEO">OSEO</option> <option value="O.S.T. Science and Technology Observatory">O.S.T. Science and Technology Observatory</option> <option value="RENATER National Telecommunication Network for Technology, Education and Research">RENATER National Telecommunication Network for Technology, Education and Research</option>  </select><i class="dropdown icon"></i><input class="search" autocomplete="off" tabindex="0"><div class="text">'+values[1]+'</div><div class="menu" tabindex="-1"><div class="item" data-value="ADIT Agency for the dissemination of technological information">ADIT Agency for the dissemination of technological information</div><div class="item" data-value="ANDRA National Agency for Radioactive Waste Management">ANDRA National Agency for Radioactive Waste Management</div><div class="item" data-value="B.R.G.M. THE FRENCH GEOLOGICAL SURVEY">B.R.G.M. THE FRENCH GEOLOGICAL SURVEY</div><div class="item" data-value="C.E.A. The French Alternative Energies and Atomic Energy Commission">C.E.A. The French Alternative Energies and Atomic Energy Commission</div><div class="item" data-value="C.E.E. Center for Employment Studies">C.E.E. Center for Employment Studies</div><div class="item" data-value="CEPH Human plymorphism Study Center">CEPH Human plymorphism Study Center</div><div class="item" data-value="CIRAD Agricultural Research for development">CIRAD Agricultural Research for development</div><div class="item" data-value="Cité des sciences et Palais de la découverte">Cité des sciences et Palais de la découverte</div><div class="item" data-value="National Museum of the History of Immigration">National Museum of the History of Immigration</div><div class="item" data-value="CNES National Center for Space Studies">CNES National Center for Space Studies</div><div class="item" data-value="CNRS National Center for Scientific Research">CNRS National Center for Scientific Research</div><div class="item" data-value="GENOPOLE France’s leading biocluster for biotechnologies and research in genomics and genetics">GENOPOLE France’s leading biocluster for biotechnologies and research in genomics and genetics</div><div class="item" data-value="IFE French Institute of Education">IFE French Institute of Education</div><div class="item" data-value="IFREMER French Research Institute for Exploitation of the Sea">IFREMER French Research Institute for Exploitation of the Sea</div><div class="item" data-value="IFPEN Research and training player in the ﬁelds of energy, transport and the environment">IFPEN Research and training player in the ﬁelds of energy, transport and the environment</div><div class="item" data-value="IFSTTAR French Institute of science and technology for transport, development and networks">IFSTTAR French Institute of science and technology for transport, development and networks</div><div class="item" data-value="INCA National Institute of cancer">INCA National Institute of cancer</div><div class="item" data-value="INED National Institute for Demographic Studies">INED National Institute for Demographic Studies</div><div class="item" data-value="INERIS National Institute for the Industrial Environment and Risks">INERIS National Institute for the Industrial Environment and Risks</div><div class="item" data-value="INRA National Institute of Agronomic Research">INRA National Institute of Agronomic Research</div><div class="item" data-value="INRIA National Institute for Research in Computer Science and Automation">INRIA National Institute for Research in Computer Science and Automation</div><div class="item" data-value="INSERM National Institute of Health and Medical Research">INSERM National Institute of Health and Medical Research</div><div class="item" data-value="Curie Institute">Curie Institute</div><div class="item" data-value="Pasteur Institute">Pasteur Institute</div><div class="item" data-value="IPEV French Polar Institute Paul Emile Victor">IPEV French Polar Institute Paul Emile Victor</div><div class="item" data-value="I.R.D. Research Institute for Development">I.R.D. Research Institute for Development</div><div class="item" data-value="I.R.S.N. Institute for Radiation Protection and Nuclear Safety">I.R.S.N. Institute for Radiation Protection and Nuclear Safety</div><div class="item" data-value="IRSTEA National Science and Technology Research Institute for Environment and Agriculture">IRSTEA National Science and Technology Research Institute for Environment and Agriculture</div><div class="item" data-value="M.N.H.N National Museum of Natural History">M.N.H.N National Museum of Natural History</div><div class="item" data-value="Quai Branly Museum">Quai Branly Museum</div><div class="item" data-value="ONERA National Office for Aeronautical Studies and Research">ONERA National Office for Aeronautical Studies and Research</div><div class="item" data-value="OSEO">OSEO</div><div class="item" data-value="O.S.T. Science and Technology Observatory">O.S.T. Science and Technology Observatory</div><div class="item" data-value="RENATER National Telecommunication Network for Technology, Education and Research">RENATER National Telecommunication Network for Technology, Education and Research</div></div></div><span class="help-block jsonform-errortext" style="display:none;"></span></div></div></div></li>');
+                                                  
+
+                                                  } else {
+                                                      $('.institutions input.search').val(values[1]);
+                                                      $('.institutions div.text').html('');
+
+                                                  }
+                                              }
+
+
+                                          }
+
+
+                                           if (value == "DATA_DESCRIPTION") {
+                                              $("textarea[name='description']").val(values[1]);
+                                          }
                                           if (value == "LANGUAGE") {
                                             
                                               $("select[name='language']").val(values[1]);
                                           }
+
+
                                          
                                          
                                           
@@ -540,7 +731,7 @@ $('.ui.dropdown[name*="institution"]')
                       alert("Only CSV file are supported!")
                   }
               }
-              document.getElementById('metadatafile').addEventListener('change', handleFileSelect, false);*/
+              document.getElementById('metadatafile').addEventListener('change', handleFileSelect, false);
 
 
 
