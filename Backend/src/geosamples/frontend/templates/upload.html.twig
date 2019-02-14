@@ -677,12 +677,31 @@ function handleFileSelect(evt) {
                                            
                                           }
 
+                                           if (value == "METHODOLOGY") {
+                                          	    if (values[1]=='SAMPLING_METHOD' ) {
+                                          	    	$("input[name='methodology[].SAMPLING_METHOD']").val(values[2]);
+                                          	    }else if(values[1]=='CONDITIONNING'){
+                                          	    	$("input[name='methodology[].CONDITIONNING']").val(values[2]);
+                                          	    }
+                                          	    else if(values[1]=='SAMPLE_STORAGE'){
+                                          	    	$("input[name='methodology[].SAMPLE_STORAGE']").val(values[2]);
+                                          	    }else{
+
+                                                  
+                                              
+                                          	    }
+
+
+                                          }
+
+
                                           if (value == "KEYWORD") {
-                                          	    keyword = $('.Keywords input').length;
+                                          	    keyword = $('.keywords input').length;
                                           	    console.log(keyword)
                                               if (keyword <= 2) {
                                                   if ($("input[name='keywords[0].keyword']").val() != "") {
-                                                      $(".Keywords fieldset ul").append('<li data-idx="'+keyword+'"><div id="jsonform-1-elt-counter-3"><div class="form-group jsonform-error-keywords[0]---keyword jsonform-required required field"><label for="jsonform-1-elt-keywords['+keyword+'].keyword">Keyword</label><div class="controls field"><input type="text" class="form-control input-lg " name="keywords['+keyword+'].keyword" data-validate="keywords['+keyword+'].keyword" value="'+values[1]+'" id="jsonform-1-elt-keywords[0].keyword" required="required" placeholder="Keyword"><span class="help-block jsonform-errortext" style="display:none;"></span></div></div></div></li>');
+                                                     	$(".keywords ._jsonform-array-addmore" ).trigger( "click" );
+	                                                  	$('.keywords input')[keyword].value=values[1];
                                                   } else {
                                                       $("input[name='keywords[0].keyword']").val(values[1]);
                                                   }
@@ -695,12 +714,49 @@ function handleFileSelect(evt) {
                                           	   console.log(institutions)
                                               if (institutions <= 2) {
                                                   if ($(".institutions input.search").val() != "") {
-                                                      $(".institutions fieldset ul").append('<li data-idx="'+institutions+'"><div id="jsonform-1-elt-counter-5"><div class="form-group jsonform-error-institution['+institutions+']---institution jsonform-required required field"><label for="jsonform-1-elt-institution['+institutions+'].institution">Institution</label><div class="controls field"><div class="ui fluid search dropdown form-control selection"><select name="institution['+institutions+'].institution" id="jsonform-1-elt-institution['+institutions+'].institution" required="required">  <option selected="" value="'+value[1]+'"></option> <option value="ADIT Agency for the dissemination of technological information">ADIT Agency for the dissemination of technological information</option> <option value="ANDRA National Agency for Radioactive Waste Management">ANDRA National Agency for Radioactive Waste Management</option> <option value="B.R.G.M. THE FRENCH GEOLOGICAL SURVEY">B.R.G.M. THE FRENCH GEOLOGICAL SURVEY</option> <option value="C.E.A. The French Alternative Energies and Atomic Energy Commission">C.E.A. The French Alternative Energies and Atomic Energy Commission</option> <option value="C.E.E. Center for Employment Studies">C.E.E. Center for Employment Studies</option> <option value="CEPH Human plymorphism Study Center">CEPH Human plymorphism Study Center</option> <option value="CIRAD Agricultural Research for development">CIRAD Agricultural Research for development</option> <option value="Cité des sciences et Palais de la découverte">Cité des sciences et Palais de la découverte</option> <option value="National Museum of the History of Immigration">National Museum of the History of Immigration</option> <option value="CNES National Center for Space Studies">CNES National Center for Space Studies</option> <option value="CNRS National Center for Scientific Research">CNRS National Center for Scientific Research</option> <option value="GENOPOLE France’s leading biocluster for biotechnologies and research in genomics and genetics">GENOPOLE France’s leading biocluster for biotechnologies and research in genomics and genetics</option> <option value="IFE French Institute of Education">IFE French Institute of Education</option> <option value="IFREMER French Research Institute for Exploitation of the Sea">IFREMER French Research Institute for Exploitation of the Sea</option> <option value="IFPEN Research and training player in the ﬁelds of energy, transport and the environment">IFPEN Research and training player in the ﬁelds of energy, transport and the environment</option> <option value="IFSTTAR French Institute of science and technology for transport, development and networks">IFSTTAR French Institute of science and technology for transport, development and networks</option> <option value="INCA National Institute of cancer">INCA National Institute of cancer</option> <option value="INED National Institute for Demographic Studies">INED National Institute for Demographic Studies</option> <option value="INERIS National Institute for the Industrial Environment and Risks">INERIS National Institute for the Industrial Environment and Risks</option> <option value="INRA National Institute of Agronomic Research">INRA National Institute of Agronomic Research</option> <option value="INRIA National Institute for Research in Computer Science and Automation">INRIA National Institute for Research in Computer Science and Automation</option> <option value="INSERM National Institute of Health and Medical Research">INSERM National Institute of Health and Medical Research</option> <option value="Curie Institute">Curie Institute</option> <option value="Pasteur Institute">Pasteur Institute</option> <option value="IPEV French Polar Institute Paul Emile Victor">IPEV French Polar Institute Paul Emile Victor</option> <option value="I.R.D. Research Institute for Development">I.R.D. Research Institute for Development</option> <option value="I.R.S.N. Institute for Radiation Protection and Nuclear Safety">I.R.S.N. Institute for Radiation Protection and Nuclear Safety</option> <option value="IRSTEA National Science and Technology Research Institute for Environment and Agriculture">IRSTEA National Science and Technology Research Institute for Environment and Agriculture</option> <option value="M.N.H.N National Museum of Natural History">M.N.H.N National Museum of Natural History</option> <option value="Quai Branly Museum">Quai Branly Museum</option> <option value="ONERA National Office for Aeronautical Studies and Research">ONERA National Office for Aeronautical Studies and Research</option> <option value="OSEO">OSEO</option> <option value="O.S.T. Science and Technology Observatory">O.S.T. Science and Technology Observatory</option> <option value="RENATER National Telecommunication Network for Technology, Education and Research">RENATER National Telecommunication Network for Technology, Education and Research</option>  </select><i class="dropdown icon"></i><input class="search" autocomplete="off" tabindex="0"><div class="text">'+values[1]+'</div><div class="menu" tabindex="-1"><div class="item" data-value="ADIT Agency for the dissemination of technological information">ADIT Agency for the dissemination of technological information</div><div class="item" data-value="ANDRA National Agency for Radioactive Waste Management">ANDRA National Agency for Radioactive Waste Management</div><div class="item" data-value="B.R.G.M. THE FRENCH GEOLOGICAL SURVEY">B.R.G.M. THE FRENCH GEOLOGICAL SURVEY</div><div class="item" data-value="C.E.A. The French Alternative Energies and Atomic Energy Commission">C.E.A. The French Alternative Energies and Atomic Energy Commission</div><div class="item" data-value="C.E.E. Center for Employment Studies">C.E.E. Center for Employment Studies</div><div class="item" data-value="CEPH Human plymorphism Study Center">CEPH Human plymorphism Study Center</div><div class="item" data-value="CIRAD Agricultural Research for development">CIRAD Agricultural Research for development</div><div class="item" data-value="Cité des sciences et Palais de la découverte">Cité des sciences et Palais de la découverte</div><div class="item" data-value="National Museum of the History of Immigration">National Museum of the History of Immigration</div><div class="item" data-value="CNES National Center for Space Studies">CNES National Center for Space Studies</div><div class="item" data-value="CNRS National Center for Scientific Research">CNRS National Center for Scientific Research</div><div class="item" data-value="GENOPOLE France’s leading biocluster for biotechnologies and research in genomics and genetics">GENOPOLE France’s leading biocluster for biotechnologies and research in genomics and genetics</div><div class="item" data-value="IFE French Institute of Education">IFE French Institute of Education</div><div class="item" data-value="IFREMER French Research Institute for Exploitation of the Sea">IFREMER French Research Institute for Exploitation of the Sea</div><div class="item" data-value="IFPEN Research and training player in the ﬁelds of energy, transport and the environment">IFPEN Research and training player in the ﬁelds of energy, transport and the environment</div><div class="item" data-value="IFSTTAR French Institute of science and technology for transport, development and networks">IFSTTAR French Institute of science and technology for transport, development and networks</div><div class="item" data-value="INCA National Institute of cancer">INCA National Institute of cancer</div><div class="item" data-value="INED National Institute for Demographic Studies">INED National Institute for Demographic Studies</div><div class="item" data-value="INERIS National Institute for the Industrial Environment and Risks">INERIS National Institute for the Industrial Environment and Risks</div><div class="item" data-value="INRA National Institute of Agronomic Research">INRA National Institute of Agronomic Research</div><div class="item" data-value="INRIA National Institute for Research in Computer Science and Automation">INRIA National Institute for Research in Computer Science and Automation</div><div class="item" data-value="INSERM National Institute of Health and Medical Research">INSERM National Institute of Health and Medical Research</div><div class="item" data-value="Curie Institute">Curie Institute</div><div class="item" data-value="Pasteur Institute">Pasteur Institute</div><div class="item" data-value="IPEV French Polar Institute Paul Emile Victor">IPEV French Polar Institute Paul Emile Victor</div><div class="item" data-value="I.R.D. Research Institute for Development">I.R.D. Research Institute for Development</div><div class="item" data-value="I.R.S.N. Institute for Radiation Protection and Nuclear Safety">I.R.S.N. Institute for Radiation Protection and Nuclear Safety</div><div class="item" data-value="IRSTEA National Science and Technology Research Institute for Environment and Agriculture">IRSTEA National Science and Technology Research Institute for Environment and Agriculture</div><div class="item" data-value="M.N.H.N National Museum of Natural History">M.N.H.N National Museum of Natural History</div><div class="item" data-value="Quai Branly Museum">Quai Branly Museum</div><div class="item" data-value="ONERA National Office for Aeronautical Studies and Research">ONERA National Office for Aeronautical Studies and Research</div><div class="item" data-value="OSEO">OSEO</div><div class="item" data-value="O.S.T. Science and Technology Observatory">O.S.T. Science and Technology Observatory</div><div class="item" data-value="RENATER National Telecommunication Network for Technology, Education and Research">RENATER National Telecommunication Network for Technology, Education and Research</div></div></div><span class="help-block jsonform-errortext" style="display:none;"></span></div></div></div></li>');
+
+                                                  	$(".institutions ._jsonform-array-addmore" ).trigger( "click" );
+                                                  	$('.institutions input.search')[institutions].value=values[1];
+                                                  	$('.institutions input.search').focus();
+
+                                                  	$('.ui.dropdown[name*="institution"]')
+													  .dropdown({
+													    allowAdditions: true
+													  })
+													;
+
+                                                  } else {
+                                                      $('.institutions input.search')[0].value=values[1];
+                                                      $('.institutions select').append('<option value="'+values[1]+'" class="addition">'+values[1]+'</option>')
+                                                      $('.institutions div.menu').append(' <div class="item active selected" data-value="'+values[1]+'">'+values[1]+'</div>')
+
+                                                     
+
+                                                      $('.institutions div.text').html('');
+                                                     
+
+
+
+                                                  }
+                                              }
+
+
+                                          }
+                                            if (value == "SCIENTIFIC_FIELD") {
+                                          	    scientific_fields = $('.scientific_fields select').length;
+                                              if (scientific_fields <= 2) {
+                                                  if ($(".scientific_fields input.search").val() != "") {
+                                                      	$(".scientific_fields ._jsonform-array-addmore" ).trigger( "click" );
+	                                                  	$('.scientific_fields input.search')[scientific_fields].value=values[1];
+	                                                  	$('.scientific_fields input.search').focus();
+
                                                   
 
                                                   } else {
-                                                      $('.institutions input.search').val(values[1]);
-                                                      $('.institutions div.text').html('');
+                                                      $('.scientific_fields input.search')[0].value=values[1];
+                                                      $('.scientific_fields div.text').html('');
+	                                                  	$('.scientific_fields input.search')[0].focus();
+
 
                                                   }
                                               }

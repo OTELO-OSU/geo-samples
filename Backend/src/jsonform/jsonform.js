@@ -248,7 +248,7 @@ var inputFieldTemplate = function (type) {
       '<%= (node.disabled? " disabled" : "")%>' +
       '<%= (node.readOnly ? " readonly=\'readonly\'" : "") %>' +
       '<%= (node.schemaElement && node.schemaElement.maxLength ? " maxlength=\'" + node.schemaElement.maxLength + "\'" : "") %>' +
-      '<%= (node.schemaElement && node.schemaElement.required && (node.schemaElement.type !== "boolean") ? " required=\'required\'" : "") %>' +
+
       '<%= (node.title? " placeholder=" + \'"\' + escape(node.title) + \'"\' : "")%>' +
       ' />',
     'fieldtemplate': true,
@@ -321,7 +321,7 @@ jsonform.elementTypes = {
       '<%= (fieldHtmlClass ? "class=\'" + fieldHtmlClass + "\' " : "") %>' +
       'name="<%= node.name %>" value="<%= escape(value) %>" id="<%= id %>"' +
       '<%= (node.disabled? " disabled" : "")%>' +
-      '<%= (node.schemaElement && node.schemaElement.required ? " required=\'required\'" : "") %>' +
+
       ' />',
     'fieldtemplate': true,
     'inputfield': true,
@@ -339,7 +339,7 @@ jsonform.elementTypes = {
       '<%= (node.disabled? " disabled" : "")%>' +
       '<%= (node.readOnly ? " readonly=\'readonly\'" : "") %>' +
       '<%= (node.schemaElement && node.schemaElement.maxLength ? " maxlength=\'" + node.schemaElement.maxLength + "\'" : "") %>' +
-      '<%= (node.schemaElement && node.schemaElement.required ? " required=\'required\'" : "") %>' +
+
       '<%= (node.placeholder? " placeholder=" + \'"\' + escape(node.placeholder) + \'"\' : "")%>' +
       '><%= value %></textarea>',
     'fieldtemplate': true,
@@ -351,7 +351,7 @@ jsonform.elementTypes = {
       '<%= (node.disabled? " disabled" : "")%>' +
       '<%= (node.readOnly ? " readonly=\'readonly\'" : "") %>' +
       '<%= (node.schemaElement && node.schemaElement.maxLength ? " maxlength=\'" + node.schemaElement.maxLength + "\'" : "") %>' +
-      '<%= (node.schemaElement && node.schemaElement.required ? " required=\'required\'" : "") %>' +
+
       '<%= (node.placeholder? " placeholder=" + \'"\' + escape(node.placeholder) + \'"\' : "")%>' +
       '><%= value %></textarea>',
     'fieldtemplate': true,
@@ -639,7 +639,7 @@ jsonform.elementTypes = {
     'template':'<select name="<%= node.name %>" id="<%= id %>"' +
       'class=\'ui fluid search dropdown form-control<%= (fieldHtmlClass ? " " + fieldHtmlClass : "") %>\'' +
       '<%= (node.schemaElement && node.schemaElement.disabled? " disabled" : "")%>' +
-      '<%= (node.schemaElement && node.schemaElement.required ? " required=\'required\'" : "") %>' +
+
       '> ' +
       '<% _.each(node.options, function(key, val) { if(key instanceof Object) { if (value === key.value) { %> <option selected value="<%= key.value %>"><%= key.title %></option> <% } else { %> <option value="<%= key.value %>"><%= key.title %></option> <% }} else { if (value === key) { %> <option selected value="<%= key %>"><%= key %></option> <% } else { %><option value="<%= key %>"><%= key %></option> <% }}}); %> ' +
       '</select>',
@@ -650,7 +650,7 @@ jsonform.elementTypes = {
     'template':'<h1>test</h1><select name="<%= node.name %>" id="<%= id %>"' +
       'class=\'form-control<%= (fieldHtmlClass ? " " + fieldHtmlClass : "") %>\'' +
       '<%= (node.schemaElement && node.schemaElement.disabled? " disabled" : "")%>' +
-      '<%= (node.schemaElement && node.schemaElement.required ? " required=\'required\'" : "") %>' +
+
       '> ' +
       '<% _.each(node.options, function(key, val) { if(key instanceof Object) { if (value === key.value) { %> <option selected value="<%= key.value %>"><%= key.title %></option> <% } else { %> <option value="<%= key.value %>"><%= key.title %></option> <% }} else { if (value === key) { %> <option selected value="<%= key %>"><%= key %></option> <% } else { %><option value="<%= key %>"><%= key %></option> <% }}}); %> ' +
       '</select>',
