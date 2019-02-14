@@ -522,6 +522,8 @@ $app->get('/modify/{id}', function (Request $req, Response $responseSlim,$args) 
 			    'methodology_sampling'=>$response['_source']['INTRO']['METHODOLOGY'][0]['DESCRIPTION'],
 			     'methodology_conditionning'=>$response['_source']['INTRO']['METHODOLOGY'][1]['DESCRIPTION'],
 			      'methodology_sample_storage'=>$response['_source']['INTRO']['METHODOLOGY'][2]['DESCRIPTION'],
+			     'methodology_custom'=>$response['_source']['INTRO']['METHODOLOGY'],
+
 			       'sampling_points'=>$response['_source']['INTRO']['SAMPLING_POINT'],
 			       	'files' => $response['_source']['DATA']['FILES'],
 

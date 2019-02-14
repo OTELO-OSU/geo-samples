@@ -127,11 +127,42 @@ title: 'HOST_LITHOLOGY_OR_PROTOLITH',
 						"type": "string",
 						"title": "SAMPLE_STORAGE",
 
-					}
+					},
+					
 				}
+				
 			}
 		},
 
+"methodology2": {
+			"type": "array",
+			
+			"items": {
+		"properties": {
+				"Nature": {
+						"type": "string",
+						"title": "Nature",
+
+					},
+					
+					
+				}
+}},
+
+"methodology3": {
+			"type": "array",
+			
+			"items": {
+		"properties": {
+			
+					
+					"description": {
+						"type": "string",
+						"title": "description",
+
+					}
+				}
+}},
 
 
 
@@ -348,7 +379,24 @@ type: 'string',
 
 				]
 			}
-		}]
+		},
+		{
+		"type": "array",
+			"items": {
+				"type": "section",
+				"items": [
+					"methodology2[].Nature",
+					"methodology3[].description"
+
+
+				]
+				}
+			
+		}
+
+		]
+
+
 		},
 
 {
@@ -434,10 +482,34 @@ type: 'string',
 		"pulp":"{{pulp}}",
 		"core":"{{core}}",
 
+		 "methodology2": [
+    {%for methodology in methodology_custom%}
+    {%if methodology.NAME != "SAMPLING_METHOD" and methodology.NAME != "CONDITIONNING" and methodology.NAME != "SAMPLE_STORAGE"%}
+
+       {"Nature": "{{methodology.NAME|raw}}"},
+
+      {%endif%}
+
+    {%endfor%}
+      ],
+
+       "methodology3": [
+    {%for methodology in methodology_custom%}
+    {%if methodology.NAME != "SAMPLING_METHOD" and methodology.NAME != "CONDITIONNING" and methodology.NAME != "SAMPLE_STORAGE"%}
+
+       {"description": "{{methodology.DESCRIPTION|raw}}"},
+
+      {%endif%}
+
+    {%endfor%}
+      ],
 
 
 
 {%endset%}
+
+
+
 
 
 {% include 'form_general.html.twig' %}

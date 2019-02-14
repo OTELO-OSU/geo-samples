@@ -405,9 +405,10 @@ echo $generatedfile;
 
     function Request_poi_data($id)
     {
-        $explode = explode('_', $id, 2);
+        $explode = explode('_', $id, 3);
+        $id=$explode[0].'_'.$explode[1];
         $config = self::ConfigFile();
-        $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . '/_search?q=(INTRO.MEASUREMENT.ABBREVIATION:"' . $explode[1] . '"%20AND%20INTRO.SUPPLEMENTARY_FIELDS.SAMPLE_NAME:"' . $explode[0] . '")&type=' . $config['COLLECTION_NAME'] ;
+        $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . '/_search?q=(INTRO.MEASUREMENT.ABBREVIATION:"' . $explode[1] . '"%20AND%20INTRO.SUPPLEMENTARY_FIELDS.SAMPLE_NAME:"' . $explode[0] . '")&type=' . $config['COLLECTION_NAME'].'_sandbox' ;
         $curlopt = array(
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
@@ -422,6 +423,7 @@ echo $generatedfile;
         $response = json_decode($response, true);
          if (($_SESSION['mail'] && in_array($response['hits']['hits'][0]['_type'], $_SESSION['projects_access_right_name'])) or ($_SESSION['admin']==1) ) {
             $identifier = $response['hits']['hits'][0]['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME'] . '_' . $response['hits']['hits'][0]['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION'];
+
             if ($identifier == $id)
             {
                 $response = json_encode($response['hits']['hits'][0]['_source']['DATA']);
@@ -639,6 +641,7 @@ echo $generatedfile;
         $rawdata=null;
         $data=null;
         $pictures=null;
+
        
       
                     $UPLOAD_FOLDER    = $config["CSV_FOLDER"];
@@ -1014,6 +1017,16 @@ echo $generatedfile;
                                     $arrKey['METHODOLOGY'][$key2]['NAME'] =$name ;
                                     $arrKey['METHODOLOGY'][$key2]['DESCRIPTION'] =htmlspecialchars($value2, ENT_QUOTES); ;
                                 }
+
+                                break;
+
+                            case "methodology3":
+                                foreach ($value as $key2 => $value2) {
+                                    $arrKey['METHODOLOGY'][$key2+3]['NAME'] =$_POST['methodology2'][$key2] ;
+                                    $arrKey['METHODOLOGY'][$key2+3]['DESCRIPTION'] =htmlspecialchars($value2, ENT_QUOTES); ;
+                                }
+                                break;
+                            case 'methodology2':
                                 break;
 
                              case "institution":
