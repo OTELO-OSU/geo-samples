@@ -290,23 +290,23 @@ var APP = (function() {
                             if (k.SUPPLEMENTARY_FIELDS) {
                                      
                                 if (k.SUPPLEMENTARY_FIELDS.CORE_DETAILS || k.SUPPLEMENTARY_FIELDS.BLOCK ) {
-                                    if (k.SUPPLEMENTARY_FIELDS.CORE_DETAILS[0].CORE.toUpperCase() == 'YES' && k.SUPPLEMENTARY_FIELDS.CORE_DETAILS[0].DEPTH != null) {
+                                    if (k.SUPPLEMENTARY_FIELDS.CORE_DETAILS[0].CORE.toUpperCase() == 'YES' && k.SAMPLING_POINT[0].ELEVATION != null) {
                                         $('.preview .header').empty();
                                         $('.preview .header').append('Core');
                                         $('#preview').append('<div id="line"></div><style>.event{top:-30px!important;}</style>');
                                         object= new Object();
-                                        object.date=k.SUPPLEMENTARY_FIELDS.CORE_DETAILS[0].DEPTH;
+                                        object.date=k.SAMPLING_POINT[0].ELEVATION;
                                         object.content='<a onclick=\"APP.modules.map.affichageinfo(\''+k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME+'\');\">'+k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME +'</a>';
                                         samples.push(object);
                                         orientation='vertical';
                                         
                                     }
-                                    else if (k.SUPPLEMENTARY_FIELDS.BLOCK.toUpperCase() == 'YES' && k.SAMPLING_POINT[0].ELEVATION != null){
+                                    else if (k.SUPPLEMENTARY_FIELDS.BLOCK.toUpperCase() == 'YES' && k.SAMPLING_POINT[0].SAMPLING != null){
                                         $('.preview .header').empty();
                                         $('.preview .header').append('OUTCROP');
                                         $('#preview').append('<div id="line"></div>');
                                         object= new Object();
-                                        object.date=k.SAMPLING_POINT[0].ELEVATION;
+                                        object.date=k.SAMPLING_POINT[0].SAMPLING;
                                         object.content='<a onclick=\"APP.modules.map.affichageinfo(\''+k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME+'\');\">'+k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME+'</a>';
                                         samples.push(object);
                                         orientation='horizontal';
