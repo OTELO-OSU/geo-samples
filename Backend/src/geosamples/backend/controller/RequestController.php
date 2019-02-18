@@ -54,7 +54,7 @@ class RequestController
         $array=array();
         foreach ($response['hits']['hits'] as $key => $value) {
             if ($value['_source']['INTRO']['STATUS']=='Awaiting') {
-             
+
              $array[]=$value['_id'];
          }
      }
@@ -408,7 +408,7 @@ echo $generatedfile;
     $explode = explode('_', $id, 3);
     $id=$explode[0].'_'.$explode[1];
     $config = self::ConfigFile();
-    $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . '/_search?q=(INTRO.MEASUREMENT.ABBREVIATION:"' . $explode[1] . '"%20AND%20INTRO.SUPPLEMENTARY_FIELDS.SAMPLE_NAME:"' . $explode[0] . '")&type=' . $config['COLLECTION_NAME'].'_sandbox' ;
+    $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . '/_search?q=(INTRO.MEASUREMENT.ABBREVIATION:"' . $explode[1] . '"%20AND%20INTRO.SUPPLEMENTARY_FIELDS.SAMPLE_NAME:"' . $explode[0] . '")&type=' . $config['COLLECTION_NAME'] ;
     $curlopt = array(
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => "",
@@ -448,12 +448,12 @@ function Request_poi_raw_data($id)
     );
     $response = self::Curlrequest($url, $curlopt);
     $response = json_decode($response, true);
-    
+
     if (count($response['hits']['hits'])==1) {
         $response = json_encode($response['hits']['hits'][0]['_source']['DATA']);
         return $response;
     }
-    
+
 }
 
 
@@ -637,13 +637,13 @@ function Request_poi_img($id, $picturename)
 
     function Post_Processing($POST,$route)
     {
+
         $config = self::ConfigFile();
         $rawdata=null;
         $data=null;
         $pictures=null;
 
-        
-        
+
         $UPLOAD_FOLDER    = $config["CSV_FOLDER"];
         if ($_FILES['data']['error'][0] != '0') {
 
@@ -655,7 +655,7 @@ function Request_poi_img($id, $picturename)
             $repertoireDestination         = $UPLOAD_FOLDER;
             $nomDestination                = str_replace(' ', '_', $_FILES["data"]["name"][$i]);
             $data["FILES"][$i]["DATA_URL"] = $nomDestination;
-            
+
             if (file_exists($repertoireDestination . $_FILES["data"]["name"][$i])) {
                 $returnarray[] = "false";
                 $returnarray[] = $array['dataform'];
@@ -674,7 +674,7 @@ function Request_poi_img($id, $picturename)
                         $file=$repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1] ."/" . $nomDestination;
                         if ($filetypes == 'csv' or $filetypes == 'xlsx') {
                             if ($filetypes == 'csv') {
-                                
+
                              $type = \PHPExcel_IOFactory::identify($file);
                              $objReader = \PHPExcel_IOFactory::createReader($type);
 
@@ -687,10 +687,10 @@ function Request_poi_img($id, $picturename)
                              $keys          = array();
                              $obj           = array();
                              $data_samples  = array();
-                             
-                             
+
+
                              $startFields = 2;
-                             
+
                              foreach ($rowIterator as $ligne => $row) {
                                 $cellIterator = $row->getCellIterator();
                                 $cellIterator->setIterateOnlyExistingCells(false);
@@ -705,25 +705,25 @@ function Request_poi_img($id, $picturename)
                                             $key = preg_replace('/./', '', $key);
                                         }
                                         $units[$key] = $sheet->getCellByColumnAndRow($indice - 1, $ligne + 1)->getValue();
-                                        
+
                                         if ($indice == $highestColumn) {
                                             $keys = array_keys($units);
                                         }
                                     } else if ($ligne > $startFields) {
                                         $value = $cell->getValue();
                                         if (!empty($keys[$indice - 1])) {
-                                          
+
                                             $obj[$keys[$indice - 1]] = $value;
                                         }
-                                        
+
                                         if ($indice == $highestColumn) {
-                                            
+
                                                                // $arrKey["SAMPLES"][] = $obj;
                                             $data_samples["SAMPLES"][]=$obj;
                                         }
                                     }
                                 }
-                                
+
                             }
 
                             $data["SAMPLES"]=$data_samples["SAMPLES"];
@@ -731,7 +731,7 @@ function Request_poi_img($id, $picturename)
                         if ($filetypes == 'xlsx') {
 
 
-                            
+
                          $type = \PHPExcel_IOFactory::identify($file);
                          $objReader = \PHPExcel_IOFactory::createReader($type);
                          $objPHPExcel = $objReader->load($file);
@@ -744,8 +744,8 @@ function Request_poi_img($id, $picturename)
                          $keys          = array();
                          $obj           = array();
                          $data_samples  = array();
-                         
-                         
+
+
                          $startFields = 2;
                          foreach ($rowIterator as $ligne => $row) {
                             $cellIterator = $row->getCellIterator();
@@ -761,38 +761,38 @@ function Request_poi_img($id, $picturename)
                                         $key = preg_replace('/./', '', $key);
                                     }
                                     $units[$key] = $sheet->getCellByColumnAndRow($indice - 1, $ligne + 1)->getValue();
-                                    
+
                                     if ($indice == $highestColumn) {
                                         $keys = array_keys($units);
                                     }
                                 } else if ($ligne > $startFields) {
                                     $value = $cell->getValue();
                                     if (!empty($keys[$indice - 1])) {
-                                      
+
                                         $obj[$keys[$indice - 1]] = $value;
                                     }
-                                    
+
                                     if ($indice == $highestColumn) {
-                                        
+
                                                                // $arrKey["SAMPLES"][] = $obj;
                                         $data_samples["SAMPLES"][]=$obj;
                                     }
                                 }
                             }
-                            
+
                         }
 
                         $data["SAMPLES"]=$data_samples["SAMPLES"];
-                        
+
 
 
 
                     }
 
-                    
-                    
 
-                    
+
+
+
 
                 }
                 else{
@@ -811,7 +811,7 @@ function Request_poi_img($id, $picturename)
             }
         }
     }
-    
+
 }
 }
 if ($_FILES['pictures']['error'][0] != '0') {
@@ -823,7 +823,7 @@ else{
     $repertoireDestination         = $UPLOAD_FOLDER;
     $nomDestination                = str_replace(' ', '_', $_FILES["pictures"]["name"][$i]);
     $pictures["FILES"][$i]["DATA_URL"] = $nomDestination;
-    
+
     if (file_exists($repertoireDestination . $_FILES["pictures"]["name"][$i])) {
         $returnarray[] = "false";
         $returnarray[] = $array['dataform'];
@@ -868,7 +868,7 @@ else{
     $repertoireDestination         = $UPLOAD_FOLDER;
     $nomDestination                = str_replace(' ', '_', $_FILES["rawdata"]["name"][$i]);
     $rawdata["FILES"][$i]["DATA_URL"] = $nomDestination;
-    
+
     if (file_exists($repertoireDestination . $_FILES["rawdata"]["name"][$i])) {
         $returnarray[] = "false";
         $returnarray[] = $array['dataform'];
@@ -928,7 +928,7 @@ else{
                         'institution',
                         'scientific_fields',
                         'sampling_points',
-                        
+
                     );
 
                     foreach ($required as $field) {
@@ -946,7 +946,7 @@ else{
                         $error = "Warning there are empty fields: " . $txt;
                     }
 
-                    
+
 
 
 
@@ -954,10 +954,10 @@ else{
 
 
                     foreach ($POST as $key => $value) {
-                        
+
                        switch ($key) {
-                        
-                        
+
+
                         case "keywords":
                         foreach ($value as $key2 => $value2) {
                             $arrKey[strtoupper($key)][]['NAME'] = htmlspecialchars($value2, ENT_QUOTES);
@@ -965,19 +965,19 @@ else{
                         break;
                         case "core":
                         $arrKey['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][]['CORE'] = $value;
-                        
+
                         break;
                         case "core_depth":
                         $arrKey['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][0]['DEPTH'] = htmlspecialchars($value, ENT_QUOTES);;
-                        
+
                         break;
                         case "core_azimut":
                         $arrKey['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][0]['AZIMUT'] = htmlspecialchars($value, ENT_QUOTES);;
-                        
+
                         break;
                         case "core_dip":
                         $arrKey['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][0]['DIP'] = htmlspecialchars($value, ENT_QUOTES);;
-                        
+
                         break;
                         case "sampling_date":
                         $arrKey[strtoupper($key)][] = htmlspecialchars($value, ENT_QUOTES);;
@@ -994,7 +994,7 @@ else{
                             $name='UNIT';
                         }
 
-                        
+
                         $arrKey['MEASUREMENT'][0][$name] =htmlspecialchars($value2, ENT_QUOTES); ;
 
                                     /*$arrKey['MEASUREMENT'][$key2]['NATURE'] =$value2[0] ;
@@ -1033,8 +1033,8 @@ else{
                             foreach ($value as $key2 => $value2) {
                                 $arrKey[strtoupper($key)][]['NAME'] = htmlspecialchars($value2, ENT_QUOTES);;
                             }
-                            
-                            
+
+
                             break;
                             case "scientific_fields":
                             foreach ($value as $key2 => $value2) {
@@ -1043,8 +1043,8 @@ else{
                                 $arrKey[strtoupper($key)][]['NAME'] = $sc;
                             }
                             break;
-                            
-                            
+
+
                             break;
                             case "sampling_points":
                             $arrKey['SAMPLING_POINT'][$key2]['NAME'] =$value[0] ;
@@ -1060,8 +1060,8 @@ else{
 
                                    // $arrKey['SAMPLING_POINT'][strtoupper($key2)] = array_change_key_case ($value2 ,  CASE_UPPER  );
                               }*/
-                              
-                              
+
+
                               break;
 
                               case "sample_name":
@@ -1090,9 +1090,9 @@ else{
                     }
                     $user= New User();
                     $referents=$user->getProjectReferent($config['COLLECTION_NAME']);
-                    
+
                     foreach ($referents as $key => $value) {
-                      
+
                        $arrKey['SUPPLEMENTARY_FIELDS']['REFERENT'][$key]['NAME_REFERENT'] = $value->name;
                        $arrKey['SUPPLEMENTARY_FIELDS']['REFERENT'][$key]['FIRST_NAME_REFERENT'] = $value->firstname;
                        $arrKey['SUPPLEMENTARY_FIELDS']['REFERENT'][$key]['MAIL'] = $value->mail;
@@ -1103,7 +1103,7 @@ else{
                        $arrKey['FILE_CREATOR'][$key]['DISPLAY_NAME'] = $value->name." ".$value->firstname;
                    }
 
-                   
+
                    $item=count($referents);     
                    $item++;
                    $arrKey['FILE_CREATOR'][$item]['NAME'] = $_SESSION['name'];
@@ -1111,7 +1111,7 @@ else{
                    $arrKey['FILE_CREATOR'][$item]['MAIL'] = $_SESSION['mail'];
                    $arrKey['FILE_CREATOR'][$item]['DISPLAY_NAME'] = $_SESSION['name']." ".$_SESSION['firstname'];
 
-                   
+
 
 
        // foreach ($POST['measurements'] as $key => $value) {
@@ -1154,7 +1154,7 @@ else{
                    else{
                         //$sample_name=$_POST['sample_name'];
                     $original_sample_name=$_POST['original_sample_name'];
-                    
+
                 }
             }
 
@@ -1176,7 +1176,7 @@ else{
             $intersect = array();
             if (isset($tmp_array)) {
                 foreach ($tmp_array->FILES as $key => $value) {
-                    
+
                     foreach ($file_already_uploaded as $key => $value2) {
                   // var_dump($value->DATA_URL);
                         if($value->DATA_URL==$value2['DATA_URL']){
@@ -1188,6 +1188,7 @@ else{
             }
             var_dump($intersect);
             var_dump($data);
+            var_dump($pictures);
             $data_samples=$data['SAMPLES'];
 
             if (count($intersect) != 0 and $data != 0) { //si il y a eu des suppressions et des ajouts
@@ -1196,10 +1197,24 @@ else{
                 } else if (count($intersect) != 0) {
 // si il y a eu seulement des suppressions
                     $merge = $intersect;
-                } else {
+                }else {
                     //si il y a eu seuelement des ajouts
                     $merge = $data;
+                }
+
+                if (count($pictures)!=0) {
                     $merge =array_merge_recursive($merge,$pictures);
+                }
+                if (count($rawdata)!=0) {
+                    foreach ($merge['FILES'] as $key => $value) {
+                        var_dump($value);
+                        if ($value->TYPE_DATA=='Rawdata') {
+                        var_dump($key);
+                            unlink($value->ORIGINAL_DATA_URL);
+                            unset($merge['FILES'][$key]);
+                        }
+                    }
+                    $merge =array_merge_recursive($merge,$rawdata);
                 }
 
             //print_r($merge);
@@ -1210,7 +1225,7 @@ else{
                    $bulk->insert($insert);
                    $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'], $bulk);
                    $bulk = new MongoDB\Driver\BulkWrite;
-                   $bulk->delete(['_id' => strtoupper($_POST['original_sample_name'])]);
+                   //$bulk->delete(['_id' => strtoupper($_POST['original_sample_name'])]);
                    $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $bulk);
 
                    return true;
@@ -1227,7 +1242,7 @@ else{
                 $bulk = new MongoDB\Driver\BulkWrite;
                 $filter=array();
                 $filter = ['_id' => strtoupper($sample_name)];
-                
+
 
                 $query = new MongoDB\Driver\Query($filter);
                 $cursor = $this->db->executeQuery($config['dbname'].'.'.$config['COLLECTION_NAME'], $query);
@@ -1256,7 +1271,7 @@ else{
 
                $filter=array();
                $filter = ['_id' => strtoupper($sample_name).'_RAW'];
-               
+
 
                $query = new MongoDB\Driver\Query($filter);
                $cursor = $this->db->executeQuery($config['dbname'].'.'.$config['COLLECTION_NAME'], $query);
@@ -1319,7 +1334,7 @@ function delete_data($id)
     $bulk->delete(['_id' => strtoupper($id)]);
 
     $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $bulk);
-    
+
 
 }
 

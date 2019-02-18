@@ -207,6 +207,21 @@
 		}
 
 		 $(function() {
+		 	$("input[name='data[]']").change(function(){
+		 		if ($("input[name='sample_name']").val()=="") {
+		 			value=$("input[name='data[]']").val().split('_')
+		 			$("input[name='sample_name']").val(value[0].replace("C:\\fakepath\\",""));
+
+		 		}else{
+		 			value=$("input[name='data[]']").val().split('_')
+					sample=value[0].replace("C:\\fakepath\\","")
+					if($("input[name='sample_name']").val()!=sample){
+						alert('File name not match')
+						$("input[name='data[]']").val('')
+					}
+
+		 		}
+			 });
 		 	$('.ui.accordion')
 			  .accordion()
 			  $( ".submit" ).click(function() {
@@ -686,7 +701,19 @@ function handleFileSelect(evt) {
                                           	    else if(values[1]=='SAMPLE_STORAGE'){
                                           	    	$("input[name='methodology[].SAMPLE_STORAGE']").val(values[2]);
                                           	    }else{
-
+                                          	    	methodology = $('.methodology2 input').length;
+                                          	    console.log(methodology)
+                                              if (methodology <= 2) {
+                                                  if ($("input[name='methodology2[0].Nature']").val() != "") {
+                                          	     console.log(values[2]);
+                                                        $(".methodology2 ._jsonform-array-addmore" ).trigger( "click" );
+	                                                  	$('.methodology2 input')[methodology].value=values[1];
+	                                                  	$('.methodology2 input')[methodology+1].value=values[2];
+                                                  } else {
+                                                      $("input[name='methodology2[0].Nature']").val(values[1]);
+                                                      $("input[name='methodology3[0].description']").val(values[2]);
+                                                  }
+                                              }
                                                   
                                               
                                           	    }
