@@ -344,13 +344,20 @@ var APP = (function() {
                                 samples.sort(function(a, b) {
                                 return parseFloat(a.date) - parseFloat(b.date);
                             });
+                            if (orientation=='vertical') {
+                                 prevArrow= '<i class="angle up icon"></i>',
+                                 nextArrow= '<i class="angle down icon"></i>'
+                            }else{
+                                 prevArrow= '<i class="angle left icon"></i>',
+                                 nextArrow= '<i class="angle right icon"></i>'
+                            }
 
                              $('#line').roadmap(samples, {
                                 orientation:orientation,
                                 eventsPerSlide: 5,
                                 slide:1,
-                                prevArrow: '<i class="angle up icon"></i>',
-                                nextArrow: '<i class="angle down icon"></i>'
+                                prevArrow: prevArrow,
+                                nextArrow: nextArrow
 
                             });
                              
