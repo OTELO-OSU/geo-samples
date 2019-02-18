@@ -34,15 +34,18 @@
          <div class="item right floated">
          {% if mail %} 
             <a class="right item" href="/logout" id="logout">Logout</a> 
-	    {% if access == 1 or access==2 or access==3 %} 	
+	    {% if access == 1  %} 	
             	<a class="item" href="/upload" id="upload">Upload</a> 
+               <a class="item" href="/validation" id="approve">Approve</a> 
+       {% elseif access == 2  %}   
+               <a class="item" href="/upload" id="upload">Upload</a> 
 	    {% endif %}
              <a class="item" href="/myaccount" id="upload">My account</a> 
          {% else %} 
             <a class="right item" href="/login" id="login">Login</a> 
             <a class="item" href="/signup" id="login">Sign up</a>
          {% endif %}
-         {%if name %}
+         {%if map %}
             <button class="ui button blue filter">Filter</button>
          {% endif %}
          </div>

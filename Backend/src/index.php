@@ -104,6 +104,16 @@ $check_current_user = function ($request, $response, $next) {
 
 };
 
+
+$user= new User();
+	$feeder= $user->is_feeder($_SESSION['mail'],$config['COLLECTION_NAME']);
+	$referent= $user->is_referent($_SESSION['mail'],$config['COLLECTION_NAME']);
+	if (($feeder===true )OR ($referent===true) OR $_SESSION['admin']==1) {
+		$access=true;
+	}
+
+
+
 session_start();
 //Declaration des différentes routes 
 
@@ -112,7 +122,8 @@ $app->get('/', function (Request $req,Response $responseSlim) {
 	$twig = new Twig_Environment($loader);
 	$config = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . '/../config.ini');
 
-	echo $twig->render('accueil.html.twig',['project_name' => $config['PROJECT_NAME'],'name' => $_SESSION['name'], 'firstname' => $_SESSION['firstname'], 'mail' => $_SESSION['mail'],'name'=>'map','access'=>$_SESSION['admin']]);
+
+	echo $twig->render('accueil.html.twig',['project_name' => $config['PROJECT_NAME'],'name' => $_SESSION['name'], 'firstname' => $_SESSION['firstname'], 'mail' => $_SESSION['mail'],'map'=>'map','access'=>$_SESSION['access']]);
 
 });
 
@@ -150,7 +161,8 @@ $app->post('/login', function (Request $req, Response $responseSlim) {
 });
 
 $app->get('/test', function (Request $req, Response $responseSlim) {
-	//var_dump($_SESSION['projects_access_right']);
+	//var_dump($_SESSION);
+	//var_dump($_SESSION['projects_access_right_name']);
 	
 		//var_dump($value);
 		/*$file   = new File();
@@ -160,9 +172,9 @@ $app->get('/test', function (Request $req, Response $responseSlim) {
 		$referent= $user->is_referent($_SESSION['mail'],$config['COLLECTION_NAME']);
 		var_dump($feeder);
 		var_dump($_SESSION);*/
-		$request = new RequestApi();
+		/*$request = new RequestApi();
 		$response=$request->Request_all_data_awaiting();
-		var_dump($response);
+		var_dump($response);*/
 
 
 	//var_dump($user->getProjectReferent('petrophysics'));
@@ -172,11 +184,16 @@ $app->get('/test', function (Request $req, Response $responseSlim) {
 
 
 $app->get('/validation', function (Request $req, Response $responseSlim) {
-		$request = new RequestApi();
-		$response=$request->Request_all_data_awaiting();
-		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig   = new Twig_Environment($loader);
-		echo $twig->render('validation.html.twig', ['data' => $response]);
+		if (($_SESSION['access']==1) OR $_SESSION['admin']==1) {
+			$request = new RequestApi();
+			$response=$request->Request_all_data_awaiting();
+			$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
+			$twig   = new Twig_Environment($loader);
+			echo $twig->render('validation.html.twig', ['data' => $response,'mail'=>$_SESSION['mail'],'access'=>$_SESSION['access']]);
+		}else{
+					return $responseSlim->withRedirect('/');
+
+		}
 
 });
 
@@ -279,7 +296,7 @@ $app->get('/myaccount', function (Request $req, Response $responseSlim) {
 		$user      = new User();
 		$user      = $user->getUserInfo($_SESSION['mail']);
 
-		echo $twig->render('myaccount.html.twig', ['name' => $user[0]->name, 'firstname' => $user[0]->firstname, 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'], 'admin' => $_SESSION['admin'],'access'=>$_SESSION['admin']]);
+		echo $twig->render('myaccount.html.twig', ['name' => $user[0]->name, 'firstname' => $user[0]->firstname, 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'], 'admin' => $_SESSION['admin'],'access'=>$_SESSION['access']]);
 	} else {
 		return $responseSlim->withRedirect('accueil');
 	}

@@ -9,6 +9,7 @@ use \geosamples\model\Users as Users;
 use \geosamples\model\Projects as Projects;
 use \geosamples\model\ProjectsAccessRight as Projects_access_right;
 use \geosamples\model\ProjectsRequest as ProjectsRequest;
+use \geosamples\backend\controller\FileController as File;
 
 class UserController
 {
@@ -48,6 +49,17 @@ class UserController
                     $_SESSION['firstname'] = $verif[0]->firstname;
                     $_SESSION['mail']      = $verif[0]->mail;
                     $_SESSION['admin']     = $verif[0]->type;
+                    $file   = new File();
+                    $config = $file->ConfigFile();
+                     $feeder= $this->is_feeder($_SESSION['mail'],$config['COLLECTION_NAME']);
+                        $referent= $this->is_referent($_SESSION['mail'],$config['COLLECTION_NAME']);
+
+                        if (($referent===true) OR $_SESSION['admin']==1) {
+                            $_SESSION['access']=1;
+                        }
+                        elseif( $feeder===true) {
+                            $_SESSION['access']=2;
+                        }
                
 
                 }
