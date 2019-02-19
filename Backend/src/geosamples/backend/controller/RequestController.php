@@ -726,7 +726,6 @@ function Request_poi_img($id, $picturename)
 
                             }
 
-                            $data["SAMPLES"]=$data_samples["SAMPLES"];
                         }
                         if ($filetypes == 'xlsx') {
 
@@ -782,7 +781,6 @@ function Request_poi_img($id, $picturename)
 
                         }
 
-                        $data["SAMPLES"]=$data_samples["SAMPLES"];
 
 
 
@@ -961,6 +959,7 @@ else{
                         case "keywords":
                         foreach ($value as $key2 => $value2) {
                             $arrKey[strtoupper($key)][]['NAME'] = htmlspecialchars($value2, ENT_QUOTES);
+                            $arrcsv[strtoupper($key)][] = htmlspecialchars($value2, ENT_QUOTES);
                         }
                         break;
                         case "core":
@@ -1031,7 +1030,9 @@ else{
 
                             case "institution":
                             foreach ($value as $key2 => $value2) {
-                                $arrKey[strtoupper($key)][]['NAME'] = htmlspecialchars($value2, ENT_QUOTES);;
+                                $arrKey[strtoupper($key)][]['NAME'] = htmlspecialchars($value2, ENT_QUOTES);
+                                $arrcsv[strtoupper($key)][] = htmlspecialchars($value2, ENT_QUOTES);
+
                             }
 
 
@@ -1041,6 +1042,8 @@ else{
                                 $sc=htmlspecialchars($value2, ENT_QUOTES);;
 
                                 $arrKey[strtoupper($key)][]['NAME'] = $sc;
+                                $arrcsv[strtoupper($key)][] = $sc;
+
                             }
                             break;
 
@@ -1066,7 +1069,8 @@ else{
 
                               case "sample_name":
                               $arrKey['SUPPLEMENTARY_FIELDS'][strtoupper($key)] =strtoupper(htmlspecialchars($value, ENT_QUOTES));
-                              $sample_name=htmlspecialchars($value, ENT_QUOTES);;
+                              $sample_name=htmlspecialchars($value, ENT_QUOTES);
+                              $arrcsv[strtoupper($key)] = htmlspecialchars($sample_name, ENT_QUOTES);
                               $sample_name_old=$sample_name;
                               break;
                               case "original_sample_name":
@@ -1078,6 +1082,8 @@ else{
                             }else{
 
                                 $arrKey[strtoupper($key)] = htmlspecialchars($value, ENT_QUOTES);
+                                $arrcsv[strtoupper($key)] = htmlspecialchars($value, ENT_QUOTES);
+
                             }
 
 
@@ -1088,6 +1094,7 @@ else{
 
 
                     }
+
                     $user= New User();
                     $referents=$user->getProjectReferent($config['COLLECTION_NAME']);
 
@@ -1147,9 +1154,9 @@ else{
                     if ($_POST['sample_name'].'_'.strtoupper($_POST['measurements'][1])!=$_POST['original_sample_name']) {
                         //$sample_name=$_POST['sample_name'];
                         $original_sample_name=$_POST['sample_name'].'_'.$_POST['measurements'][1];
-                        if (strpos($_POST['original_sample_name'], '_RAW') !== false) {
+                       /* if (strpos($_POST['original_sample_name'], '_RAW') !== false) {
                            $original_sample_name=$_POST['sample_name'].'_'.$_POST['measurements'][1].'_RAW';
-                       }
+                       }*/
                    }
                    else{
                         //$sample_name=$_POST['sample_name'];
@@ -1159,7 +1166,7 @@ else{
             }
 
             var_dump($POST['file_already_uploaded']);
-              // $data=$arrKey['DATA'];
+               //$data=$arrKey['DATA'];
             $filter = ['_id' => strtoupper($original_sample_name)];
                // var_dump($filter);
             $query = new MongoDB\Driver\Query($filter);
@@ -1174,59 +1181,119 @@ else{
             }
 
             $intersect = array();
+            $intersect_raw = array();
             if (isset($tmp_array)) {
                 foreach ($tmp_array->FILES as $key => $value) {
 
                     foreach ($file_already_uploaded as $key => $value2) {
                   // var_dump($value->DATA_URL);
                         if($value->DATA_URL==$value2['DATA_URL']){
-                            $intersect['FILES'][]=$value;
+                            var_dump($value->TYPE_DATA);
+                            if ($value->TYPE_DATA=='Rawdata') {
+                                $intersect_raw['FILES'][]=(array)$value;
+                            }
+                            else{
+
+                            $intersect['FILES'][]=(array)$value;
+                            }
                         //unset($data[$key]);
                         }
+                        
+
                     }
                 }
             }
-            var_dump($intersect);
-            var_dump($data);
-            var_dump($pictures);
-            $data_samples=$data['SAMPLES'];
+            echo "string";
+            //var_dump($intersect_raw);
+            //var_dump($tmp_array);
+                print_r($rawdata);
 
             if (count($intersect) != 0 and $data != 0) { //si il y a eu des suppressions et des ajouts
-                    $merge = array_merge($intersect, $data['FILES']); // on merge les tableaux
-                    $merge=array_merge($merge,$data_samples);
+          // var_dump($data);
+            //print_r($intersect);
+                foreach ($intersect['FILES'] as $key => $value) {
+                        if ($value['TYPE_DATA']=='Data') {
+                            unlink($value->ORIGINAL_DATA_URL);
+                            unset($intersect['FILES'][$key]);
+                        }
+                    }
+                    $merge = array_merge_recursive($intersect, $data); // on merge les tableaux
+                   // var_dump($merge);
+
+                    //$data_samples['SAMPLES']=$data['SAMPLES'];
+
                 } else if (count($intersect) != 0) {
-// si il y a eu seulement des suppressions
+                // si il y a eu seulement des suppressions
+                    $data_samples['SAMPLES']=$tmp_array->SAMPLES;
                     $merge = $intersect;
                 }else {
                     //si il y a eu seuelement des ajouts
+                    $data_samples['SAMPLES']=$tmp_array->SAMPLES;
                     $merge = $data;
                 }
 
                 if (count($pictures)!=0) {
                     $merge =array_merge_recursive($merge,$pictures);
+                   // var_dump($merge);
+                }else{
+                    $pictures=array();
+                    //$merge =array_merge_recursive($merge,$pictures);
                 }
+              
                 if (count($rawdata)!=0) {
-                    foreach ($merge['FILES'] as $key => $value) {
-                        var_dump($value);
-                        if ($value->TYPE_DATA=='Rawdata') {
-                        var_dump($key);
-                            unlink($value->ORIGINAL_DATA_URL);
-                            unset($merge['FILES'][$key]);
+                    $merge_raw=$merge;
+                     foreach ($merge['FILES'] as $key => $value) {
+                        if ($value['TYPE_DATA']=='Rawdata') {
+                          unlink($value['ORIGINAL_DATA_URL']);
+                          unset($intersect_raw['FILES'][$key]);
                         }
+                          if ($value['TYPE_DATA']=='Data') {
+                          unlink($value['ORIGINAL_DATA_URL']);
+                          unset($merge_raw['FILES'][$key]);
+                        }
+
+                    
                     }
-                    $merge =array_merge_recursive($merge,$rawdata);
+                        $rawdata =array_merge_recursive($intersect_raw,$rawdata,$merge_raw);
+
+                //var_dump($pictures);
+               // var_dump($rawdata);
+                //var_dump($intersect_raw);
+                    //$rawdata =array_merge_recursive($pictures,$intersect_raw);
+                //var_dump($rawdata);
                 }
 
-            //print_r($merge);
+                if ($intersect_raw){
+                    $merge_raw=$merge;
+                    foreach ($merge['FILES'] as $key => $value) {
+                    if ($value['TYPE_DATA']=='Data') {
+                          unlink($value['ORIGINAL_DATA_URL']);
+                          unset($merge_raw['FILES'][$key]);
+                        }
+                    }
+            $rawdata =array_merge_recursive($pictures,$merge_raw,$intersect_raw);
+
+                    
+                }
+            $merge=array_merge($merge,$data_samples);
+
+
+            print_r($rawdata);
                 $bulk = new MongoDB\Driver\BulkWrite;
                 try{
                    unset($arrKey["STATUS"]);
                    $insert=array('_id' => strtoupper($original_sample_name),"INTRO"=>$arrKey,'DATA'=>$merge);
                    $bulk->insert($insert);
+                    if (count($rawdata)!=0) {
+                          unset($arrKey["STATUS"]);
+                           $insert=array('_id' => strtoupper($original_sample_name).'_RAW',"INTRO"=>$arrKey,'DATA'=>$rawdata);
+                           $bulk->insert($insert);
+
+                     }
                    $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'], $bulk);
                    $bulk = new MongoDB\Driver\BulkWrite;
                    //$bulk->delete(['_id' => strtoupper($_POST['original_sample_name'])]);
-                   $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $bulk);
+                   //$this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $bulk);
 
                    return true;
                }
@@ -1247,6 +1314,28 @@ else{
                 $query = new MongoDB\Driver\Query($filter);
                 $cursor = $this->db->executeQuery($config['dbname'].'.'.$config['COLLECTION_NAME'], $query);
 
+               /* $fp = fopen('file.csv', 'w');
+
+              foreach ($arrcsv as $key=>$line) {
+                var_dump($line);
+                // use the default csv handle
+                if (is_array($line)) {
+                   foreach ($line as $key2 => $value) {
+                    var_dump($key);
+                    $csv=array($key,$value);
+                    fputcsv($fp, $csv);
+
+                   }
+                }else{
+                $csv=array($key,$line);
+                fputcsv($fp, $csv);
+                }
+              
+                }
+
+
+            fclose($fp);*/
+
                 foreach ($cursor as $document) {
                     if($document->_id== strtoupper($sample_name)){
                         $array['dataform'] = $arrKey;
@@ -1254,10 +1343,11 @@ else{
                         return $array;
                     }
                 }
-                $data =array_merge_recursive($data,$pictures);
+                $data =array_merge_recursive($data,$pictures,$rawdata);
                 $insert=array('_id' => strtoupper($sample_name),"INTRO"=>$arrKey,'DATA'=>$data);
                 $bulk->insert($insert);
                 $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $bulk);
+                return true;
             }
             catch (MongoDB\Driver\Exception\BulkWriteException  $e) {
                $array['dataform'] = $arrKey;
@@ -1265,7 +1355,7 @@ else{
                return $array;
            }
 
-           if ($rawdata) {
+          /* if ($rawdata) {
             try{
                $bulk = new MongoDB\Driver\BulkWrite;
 
@@ -1288,6 +1378,7 @@ else{
 
 
             $insert=array('_id' => strtoupper($sample_name).'_RAW',"INTRO"=>$arrKey,'DATA'=>$rawdata);
+            
             $bulk->insert($insert);
             $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $bulk);
             exit();
@@ -1300,7 +1391,7 @@ else{
        }
    }else{
     return true;
-}
+}*/
 }
 }
 

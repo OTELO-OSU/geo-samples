@@ -100,35 +100,40 @@ var APP = (function() {
                         }
 
                         if (k.SUPPLEMENTARY_FIELDS) {
+                            supplementary_fields_array=[];
                              $.map(k.SUPPLEMENTARY_FIELDS, function(k3, v3) {  
                             supplementary_field='';
                             if (v3=='REFERENT') {
                                k3.forEach(function(ref, val) {
                                 $.map(ref, function(k4, v4) {  
-                                     supplementary_field += '<br>' +v4+': '+k4
+                                     supplementary_field += v4+': '+k4+'<br>'
                                 });
                                 });
                             }else if (v3=='ANALYST') {
                                k3.forEach(function(ref, val) {
                                 $.map(ref, function(k4, v4) {  
-                                     supplementary_field += '<br>' +v4+': '+k4
+                                     supplementary_field += v4+': '+k4+'<br>'
                                 });
                                 });
                             }
                             else if (v3=='CORE_DETAILS') {
                                k3.forEach(function(ref, val) {
                                 $.map(ref, function(k4, v4) {  
-                                     supplementary_field += '<br>' +v4+': '+k4
+                                     supplementary_field += v4+': '+k4+'<br>'
                                 });
                                 });
                             }
                             else{
 
-                                supplementary_field = '<br>' +v3+': '+k3
+                                supplementary_field = v3+': '+k3
                             }
 
+                            supplementary_fields_array.push(supplementary_field);
+                            });
+                            supplementary_fields_array=supplementary_fields_array.sort()
 
-                                supplementary_fields+=supplementary_field;
+                             supplementary_fields_array.forEach(function(ref, val) {
+                                supplementary_fields+='<br>'+ref;
                             });
                             if (supplementary_fields != '') {
                                 supplementary_fields = '<div class="ui middle aligned selection list">' + supplementary_fields + '</div>'
