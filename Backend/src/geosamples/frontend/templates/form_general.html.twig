@@ -369,7 +369,7 @@ title: 'Sampling date'
 
 		{
 			"type":"file_data_already_uploaded",
-			"value":"{%if files%}{%for file in files%}<div class=\"ui input\"><!--a href='/download_poi_data/{{file.DATA_URL}}'> {{file.DATA_URL}}</a>--> <input id=\"text\" type=\"text\" name=\"file_already_uploaded[]\" value={{file.DATA_URL}} readonly><div class=\"ui icon delete\"><i class=\"remove icon\"></i></div></div>{%endfor%}{%endif%}"
+			"value":"{%if files%}{%for file in files%}<div class=\"ui input\"><a href='/download_poi_data_awaiting/{{original_sample_name}}/{{file.DATA_URL}}'> {{file.DATA_URL}}</a> <input id=\"text\" type=\"text\" name=\"file_already_uploaded[]\" value={{file.DATA_URL}} readonly><div class=\"ui icon delete\"><i class=\"remove icon\"></i></div></div>{%endfor%}{%endif%}"
 		},
 		{
 			"key": "pictures"

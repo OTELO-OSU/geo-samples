@@ -403,6 +403,39 @@ echo $generatedfile;
      return $responses;
  }
 
+
+ function Request_poi_data_awaiting($id, $name)
+{
+    $explode = explode('_', $id, 2);
+    $config = self::ConfigFile();
+    $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . '/_search?q=(INTRO.MEASUREMENT.ABBREVIATION:"' . $explode[1] . '"%20AND%20INTRO.SUPPLEMENTARY_FIELDS.SAMPLE_NAME:"' . $explode[0] . '")&type=' . $config['COLLECTION_NAME'].'_sandbox' ;
+    $curlopt = array(
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_PORT => $config['ESPORT'],
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_HTTPHEADER     => "Content-type: application/json",
+        CURLOPT_CUSTOMREQUEST => "GET"
+    );
+    $response = self::Curlrequest($url, $curlopt);
+    $response = json_decode($response, true);
+
+    foreach ($response['hits']['hits'][0]['_source']['DATA']['FILES'] as $key => $value)
+    {
+
+        if ($value['DATA_URL'] == $name)
+        {
+            $img = $value['ORIGINAL_DATA_URL'];
+        }
+
+    }
+    return $img;
+}
+
+
+
  function Request_poi_data($id)
  {
     $explode = explode('_', $id, 3);

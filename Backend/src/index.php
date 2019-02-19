@@ -105,12 +105,7 @@ $check_current_user = function ($request, $response, $next) {
 };
 
 
-$user= new User();
-	$feeder= $user->is_feeder($_SESSION['mail'],$config['COLLECTION_NAME']);
-	$referent= $user->is_referent($_SESSION['mail'],$config['COLLECTION_NAME']);
-	if (($feeder===true )OR ($referent===true) OR $_SESSION['admin']==1) {
-		$access=true;
-	}
+
 
 
 
@@ -972,6 +967,7 @@ $app->get('/download_poi_data/{name}', function (Request $req,Response $response
 	}
 })->add($check_access_right_file);
 
+
 $app->get('/download_poi_raw_data/{name}', function (Request $req,Response $responseSlim,$args) {
 	$name = $args['name'];
 	$name = str_replace(' ', '', $name);
@@ -986,16 +982,23 @@ $app->get('/download_poi_raw_data/{name}', function (Request $req,Response $resp
 })->add($check_access_right_file);
 
 
-$app->get('/download_img/{name}/{picturename}', function (Request $req,Response $responseSlim,$args) {
-	$name = $args['name'];
-	$picture = $args['picturename'];
-	$request = new RequestApi();
-	$path = $request->Request_poi_img($name,$picture);
-	$download = $request->download($path);
-	if ($download == NULL or $download == false) {
-		return $responseSlim->withStatus(403);
+$app->get('/download_poi_data_awaiting/{name}/{picturename}', function (Request $req,Response $responseSlim,$args) {
+		$user= new User();
+		$referent= $user->is_referent($_SESSION['mail'],$config['COLLECTION_NAME']);
+		if (($referent===true) OR $_SESSION['admin']==1) {
+		$name = $args['name'];
+		$picture = $args['picturename'];
+		$request = new RequestApi();
+		$path = $request->Request_poi_data_Awaiting($name,$picture);
+		$download = $request->download($path);
+		if ($download == NULL or $download == false) {
+			return $responseSlim->withStatus(403);
+		}
 	}
-});
+	else{
+		return $responseSlim->withRedirect('/');
+	}
+})->add($check_access_right_file);
 
 $app->get('/preview_img/{name}/{picturename}', function (Request $req,Response $responseSlim,$args) {
 	$name = $args['name'];
