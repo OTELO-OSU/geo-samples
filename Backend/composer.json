@@ -1,6 +1,7 @@
 {
     "require": {
 	"illuminate/database": "5.0.*",
+	"paragonie/random_compat":"2.0.18",
         "slim/slim": "^3.5",
 	"slim/csrf": "*",
 	"twig/twig": "~1.0",
