@@ -508,16 +508,19 @@ function Request_poi_img($id, $picturename)
     $response = self::Curlrequest($url, $curlopt);
     $response = json_decode($response, true);
 
-    foreach ($response['hits']['hits'][0]['_source']['DATA']['FILES'] as $key => $value)
+    foreach ($response['hits']['hits'] as $key => $value)
     {
-
+        foreach ($value['_source']['DATA']['FILES'] as $key => $value) {
         if ($value['DATA_URL'] == $picturename)
         {
             $img = $value['ORIGINAL_DATA_URL'];
         }
+            
+        }
+
 
     }
-    return $img;
+   return $img;
 }
 
     /**
@@ -1127,21 +1130,21 @@ else{
 
 
 
-                            $arrKey['SAMPLING_POINT'][$key2]['NAME'] =$value[0] ;
+                            $arrKey['SAMPLING_POINT'][0]['NAME'] =$value[0] ;
                             $csv['SAMPLING_POINT'][]= htmlspecialchars($value[0], ENT_QUOTES);
-                            $arrKey['SAMPLING_POINT'][$key2]['COORDINATE_SYSTEM'] =$value[1] ;
+                            $arrKey['SAMPLING_POINT'][0]['COORDINATE_SYSTEM'] =$value[1] ;
                               $csv['SAMPLING_POINT'][]= htmlspecialchars($value[1], ENT_QUOTES);
-                            $arrKey['SAMPLING_POINT'][$key2]['ABBREVIATION'] =$value[2] ;
+                            $arrKey['SAMPLING_POINT'][0]['ABBREVIATION'] =$value[2] ;
                               $csv['SAMPLING_POINT'][]= htmlspecialchars($value[2], ENT_QUOTES);                                    
-                            $arrKey['SAMPLING_POINT'][$key2]['LONGITUDE'] =$value[3] ;
+                            $arrKey['SAMPLING_POINT'][0]['LONGITUDE'] =$value[3] ;
                               $csv['SAMPLING_POINT'][]= htmlspecialchars($value[3], ENT_QUOTES);
-                            $arrKey['SAMPLING_POINT'][$key2]['LATITUDE'] =$value[4] ;
+                            $arrKey['SAMPLING_POINT'][0]['LATITUDE'] =$value[4] ;
                               $csv['SAMPLING_POINT'][]= htmlspecialchars($value[4], ENT_QUOTES);
-                            $arrKey['SAMPLING_POINT'][$key2]['ELEVATION'] =$value[5] ;
+                            $arrKey['SAMPLING_POINT'][0]['ELEVATION'] =$value[5] ;
                               $csv['SAMPLING_POINT'][]= htmlspecialchars($value[5], ENT_QUOTES);
-                            $arrKey['SAMPLING_POINT'][$key2]['SAMPLING'] =$value[6] ;
+                            $arrKey['SAMPLING_POINT'][0]['SAMPLING'] =$value[6] ;
                               $csv['SAMPLING_POINT'][]= htmlspecialchars($value[6], ENT_QUOTES);
-                            $arrKey['SAMPLING_POINT'][$key2]['DESCRIPTION'] =$value[7] ;
+                            $arrKey['SAMPLING_POINT'][0]['DESCRIPTION'] =$value[7] ;
                               $csv['SAMPLING_POINT'][]= htmlspecialchars($value[7], ENT_QUOTES);
                               /*  foreach ($value as $key2 => $value2) {
 
