@@ -182,6 +182,9 @@ var APP = (function() {
                         if (k.SUPPLEMENTARY_FIELDS.LITHOLOGY ) {
                         lithology='<br> Lithology: ' + k.SUPPLEMENTARY_FIELDS.LITHOLOGY ;
                         }
+                         else if (k.SUPPLEMENTARY_FIELDS.LITHOLOGY1 ) {
+                        lithology='<br> Lithology: ' + k.SUPPLEMENTARY_FIELDS.LITHOLOGY1 ;
+                        }
                         else{
                             lithology='<br> Lithology: Inconnu' ;
                         }

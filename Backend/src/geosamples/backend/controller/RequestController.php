@@ -1413,6 +1413,42 @@ else{
                    $bulk = new MongoDB\Driver\BulkWrite;
                    //$bulk->delete(['_id' => strtoupper($_POST['original_sample_name'])]);
                    //$this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $bulk);
+                    $repertoireDestination         = $UPLOAD_FOLDER;
+                    $fp = fopen($repertoireDestination  ."/". $_POST['sample_name'] . "_META/" . $_POST['sample_name'].'_META.csv', 'w');
+
+
+                          foreach ($arrcsv as $key=>$line) {
+                            $csv=[];
+                           
+                            if (is_array($line)) {
+                               foreach ($line as $key2 => $value) {
+                                if (is_array($value)) {
+                                    $csv2=[];
+                                    foreach ($value as $key3 => $value2) {
+                                      $csv2[$key3]=$value2;
+                                    }
+                                    $csv[]=$csv2;
+                                     fputcsv($fp, $csv2);
+                                }else{
+
+
+                                $csv=array($key,$value);
+                                fputcsv($fp, $csv);
+                                }
+                               
+
+                                
+
+                               }
+                            }else{
+                            $csv=array($key,$line);
+                            fputcsv($fp, $csv);
+                            }
+                          
+                            }
+
+
+                        fclose($fp);
 
                    return true;
                }
@@ -1433,42 +1469,7 @@ else{
                 $query = new MongoDB\Driver\Query($filter);
                 $cursor = $this->db->executeQuery($config['dbname'].'.'.$config['COLLECTION_NAME'], $query);
 
-                $repertoireDestination         = $UPLOAD_FOLDER;
-                $fp = fopen($repertoireDestination  ."/". $_POST['sample_name'] . "_META/" . $_POST['sample_name'].'_META.csv', 'w');
-
-
-              foreach ($arrcsv as $key=>$line) {
-                $csv=[];
                
-                if (is_array($line)) {
-                   foreach ($line as $key2 => $value) {
-                    if (is_array($value)) {
-                        $csv2=[];
-                        foreach ($value as $key3 => $value2) {
-                          $csv2[$key3]=$value2;
-                        }
-                        $csv[]=$csv2;
-                         fputcsv($fp, $csv2);
-                    }else{
-
-
-                    $csv=array($key,$value);
-                    fputcsv($fp, $csv);
-                    }
-                   
-
-                    
-
-                   }
-                }else{
-                $csv=array($key,$line);
-                fputcsv($fp, $csv);
-                }
-              
-                }
-
-
-            fclose($fp);
 
                 foreach ($cursor as $document) {
                     if($document->_id== strtoupper($sample_name)){
