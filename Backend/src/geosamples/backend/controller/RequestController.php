@@ -1469,7 +1469,7 @@ else{
                 $query = new MongoDB\Driver\Query($filter);
                 $cursor = $this->db->executeQuery($config['dbname'].'.'.$config['COLLECTION_NAME'], $query);
 
-               
+
 
                 foreach ($cursor as $document) {
                     if($document->_id== strtoupper($sample_name)){
