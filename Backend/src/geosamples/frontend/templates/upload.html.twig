@@ -296,8 +296,8 @@ pictures:{
 	rules:[
 	{
         type   : 'regExp',
-        value  : '/^(.*.((jpeg|gif|png|tiff|jpg)$))?[^.]*$/i',
-        prompt : 'Please upload a file in suggested format (CSV,XLSX)'
+        value  : '/^(.*.((jpeg|gif|png|tiff|tif|jpg)$))?[^.]*$/i',
+        prompt : 'Please upload a file in suggested format (JPEG,GIF,PNG,TIF)'
       }
  ]
 },
@@ -449,6 +449,7 @@ $('.ui.dropdown[name*="institution"]')
   if ($('.institutions input.search')[{{key}}].value=="") {
  
       $('.institutions input.search')[{{key}}].value='{{institution.NAME}}'
+      $($('.institutions select')[{{key}}]).append('<option selected="selected" value="{{institution.NAME}}">{{institution.NAME}}</option>')
   }
 ;
     {%endfor%}
@@ -459,6 +460,8 @@ $('.ui.dropdown[name*="institution"]')
 
   if ($('.scientific_fields input.search')[{{key}}].value=="") {
       $('.scientific_fields input.search')[{{key}}].value='{{scientific_field.NAME}}'
+            $($('.scientific_fields select')[{{key}}]).append('<option selected="selected" value="{{scientific_field.NAME}}">{{scientific_field.NAME}}</option>')
+
    
   }
 ;
@@ -744,18 +747,23 @@ function handleFileSelect(evt) {
 
                                                   	$(".institutions ._jsonform-array-addmore" ).trigger( "click" );
                                                   	$('.institutions input.search')[institutions].value=values[1];
-                                                  	$('.institutions input.search').focus();
 
                                                   	$('.ui.dropdown[name*="institution"]')
 													  .dropdown({
-													    allowAdditions: true
+													    allowAdditions: true,
 													  })
 													;
+                                                  	//$('.institutions input.search')[0].focus();
+                                                  	
+                                                  	$($('.institutions select')[institutions]).append('<option selected="selected" value="'+values[1]+'">'+values[1]+'</option>')
+
 
                                                   } else {
                                                       $('.institutions input.search')[0].value=values[1];
                                                       $('.institutions select').append('<option value="'+values[1]+'" class="addition">'+values[1]+'</option>')
                                                       $('.institutions div.menu').append(' <div class="item active selected" data-value="'+values[1]+'">'+values[1]+'</div>')
+                                                      $($('.institutions select')[0]).append('<option selected="selected" value="'+values[1]+'">'+values[1]+'</option>')
+
 
                                                      
 
@@ -776,6 +784,8 @@ function handleFileSelect(evt) {
                                                       	$(".scientific_fields ._jsonform-array-addmore" ).trigger( "click" );
 	                                                  	$('.scientific_fields input.search')[scientific_fields].value=values[1];
 	                                                  	$('.scientific_fields input.search').focus();
+	                                                  	$($('.scientific_fields select')[scientific_fields]).append('<option selected="selected" value="'+values[1]+'">'+values[1]+'</option>')
+
 
                                                   
 
@@ -783,6 +793,7 @@ function handleFileSelect(evt) {
                                                       $('.scientific_fields input.search')[0].value=values[1];
                                                       $('.scientific_fields div.text').html('');
 	                                                  	$('.scientific_fields input.search')[0].focus();
+	                                                  	$($('.scientific_fields select')[0]).append('<option selected="selected" value="'+values[1]+'">'+values[1]+'</option>')
 
 
                                                   }

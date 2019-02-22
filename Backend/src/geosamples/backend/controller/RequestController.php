@@ -1280,8 +1280,8 @@ else{
                 }
                 if ($route=='modify') {
                                   if ($_POST['original_sample_name']) {
-                                    var_dump($_POST['original_sample_name']);
-                                    var_dump($_POST['sample_name'].'_'.strtoupper($_POST['measurements'][1]));
+                                    //var_dump($_POST['original_sample_name']);
+                                    //var_dump($_POST['sample_name'].'_'.strtoupper($_POST['measurements'][1]));
                                     if ($_POST['sample_name'].'_'.strtoupper($_POST['measurements'][1])!=$_POST['original_sample_name']) {
                                         //$sample_name=$_POST['sample_name'];
                                         $original_sample_name=$_POST['sample_name'].'_'.$_POST['measurements'][1];
@@ -1342,7 +1342,7 @@ else{
                                                 }
                                             }
                                         }
-                                        echo "string";
+                                        //echo "string";
                                        // var_dump($intersect);
                                         //var_dump($tmp_array);
                                            // print_r($data_samples);
@@ -1509,7 +1509,7 @@ else{
                                     $sample2=explode('_', $original_sample_name);
 
                                     $newurl=preg_replace('/'.$sample[0].'/', $sample2[0], $value['ORIGINAL_DATA_URL'],1);
-                                    var_dump($value['DATA_URL']);
+                                   // var_dump($value['DATA_URL']);
                                     //$dir=preg_replace('/'.$value['DATA_URL'].'/', '', $value['ORIGINAL_DATA_URL']);
                                     $dir=dirname($newurl);
                                     mkdir($dir);
@@ -1524,10 +1524,10 @@ else{
                                     $sample2=explode('_', $original_sample_name);
 
                                     $newurl=preg_replace('/'.$sample[0].'/', $sample2[0], $value['ORIGINAL_DATA_URL'],1);
-                                    var_dump($value['DATA_URL']);
+                                    //var_dump($value['DATA_URL']);
                                     //$dir=preg_replace('/'.$value['DATA_URL'].'/', '', $value['ORIGINAL_DATA_URL']);
                                     $dir=dirname($newurl);
-                                    var_dump($dir);
+                                    //var_dump($dir);
                                     mkdir($dir);
                                     rename($value['ORIGINAL_DATA_URL'],$newurl);
                                     rmdir(dirname($value['ORIGINAL_DATA_URL']));
