@@ -2,6 +2,7 @@
 namespace geosamples\backend\controller;
 use \geosamples\backend\controller\UserController as User;
 use \geosamples\backend\controller\FileController as File;
+use \geosamples\backend\controller\MailerController as Mailer;
 use MongoDB;
 use MongoDuplicateKeyException;
 
@@ -1626,6 +1627,11 @@ else{
                 $insert=array('_id' => strtoupper($sample_name),"INTRO"=>$arrKey,'DATA'=>$data);
                 $bulk->insert($insert);
                 $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $bulk);
+                $mail = new Mailer();
+                $referents=$user->getProjectReferent($config['COLLECTION_NAME']);
+                foreach ($referents as $key => $value) {
+                    $mail->Send_mail_new_data_to_approve($value->mail,$config['COLLECTION_NAME'],$_SESSION['mail']);
+                }
                 return true;
             }
             catch (MongoDB\Driver\Exception\BulkWriteException  $e) {

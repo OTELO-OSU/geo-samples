@@ -301,6 +301,31 @@ class MailerController
     }
 
 
+    public function Send_mail_new_data_to_approve($email,$project,$user)
+    {
+        $connected = self::CheckSMTPstatus();
+        if ($connected === true) {
+            $file    = new File();
+            $config  = $file->ConfigFile();
+            $headers = "From:<" . $config['NO_REPLY_MAIL'] . ">\r\n";
+            $headers .= "MIME-Version: 1.0\r\n";
+            $headers .= "Content-Type: text/html; charset=utf-8\r\n";
+            $mail = mail($email, '[' . $config['PROJECT_NAME'] . '] You must approve new data for the project '.$project.' !', '<html>
+               <head>
+               <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+               </head>
+               <body>
+               <p>Hello, '.$user.' upload a new dataset to project '.$project.', please go to your account to check it out! </a>. </p>
+               </body>
+               </html> ', $headers);
+
+        } else {
+            $error = "true";
+        }
+        return $error;
+    }
+
+
 
 
 
