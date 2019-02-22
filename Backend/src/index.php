@@ -547,7 +547,7 @@ $app->get('/modify/{id}', function (Request $req, Response $responseSlim,$args) 
 
 			]);
 		}else{
-			return $responseSlim->withRedirect('accueil');
+			return $responseSlim->withRedirect('/');
 		}
 
 
@@ -679,6 +679,7 @@ $app->post('/delete_data', function (Request $req, Response $responseSlim) {
 		$id  = $req->getparam('id');
 		$req   = new RequestApi();
 		$error  = $req->delete_data($id);
+		return $responseSlim->withRedirect('validation');
 	
 
 });

@@ -684,7 +684,20 @@ function Request_poi_img($id, $picturename)
         $pictures=array();
         $data_samples  = array();
 
+if ($_POST['original_sample_name']) {
+                                    if ($_POST['sample_name'].'_'.strtoupper($_POST['measurements'][1])!=$_POST['original_sample_name']) {
+                                        //$sample_name=$_POST['sample_name'];
+                                        $original_sample_name=$_POST['sample_name'].'_'.$_POST['measurements'][1];
+                                       /* if (strpos($_POST['original_sample_name'], '_RAW') !== false) {
+                                           $original_sample_name=$_POST['sample_name'].'_'.$_POST['measurements'][1].'_RAW';
+                                       }*/
+                                   }
+                                   else{
+                                        //$sample_name=$_POST['sample_name'];
+                                    $original_sample_name=$_POST['original_sample_name'];
 
+                                }
+                            }
         $UPLOAD_FOLDER    = $config["CSV_FOLDER"];
         if ($_FILES['data']['error'][0] != '0') {
 
@@ -1167,6 +1180,12 @@ else{
                               break;
                               case "original_sample_name":
                               break;
+                              case "csrf_value":
+                              break;
+                              case "csrf_name":
+                              break;
+                              case "file_already_uploaded":
+                              break;
 
                               default:
                               if (in_array(strtoupper($key), $SUPPLEMENTARY_FIELDS)) {
@@ -1261,9 +1280,12 @@ else{
                 }
                 if ($route=='modify') {
                                   if ($_POST['original_sample_name']) {
+                                    var_dump($_POST['original_sample_name']);
+                                    var_dump($_POST['sample_name'].'_'.strtoupper($_POST['measurements'][1]));
                                     if ($_POST['sample_name'].'_'.strtoupper($_POST['measurements'][1])!=$_POST['original_sample_name']) {
                                         //$sample_name=$_POST['sample_name'];
                                         $original_sample_name=$_POST['sample_name'].'_'.$_POST['measurements'][1];
+                                           $sample_search=$_POST['original_sample_name'];
                                        /* if (strpos($_POST['original_sample_name'], '_RAW') !== false) {
                                            $original_sample_name=$_POST['sample_name'].'_'.$_POST['measurements'][1].'_RAW';
                                        }*/
@@ -1271,13 +1293,14 @@ else{
                                    else{
                                         //$sample_name=$_POST['sample_name'];
                                     $original_sample_name=$_POST['original_sample_name'];
+                                    $sample_search=$_POST['sample_name'].'_'.$_POST['measurements'][1];
 
                                 }
                             }
 
                             //var_dump($POST['file_already_uploaded']);
                                //$data=$arrKey['DATA'];
-                            $filter = ['_id' => strtoupper($original_sample_name)];
+                            $filter = ['_id' => strtoupper($sample_search)];
                                // var_dump($filter);
                             $query = new MongoDB\Driver\Query($filter);
                             $cursor = $this->db->executeQuery($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $query);
@@ -1477,8 +1500,39 @@ else{
                                                         array_diff(array_map('serialize', $array), array_map('serialize', $intersect3)));
 
                                  foreach ($diff as $key => $value) {
-                                    var_dump($value);
                                     unlink($value["ORIGINAL_DATA_URL"]);
+                                 }
+
+                                 foreach ($intersect['FILES'] as $key => $value) {
+                                    //var_dump($value);
+                                    $sample=explode('_', $sample_search);
+                                    $sample2=explode('_', $original_sample_name);
+
+                                    $newurl=preg_replace('/'.$sample[0].'/', $sample2[0], $value['ORIGINAL_DATA_URL'],1);
+                                    var_dump($value['DATA_URL']);
+                                    //$dir=preg_replace('/'.$value['DATA_URL'].'/', '', $value['ORIGINAL_DATA_URL']);
+                                    $dir=dirname($newurl);
+                                    mkdir($dir);
+                                    rename($value['ORIGINAL_DATA_URL'],$newurl);
+                                    rmdir(dirname($value['ORIGINAL_DATA_URL']));
+                                    $intersect['FILES'][$key]['ORIGINAL_DATA_URL']=$newurl;
+
+                                 }
+                                 foreach ($rawdata['FILES'] as $key => $value) {
+                                    //var_dump($value);
+                                    $sample=explode('_', $sample_search);
+                                    $sample2=explode('_', $original_sample_name);
+
+                                    $newurl=preg_replace('/'.$sample[0].'/', $sample2[0], $value['ORIGINAL_DATA_URL'],1);
+                                    var_dump($value['DATA_URL']);
+                                    //$dir=preg_replace('/'.$value['DATA_URL'].'/', '', $value['ORIGINAL_DATA_URL']);
+                                    $dir=dirname($newurl);
+                                    var_dump($dir);
+                                    mkdir($dir);
+                                    rename($value['ORIGINAL_DATA_URL'],$newurl);
+                                    rmdir(dirname($value['ORIGINAL_DATA_URL']));
+                                    $rawdata['FILES'][$key]['ORIGINAL_DATA_URL']=$newurl;
+
                                  }
                                 
 
@@ -1500,8 +1554,8 @@ else{
                                      }
                                    $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'], $bulk);
                                    $bulk = new MongoDB\Driver\BulkWrite;
-                                   //$bulk->delete(['_id' => strtoupper($_POST['original_sample_name'])]);
-                                   //$this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $bulk);
+                                   $bulk->delete(['_id' => strtoupper($_POST['original_sample_name'])]);
+                                   $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $bulk);
                                     $repertoireDestination         = $UPLOAD_FOLDER;
                                     $fp = fopen($repertoireDestination  ."/". $_POST['sample_name'] . "_META/" . $_POST['sample_name'].'_META.csv', 'w');
 
@@ -1645,6 +1699,8 @@ function delete_data($id)
     $data=self::Request_data_awaiting($id);
     foreach ($data['_source']['DATA']['FILES'] as $key => $value) {
         unlink($value['ORIGINAL_DATA_URL']);
+        rmdir(dirname($value['ORIGINAL_DATA_URL']));
+
     }
     $bulk = new MongoDB\Driver\BulkWrite;
     $bulk->delete(['_id' => strtoupper($id)]);
