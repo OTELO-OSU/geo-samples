@@ -672,6 +672,8 @@ function Request_poi_img($id, $picturename)
         exit;
 
     }
+     
+
 
     function Post_Processing($POST,$route)
     {
@@ -1320,14 +1322,15 @@ else{
                                         echo "string";
                                        // var_dump($intersect);
                                         //var_dump($tmp_array);
-                                            //print_r($data);
+                                           // print_r($data_samples);
                                        // var_dump($intersect);
 
-                                                var_dump($pictures);
+                                               // var_dump($pictures);
                                       // var_dump($pictures);
 
                                         if (count($intersect) != 0 and ( (count($data) != 0) or (count($pictures) != 0) or (count($rawdata) != 0 or count($rawdata)==0))) { //si il y a eu des suppressions et des ajouts
                                         //print_r($intersect);
+                                                       // var_dump($data);
                                             if (count($data) != 0) {
                                             foreach ($intersect['FILES'] as $key => $value) {
                                                     if ($value['TYPE_DATA']=='Data') {
@@ -1363,12 +1366,12 @@ else{
                                                 }
                                                 if ($is_raw_data) {
                                                      $rawdata = array_merge_recursive($intersect_raw, $rawdata); // on merge les tableaux
+                                                        $i=1;
                                                      foreach ($rawdata['FILES'] as $key => $value) {
                                                         if ($value['TYPE_DATA']=='Rawdata') {
                                                             $rawdata2['FILES'][0]=$value;
                                                         }else{
 
-                                                        $i=1;
                                                          $rawdata2['FILES'][$i]=$value;
                                                         $i++;
                                                         }
@@ -1442,11 +1445,6 @@ else{
 
                                                 
                                             }*/
-                                        //var_dump($merge);
-                                            if ($data_samples) {
-                                                
-                                            $intersect=array_merge($intersect,$data_samples);
-                                            }
 
                                         foreach ($intersect['FILES'] as $key => $value) {
 
@@ -1460,6 +1458,28 @@ else{
                                            $intersect2['FILES'][]=$value;
                                         }
                                         $intersect=$intersect2;
+                                            if ($data_samples) {
+                                                
+                                            $intersect=array_merge($intersect,$data_samples);
+                                            }
+                                foreach ($tmp_array->FILES as $key => $value) {
+                                    $array[]=(array)$value;
+                                }
+
+                                //var_dump($array);
+                                //var_dump($intersect['FILES']);
+                                //var_dump($rawdata);
+                                $intersect3=array_merge($intersect['FILES'],$rawdata['FILES']);
+                             
+
+
+                                    $diff = array_map('unserialize',
+                                                        array_diff(array_map('serialize', $array), array_map('serialize', $intersect3)));
+
+                                 foreach ($diff as $key => $value) {
+                                    var_dump($value);
+                                    unlink($value["ORIGINAL_DATA_URL"]);
+                                 }
                                 
 
                             //var_dump($intersect);
@@ -1472,7 +1492,7 @@ else{
                                        
 
                                           unset($arrKey["STATUS"]);
-                                          var_dump($rawdata);
+                                         // var_dump($rawdata);
                                           $arrKey["MEASUREMENT"][0]["ABBREVIATION"]=$arrKey["MEASUREMENT"][0]["ABBREVIATION"].'_RAW';
                                            $insert=array('_id' => strtoupper($original_sample_name).'_RAW',"INTRO"=>$arrKey,'DATA'=>$rawdata);
                                            $bulk->insert($insert);
