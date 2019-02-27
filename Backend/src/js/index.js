@@ -372,7 +372,7 @@ var APP = (function() {
 
                              if (show_popup===true) {
                                  if (picture_localisation !== null) {
-                                    $('#preview.scrolling.content').prepend('<img class="ui fluid  image" src="/preview_img/' + name_localisation + '/' + picture_localisation + '""</img>');
+                                    $('#preview.scrolling.content').append('<img class="ui centered big  image" src="/preview_img/' + name_localisation + '/' + picture_localisation + '""</img>');
                                 }
                                 $('.ui.longer.modal.preview').modal({
     onVisible: function () {
