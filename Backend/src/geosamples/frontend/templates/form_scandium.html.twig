@@ -2,6 +2,11 @@
 
 {%set supplementary_fields_schema%}
 
+rawdata: {
+			type: 'file',
+			title: 'RawData'
+
+		},
 sample_location_facility: {
 type: 'string',
 title: 'SAMPLE LOCATION FACILITY'
@@ -54,7 +59,9 @@ title: 'HOST_LITHOLOGY_OR_PROTOLITH',
 					},
 					"COORDINATE_SYSTEM": {
 						"type": "string",
-						"title": "COORDINATE SYSTEM"
+						"title": "COORDINATE SYSTEM",
+						"enum": [ "","Lambert93", "WGS84 Greenwich" ]
+
 
 
 					},
@@ -66,25 +73,25 @@ title: 'HOST_LITHOLOGY_OR_PROTOLITH',
 					},
 					"LONGITUDE": {
 						"type": "string",
-						"title": "LONGITUDE"
+						"title": "LONGITUDE (decimal)"
 
 
 					},
 					"LATITUDE": {
 						"type": "string",
-						"title": "LATITUDE"
+						"title": "LATITUDE (decimal)"
 
 
 					},
 					"ELEVATION_M": {
 						"type": "string",
-						"title": "ELEVATION_M"
+						"title": "ELEVATION (meter)"
 
 					},
 					
 					"SAMPLING": {
 						"type": "string",
-						"title": "sampling",
+						"title": "sampling (centimeter)",
 
 
 					},
@@ -120,10 +127,43 @@ title: 'HOST_LITHOLOGY_OR_PROTOLITH',
 						"type": "string",
 						"title": "SAMPLE_STORAGE",
 
-					}
+					},
+					
 				}
+				
 			}
 		},
+
+"methodology2": {
+			"type": "array",
+			
+			"items": {
+		"properties": {
+				"Nature": {
+						"type": "string",
+						"title": "Nature",
+
+					},
+					
+					
+				}
+}},
+
+"methodology3": {
+			"type": "array",
+			
+			"items": {
+		"properties": {
+			
+					
+					"description": {
+						"type": "string",
+						"title": "description",
+
+					}
+				}
+}},
+
 
 
 
@@ -171,6 +211,9 @@ type: 'string',
 core_azimut: {
 type: 'string',
 },
+core_dip: {
+type: 'string',
+},
 
  "pulp": {
       "type": "string",
@@ -193,6 +236,11 @@ type: 'string',
 
 
 {%set supplementary_fields_form%}
+{
+			"key": "rawdata"
+			
+			
+		},
 {
 	      "type": "advancedfieldset",
 	      "title":"Supplementary fields",
@@ -256,10 +304,12 @@ type: 'string',
         if (value=='Yes') {
         $('.form-group.jsonform-error-core_depth').removeClass("hidden field");
         $('.form-group.jsonform-error-core_azimut').removeClass("hidden field");
+        $('.form-group.jsonform-error-core_dip').removeClass("hidden field");
         }
         else{
-         $('.form-group.jsonform-error-core_depth').addClass("hidden field");
+        $('.form-group.jsonform-error-core_depth').addClass("hidden field");
         $('.form-group.jsonform-error-core_azimut').addClass("hidden field");
+        $('.form-group.jsonform-error-core_dip').addClass("hidden field");
         }
       }
 },
@@ -270,6 +320,11 @@ type: 'string',
 },
 {
 "key": "core_azimut",
+"htmlClass": "hidden field",
+"value":""
+},
+{
+"key": "core_dip",
 "htmlClass": "hidden field",
 "value":""
 },
@@ -324,7 +379,25 @@ type: 'string',
 
 				]
 			}
-		}]
+		},
+		{
+		"type": "array",
+		"htmlClass":"methodology2",
+			"items": {
+				"type": "section",
+				"items": [
+					"methodology2[].Nature",
+					"methodology3[].description"
+
+
+				]
+				}
+			
+		}
+
+		]
+
+
 		},
 
 {
@@ -335,7 +408,7 @@ type: 'string',
 
 {
       "type": "lithology",
-      "value": '<div class="form-group jsonform-error-lithology1 ui-input"> <label for="jsonform-1-elt-lithology1">Lithology 1</label> <select id="jsonform-1-elt-lithology1" name="lithology1">{%if edit and lithology1%}<option value="{{lithology1}}">{{lithology1}}</option> {%endif%}<option value="">--</option><option value="MAGMATIC_INTRUSIVE">MAGMATIC_INTRUSIVE</option> <option value="MAGMATIC_EXTRUSIVE">MAGMATIC_EXTRUSIVE</option> <option value="METAMORPHIC">METAMORPHIC</option> <option value="METASOMATIC_AND_OR_HYDROTHERMAL">METASOMATIC_AND_OR_HYDROTHERMAL</option> <option value="NON_SEDIMENTARY_SURFACE_PHENOMENA_DRIVEN_LITHOFACIES">NON_SEDIMENTARY_SURFACE_PHENOMENA_DRIVEN_LITHOFACIES</option> <option value="PEDOGENETIC">PEDOGENETIC</option> <option value="SEDIMENTARY">SEDIMENTARY</option> </select> </div> <div class="form-group jsonform-error-lithology2 ui-input"> <label for="jsonform-1-elt-lithology2">Lithology 2</label> <select id="jsonform-1-elt-lithology2" name="lithology2">{%if edit and lithology2%}<option value="{{lithology2}}">{{lithology2}}</option> {%endif%} <option value="">--</option> <option value="FELSIC" class="MAGMATIC_INTRUSIVE">FELSIC</option> <option value="INTERMEDIATE" class="MAGMATIC_INTRUSIVE">INTERMEDIATE</option> <option value="MAFIC" class="MAGMATIC_INTRUSIVE">MAFIC</option> <option value="UNDERSATURATED" class="MAGMATIC_INTRUSIVE">UNDERSATURATED</option> <option value="ULTRAMAFIC" class="MAGMATIC_INTRUSIVE">ULTRAMAFIC</option> <option value="LAVAS_FLOWS" class="MAGMATIC_EXTRUSIVE">LAVAS_FLOWS</option> <option value="VOLCANICLASTIC _ROCKS_EPICLASTS_EXCLUDED" class="MAGMATIC_EXTRUSIVE">VOLCANICLASTIC _ROCKS_EPICLASTS_EXCLUDED</option> <option value="BURIAL" class="METAMORPHIC">BURIAL</option> <option value="OROGENIC" class="METAMORPHIC">OROGENIC</option> <option value="CONTACT" class="METAMORPHIC">CONTACT</option> <option value="IMPACT_BRECCIA" class="METAMORPHIC">IMPACT_BRECCIA</option> <option value="AUTOCHTONOUS_ALTERITE_PEDOGENETIC" class="PEDOGENETIC">AUTOCHTONOUS_ALTERITE</option> <option value="AUTOCHTONOUS_ALTERITE_SURF" class="SEDIMENTARY">ALLOCHTONOUS_ALTERITE</option> <option value="SILICICLASTIC" class="SEDIMENTARY">SILICICLASTIC</option> <option value="OTHER_TERRIGENOUS_CLASTIC" class="SEDIMENTARY">OTHER_TERRIGENOUS_CLASTIC</option> <option value="CARBONATES" class="SEDIMENTARY">CARBONATES</option> <option value="OTHER_CHEMICAL_BIOCHEMICAL_ROCKS" class="SEDIMENTARY">OTHER_CHEMICAL_BIOCHEMICAL_ROCKS</option> </select> </div> <div class="form-group jsonform-error-lithology3 ui-input"> <label for="jsonform-1-elt-lithology3">Lithology 3</label> <select id="jsonform-1-elt-lithology3" name="lithology3">{%if edit and lithology3%}<option value="{{lithology3}}">{{lithology3}}</option> {%endif%} <option value="">--</option> <option value="FELSIC" class="LAVAS_FLOWS">FELSIC</option> <option value="INTERMEDIATE" class="LAVAS_FLOWS">INTERMEDIATE</option> <option value="MAFIC" class="LAVAS_FLOWS">MAFIC</option> <option value="UNDERSATURATED" class="LAVAS_FLOWS">UNDERSATURATED</option> <option value="ULTRAMAFIC" class="LAVAS_FLOWS">ULTRAMAFIC</option> <option value="ZEOLITE_FACIES" class="BURIAL">ZEOLITE_FACIES</option> <option value="PREHNITE-PUMPELLYITE_FACIES" class="BURIAL">PREHNITE-PUMPELLYITE_FACIES</option> <option value="BLUESCHIST_FACIES" class="OROGENIC">BLUESCHIST_FACIES</option> <option value="GREENSCHIST_FACIES" class="OROGENIC">GREENSCHIST_FACIES</option> <option value="AMPHIBOLITE_FACIES" class="OROGENIC">AMPHIBOLITE_FACIES</option> <option value="GRANULITE_FACIES" class="OROGENIC">GRANULITE_FACIES</option> <option value="ECLOGITE_FACIES" class="OROGENIC">ECLOGITE_FACIES</option> <option value="TOPSOIL" class="AUTOCHTONOUS_ALTERITE_PEDOGENETIC">TOPSOIL</option> <option value="DURICRUST" class="AUTOCHTONOUS_ALTERITE_PEDOGENETIC">DURICRUST</option> <option value="LIMONITE" class="AUTOCHTONOUS_ALTERITE_PEDOGENETIC">LIMONITE</option> <option value="MOTTLED_ZONE" class="AUTOCHTONOUS_ALTERITE_PEDOGENETIC">MOTTLED_ZONE</option> <option value="SAPROLITE" class="AUTOCHTONOUS_ALTERITE_PEDOGENETIC">SAPROLITE</option> <option value="SAPROCK" class="AUTOCHTONOUS_ALTERITE_PEDOGENETIC">SAPROCK</option> <option value="BEDROCK" class="AUTOCHTONOUS_ALTERITE_PEDOGENETIC">BEDROCK</option> <option value="SURFICIAL_DEPOSITS" class="AUTOCHTONOUS_ALTERITE_SURF">SURFICIAL_DEPOSITS</option> <option value="CONGLOMERATE" class="SILICICLASTIC">CONGLOMERATE</option> <option value="SANDSTONE" class="SILICICLASTIC">SANDSTONE</option> <option value="SILTITE" class="SILICICLASTIC">SILTITE</option> <option value="ARGILITE" class="SILICICLASTIC">ARGILITE</option> <option value="LIMESTONE" class="CARBONATES">LIMESTONE</option> <option value="DOLOSTONE" class="CARBONATES">DOLOSTONE</option> </select> </div>'
+      "value": '<div class="form-group jsonform-error-lithology1 ui-input"> <label for="jsonform-1-elt-lithology1">Lithology 1</label> <select id="jsonform-1-elt-lithology1" name="lithology1">{%if edit and lithology1%}<option value="{{lithology1}}">{{lithology1}}</option> {%endif%}<option value="">--</option><option value="MAGMATIC_INTRUSIVE">MAGMATIC_INTRUSIVE</option> <option value="MAGMATIC_EXTRUSIVE">MAGMATIC_EXTRUSIVE</option> <option value="METAMORPHIC">METAMORPHIC</option> <option value="METASOMATIC_AND_OR_HYDROTHERMAL">METASOMATIC_AND_OR_HYDROTHERMAL</option> <option value="NON_SEDIMENTARY_SURFACE_PHENOMENA_DRIVEN_LITHOFACIES">NON_SEDIMENTARY_SURFACE_PHENOMENA_DRIVEN_LITHOFACIES</option> <option value="PEDOGENETIC">PEDOGENETIC</option> <option value="SEDIMENTARY">SEDIMENTARY</option> </select> </div> <div class="form-group jsonform-error-lithology2 ui-input"> <label for="jsonform-1-elt-lithology2">Lithology 2</label> <select id="jsonform-1-elt-lithology2" name="lithology2">{%if edit and lithology2%}<option value="{{lithology2}}">{{lithology2}}</option> {%endif%} <option value="">--</option> <option value="FELSIC" class="MAGMATIC_INTRUSIVE">FELSIC</option> <option value="INTERMEDIATE" class="MAGMATIC_INTRUSIVE">INTERMEDIATE</option> <option value="MAFIC" class="MAGMATIC_INTRUSIVE">MAFIC</option> <option value="UNDERSATURATED" class="MAGMATIC_INTRUSIVE">UNDERSATURATED</option> <option value="ULTRAMAFIC" class="MAGMATIC_INTRUSIVE">ULTRAMAFIC</option> <option value="LAVAS_FLOWS" class="MAGMATIC_EXTRUSIVE">LAVAS_FLOWS</option> <option value="VOLCANICLASTIC _ROCKS_EPICLASTS_EXCLUDED" class="MAGMATIC_EXTRUSIVE">VOLCANICLASTIC _ROCKS_EPICLASTS_EXCLUDED</option> <option value="BURIAL" class="METAMORPHIC">BURIAL</option> <option value="OROGENIC" class="METAMORPHIC">OROGENIC</option> <option value="CONTACT" class="METAMORPHIC">CONTACT</option> <option value="IMPACT_BRECCIA" class="METAMORPHIC">IMPACT_BRECCIA</option> <option value="AUTOCHTONOUS_ALTERITE" class="PEDOGENETIC">AUTOCHTONOUS_ALTERITE</option> <option value="ALLOCHTONOUS_ALTERITE" class="SEDIMENTARY">ALLOCHTONOUS_ALTERITE</option> <option value="SILICICLASTIC" class="SEDIMENTARY">SILICICLASTIC</option> <option value="OTHER_TERRIGENOUS_CLASTIC" class="SEDIMENTARY">OTHER_TERRIGENOUS_CLASTIC</option> <option value="CARBONATES" class="SEDIMENTARY">CARBONATES</option> <option value="OTHER_CHEMICAL_BIOCHEMICAL_ROCKS" class="SEDIMENTARY">OTHER_CHEMICAL_BIOCHEMICAL_ROCKS</option> </select> </div> <div class="form-group jsonform-error-lithology3 ui-input"> <label for="jsonform-1-elt-lithology3">Lithology 3</label> <select id="jsonform-1-elt-lithology3" name="lithology3">{%if edit and lithology3%}<option value="{{lithology3}}">{{lithology3}}</option> {%endif%} <option value="">--</option> <option value="FELSIC" class="LAVAS_FLOWS">FELSIC</option> <option value="INTERMEDIATE" class="LAVAS_FLOWS">INTERMEDIATE</option> <option value="MAFIC" class="LAVAS_FLOWS">MAFIC</option> <option value="UNDERSATURATED" class="LAVAS_FLOWS">UNDERSATURATED</option> <option value="ULTRAMAFIC" class="LAVAS_FLOWS">ULTRAMAFIC</option> <option value="ZEOLITE_FACIES" class="BURIAL">ZEOLITE_FACIES</option> <option value="PREHNITE-PUMPELLYITE_FACIES" class="BURIAL">PREHNITE-PUMPELLYITE_FACIES</option> <option value="BLUESCHIST_FACIES" class="OROGENIC">BLUESCHIST_FACIES</option> <option value="GREENSCHIST_FACIES" class="OROGENIC">GREENSCHIST_FACIES</option> <option value="AMPHIBOLITE_FACIES" class="OROGENIC">AMPHIBOLITE_FACIES</option> <option value="GRANULITE_FACIES" class="OROGENIC">GRANULITE_FACIES</option> <option value="ECLOGITE_FACIES" class="OROGENIC">ECLOGITE_FACIES</option> <option value="TOPSOIL" class="AUTOCHTONOUS_ALTERITE">TOPSOIL</option> <option value="DURICRUST" class="AUTOCHTONOUS_ALTERITE_PEDOGENETIC">DURICRUST</option> <option value="LIMONITE" class="AUTOCHTONOUS_ALTERITE">LIMONITE</option> <option value="MOTTLED_ZONE" class="AUTOCHTONOUS_ALTERITE">MOTTLED_ZONE</option> <option value="SAPROLITE" class="AUTOCHTONOUS_ALTERITE">SAPROLITE</option> <option value="SAPROCK" class="AUTOCHTONOUS_ALTERITE">SAPROCK</option> <option value="BEDROCK" class="AUTOCHTONOUS_ALTERITE">BEDROCK</option> <option value="SURFICIAL_DEPOSITS" class="ALLOCHTONOUS_ALTERITE">SURFICIAL_DEPOSITS</option> <option value="CONGLOMERATE" class="SILICICLASTIC">CONGLOMERATE</option> <option value="SANDSTONE" class="SILICICLASTIC">SANDSTONE</option> <option value="SILTITE" class="SILICICLASTIC">SILTITE</option> <option value="ARGILITE" class="SILICICLASTIC">ARGILITE</option> <option value="LIMESTONE" class="CARBONATES">LIMESTONE</option> <option value="DOLOSTONE" class="CARBONATES">DOLOSTONE</option> </select> </div>'
     },
 ]},
 {
@@ -370,9 +443,25 @@ type: 'string',
 
 
 {%set list_measurements%}
-["Select abbreviation","BGC",
-"EMPA",
-"LAICPMS",]
+["Select abbreviation","Tcond-D",
+"Tcond-W",
+"Tdif-D",
+"Tdif-W",
+"SHC",
+"P-Wave-D",
+"P-Wave-W",
+"S-Wave-D",
+"S-Wave-W",
+"GD",
+"GD-powder",
+"Porosity-TW",
+"Porosity-Hg",
+"Porosity-He",
+"MS",
+"AMS",
+"AMS-ferro",
+"Perm-Ni",
+"Perm-F" ]
 
 
 {%endset%}
@@ -394,10 +483,34 @@ type: 'string',
 		"pulp":"{{pulp}}",
 		"core":"{{core}}",
 
+		 "methodology2": [
+    {%for methodology in methodology_custom%}
+    {%if methodology.NAME != "SAMPLING_METHOD" and methodology.NAME != "CONDITIONNING" and methodology.NAME != "SAMPLE_STORAGE"%}
+
+       {"Nature": "{{methodology.NAME|raw}}"},
+
+      {%endif%}
+
+    {%endfor%}
+      ],
+
+       "methodology3": [
+    {%for methodology in methodology_custom%}
+    {%if methodology.NAME != "SAMPLING_METHOD" and methodology.NAME != "CONDITIONNING" and methodology.NAME != "SAMPLE_STORAGE"%}
+
+       {"description": "{{methodology.DESCRIPTION|raw}}"},
+
+      {%endif%}
+
+    {%endfor%}
+      ],
 
 
 
 {%endset%}
+
+
+
 
 
 {% include 'form_general.html.twig' %}
