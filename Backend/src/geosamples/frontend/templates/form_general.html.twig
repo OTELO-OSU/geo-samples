@@ -369,15 +369,15 @@ title: 'Sampling date'
 		},
 
 		{
-			"type":"file_data_already_uploaded",
-			"value":"<div class='files'>{%if files%}{%for file in files%}{%if file.TYPE_DATA=='Data'%}<h4>Data</h4>{%elseif file.TYPE_DATA=='Rawdata'%}<h4>Rawdata</h4>{%elseif file.TYPE_DATA=='Pictures'%}<h4>Pictures</h4>{%endif%}<div class=\"file\"><a href='/download_poi_data_awaiting/{{original_sample_name}}/{{file.DATA_URL}}'> {{file.DATA_URL}}</a> <input id=\"text\" type=\"text\" name=\"file_already_uploaded[]\" value={{file.DATA_URL}} readonly hidden><div class=\"ui icon delete\"><i class=\"remove icon\"></i></div></div>{%endfor%}{%endif%}</div>"
-		},
-		{
 			"key": "pictures",
 			"htmlClass":"pictures",
 
 			
 			
+		},
+		{
+			"type":"file_data_already_uploaded",
+			"value":"<div class='files'>{%if files%}{%for file in files%}{%if file.TYPE_DATA=='Data'%}<h4>Data</h4>{%elseif file.TYPE_DATA=='Rawdata'%}<h4>Rawdata</h4>{%elseif file.TYPE_DATA=='Pictures'%}<h4>Pictures</h4>{%endif%}<div class=\"file\"><a href='/download_poi_data_awaiting/{{original_sample_name}}/{{file.DATA_URL}}'> {{file.DATA_URL}}</a> <input id=\"text\" type=\"text\" name=\"file_already_uploaded[]\" value={{file.DATA_URL}} readonly hidden><div class=\"ui icon delete\"><i class=\"remove icon\"></i></div></div>{%endfor%}{%endif%}</div>"
 		},
 		{
 			"key": "original_sample_name",

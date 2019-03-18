@@ -136,9 +136,9 @@ class RequestController
                     }
                 }
             }
-            if (($_SESSION['mail'] && in_array($value['_type'], $_SESSION['projects_access_right_name'])) or ($_SESSION['admin']==1) ) {
+            //if (($_SESSION['mail'] && in_array($value['_type'], $_SESSION['projects_access_right_name'])) or ($_SESSION['admin']==1) ) {
                 $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['MEASUREMENT'][] = $value['_source']['INTRO']['MEASUREMENT'];
-            }
+            //}
 
         }
         $responses = $return;
@@ -393,9 +393,9 @@ echo $generatedfile;
                     }
 
                 }
-                if (($_SESSION['mail'] && in_array($value['_type'], $_SESSION['projects_access_right_name'])) or ($_SESSION['admin']==1) ) {
+                //if (($_SESSION['mail'] && in_array($value['_type'], $_SESSION['projects_access_right_name'])) or ($_SESSION['admin']==1) ) {
                  $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['MEASUREMENT'][] = $value['_source']['INTRO']['MEASUREMENT'];
-             }
+            // }
 
              $responses = $return;
          }
@@ -455,7 +455,7 @@ echo $generatedfile;
     );
     $response = self::Curlrequest($url, $curlopt);
     $response = json_decode($response, true);
-    if (($_SESSION['mail'] && in_array($response['hits']['hits'][0]['_type'], $_SESSION['projects_access_right_name'])) or ($_SESSION['admin']==1) ) {
+    //if (($_SESSION['mail'] && in_array($response['hits']['hits'][0]['_type'], $_SESSION['projects_access_right_name'])) or ($_SESSION['admin']==1) ) {
         $identifier = $response['hits']['hits'][0]['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME'] . '_' . $response['hits']['hits'][0]['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION'];
 
         if ($identifier == $id)
@@ -466,7 +466,7 @@ echo $generatedfile;
             return $response;
         }
     }
-}
+//}
 
 function Request_poi_raw_data($id)
 {
@@ -1250,11 +1250,11 @@ else{
 
 
 
-
        // foreach ($POST['measurements'] as $key => $value) {
                    $sample_name=$sample_name_old;
                    $arrKey["ACCESS_RIGHT"] = "Draft";
                    $arrKey["UPLOAD_DATE"]  = date('Y-m-d');
+                   $arrKey["CREATION_DATE"]  = date('Y-m-d');
                    $arrcsv["CREATION_DATE"]  = date('Y-m-d');
                    $arrKey["METADATA_DATE"]  = date('Y-m-d');
                    $arrKey["STATUS"]  = "Awaiting";
@@ -1541,6 +1541,9 @@ else{
                                 $bulk = new MongoDB\Driver\BulkWrite;
                                 try{
                                    unset($arrKey["STATUS"]);
+                                   if (count($intersect)!=0) {
+                                        $arrKey["ACCESS_RIGHT"] = "Unpublished";
+                                   }
                                    $insert=array('_id' => strtoupper($original_sample_name),"INTRO"=>$arrKey,'DATA'=>$intersect);
                                    $bulk->insert($insert);
                                     if (count($rawdata)!=0) {

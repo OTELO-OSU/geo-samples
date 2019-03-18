@@ -73,6 +73,7 @@ $check_access_right_file = function ($request, $response, $next) {
 		$twig   = new Twig_Environment($loader);
 		$render = $twig->render('notfound.html.twig');
 		$response->write($render);
+		//return $responseSlim->withStatus(403);
 		return $response;
 	}
 
@@ -118,7 +119,7 @@ $app->get('/', function (Request $req,Response $responseSlim) {
 	$config = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . '/../config.ini');
 
 
-	echo $twig->render('accueil.html.twig',['project_name' => $config['PROJECT_NAME'],'name' => $_SESSION['name'], 'firstname' => $_SESSION['firstname'], 'mail' => $_SESSION['mail'],'map'=>'map','access'=>$_SESSION['access']]);
+	echo $twig->render('accueil.html.twig',['project_name' => $config['PROJECT_NAME'],'title' => $config['PROJECT_NAME'],'name' => $_SESSION['name'], 'firstname' => $_SESSION['firstname'], 'mail' => $_SESSION['mail'],'map'=>'map','access'=>$_SESSION['access']]);
 
 });
 
@@ -134,7 +135,7 @@ $app->get('/login', function (Request $req, Response $responseSlim) {
 
 	$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
 	$twig   = new Twig_Environment($loader);
-	echo $twig->render('login.html.twig');
+	echo $twig->render('login.html.twig',['title' => "Login"]);
 
 	session_regenerate_id();
 
@@ -184,7 +185,7 @@ $app->get('/validation', function (Request $req, Response $responseSlim) {
 			$response=$request->Request_all_data_awaiting();
 			$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
 			$twig   = new Twig_Environment($loader);
-			echo $twig->render('validation.html.twig', ['data' => $response,'mail'=>$_SESSION['mail'],'access'=>$_SESSION['access']]);
+			echo $twig->render('validation.html.twig', ['title' => "Approve",'data' => $response,'mail'=>$_SESSION['mail'],'access'=>$_SESSION['access']]);
 		}else{
 					return $responseSlim->withRedirect('/');
 
@@ -234,7 +235,7 @@ $app->get('/signup', function (Request $req, Response $responseSlim) {
 		}
 		$loader    = new Twig_Loader_Filesystem('geosamples/frontend/templates');
 		$twig      = new Twig_Environment($loader);
-		echo $twig->render('signup.html.twig', ['name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf,'data'=>json_encode($response)]);
+		echo $twig->render('signup.html.twig', ['title' => "Sign up",'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf,'data'=>json_encode($response)]);
 	} else {
 		return $responseSlim->withRedirect('/');
 
@@ -291,7 +292,7 @@ $app->get('/myaccount', function (Request $req, Response $responseSlim) {
 		$user      = new User();
 		$user      = $user->getUserInfo($_SESSION['mail']);
 
-		echo $twig->render('myaccount.html.twig', ['name' => $user[0]->name, 'firstname' => $user[0]->firstname, 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'], 'admin' => $_SESSION['admin'],'access'=>$_SESSION['access']]);
+		echo $twig->render('myaccount.html.twig', ['title' => "My account",'name' => $user[0]->name, 'firstname' => $user[0]->firstname, 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'], 'admin' => $_SESSION['admin'],'access'=>$_SESSION['access']]);
 	} else {
 		return $responseSlim->withRedirect('accueil');
 	}
@@ -373,7 +374,7 @@ $app->get('/upload', function (Request $req, Response $responseSlim) {
 		$feeder= $user->is_feeder($_SESSION['mail'],$config['COLLECTION_NAME']);
 		$referent= $user->is_referent($_SESSION['mail'],$config['COLLECTION_NAME']);
 		if (($feeder===true )OR ($referent===true) OR $_SESSION['admin']==1) {
-		echo $twig->render('upload.html.twig',['collection_name'=>$config['COLLECTION_NAME'],'route'=>'upload', 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'], 'admin' => $_SESSION['admin'],'access'=>$_SESSION['admin']]);
+		echo $twig->render('upload.html.twig',['title' => "Upload",'collection_name'=>$config['COLLECTION_NAME'],'route'=>'upload', 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'], 'admin' => $_SESSION['admin'],'access'=>$_SESSION['admin']]);
 		}else{
 			return $responseSlim->withRedirect('accueil');
 		}
@@ -728,7 +729,7 @@ $app->get('/listusers', function (Request $req, Response $responseSlim) {
 		$Allprojects  = $user->getAllProject();
 		$usersawaitingvalidation = $user->getUserAwaitingValidationFromReferent($Allprojects);
 		$allusers=json_encode($user->getAllUsersApprovedAutocomplete());
-		echo $twig->render('listusers.html.twig', ['usersapproved' => $usersapproved, 'userswaiting' => $userswaiting, 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'],'allprojects'=>$Allprojects,'UsersAwaitingValidation' => $usersawaitingvalidation,'usersreferentsadmin' => $usersreferents,'admin'=> '1','alluser' => $allusers]);
+		echo $twig->render('listusers.html.twig', ['title'=> "Administration panel",'usersapproved' => $usersapproved, 'userswaiting' => $userswaiting, 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'],'allprojects'=>$Allprojects,'UsersAwaitingValidation' => $usersawaitingvalidation,'usersreferentsadmin' => $usersreferents,'admin'=> '1','alluser' => $allusers]);
 	} else{
 		$loader  = new Twig_Loader_Filesystem('geosamples/frontend/templates');
 		$twig    = new Twig_Environment($loader);
