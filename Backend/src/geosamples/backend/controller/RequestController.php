@@ -137,6 +137,8 @@ class RequestController
          
 
                 $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['TITLE'] = $value['_source']['INTRO']['TITLE'];
+                $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['INSTITUTION'] = $value['_source']['INTRO']['INSTITUTION'];
+
                 $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_POINT'] = $value['_source']['INTRO']['SAMPLING_POINT'];
                 $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']]['COORDINATES']['LAT'] = $value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'];
                 $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']]['COORDINATES']['LONG'] = $value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE'];
@@ -405,6 +407,8 @@ echo $generatedfile;
                     $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SUPPLEMENTARY_FIELDS'] = $supplementary;
                 }
                     $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['TITLE'] = $value['_source']['INTRO']['TITLE'];
+                    $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['INSTITUTION'] = $value['_source']['INTRO']['INSTITUTION'];
+
                     $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_POINT'] = $value['_source']['INTRO']['SAMPLING_POINT'];
                     $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']]['COORDINATES']['LAT'] = $value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'];
                     $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']]['COORDINATES']['LONG'] = $value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE'];

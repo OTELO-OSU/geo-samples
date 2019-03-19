@@ -183,6 +183,14 @@ var APP = (function() {
                                 }
                             });
                         }
+                        institution="";
+                         if(k.INSTITUTION){
+                            k.INSTITUTION.forEach(function(inst, val) {
+                                if (inst.NAME) {
+                                    institution += '<br> Institution: ' + inst.NAME;
+                                }
+                            });
+                        }
                         if (k.SUPPLEMENTARY_FIELDS.LITHOLOGY ) {
                         lithology='<br> Lithology: ' + k.SUPPLEMENTARY_FIELDS.LITHOLOGY ;
                         }
@@ -204,7 +212,7 @@ var APP = (function() {
                         else{
                             elevation="";
                         }
-                        $('.ui.sidebar.right').append('<div class="ui styled accordion"> <div class="active title"> <i class="dropdown icon"></i> ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + ' </div> <div class="active content"> <h3>' + k.TITLE.substr(0, k.TITLE.lastIndexOf("_")) + '</h3><p> Description: ' + k.SUPPLEMENTARY_FIELDS.DESCRIPTION + '<br> Sample Name: ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME +alteration_degrees + referent + lithology+'<br> Latitude: ' + k.SAMPLING_POINT[0].LATITUDE + ' Longitude: ' + k.SAMPLING_POINT[0].LONGITUDE + '<br>'+elevation+'</p>' + picturemetas + '</div>' + measurements + pictures + rawdatas+supplementary_fields)
+                        $('.ui.sidebar.right').append('<div class="ui styled accordion"> <div class="active title"> <i class="dropdown icon"></i> ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + ' </div> <div class="active content"> <h3>' + k.TITLE.substr(0, k.TITLE.lastIndexOf("_")) + '</h3><p> Description: ' + k.SUPPLEMENTARY_FIELDS.DESCRIPTION + '<br> Sample Name: ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME +alteration_degrees + referent + lithology+institution+'<br> Latitude: ' + k.SAMPLING_POINT[0].LATITUDE + ' Longitude: ' + k.SAMPLING_POINT[0].LONGITUDE + '<br>'+elevation+'</p>' + picturemetas + '</div>' + measurements + pictures + rawdatas+supplementary_fields)
                         $('.ui.accordion').accordion();
                         $('.item.measurement_abbreviation').on('click', function(e) {
                             mesure = $(this).children()[0].value;
