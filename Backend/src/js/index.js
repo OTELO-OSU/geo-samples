@@ -315,6 +315,9 @@ var APP = (function() {
                                         object.date=k.SAMPLING_POINT[0].ELEVATION;
                                         object.content='<a onclick=\"APP.modules.map.affichageinfo(\''+k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME+'\');\">'+k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME +'</a>';
                                         samples.push(object);
+                                          samples.sort(function(a, b) {
+                                            return parseFloat(b.date) - parseFloat(a.date);
+                                        });
                                         orientation='vertical';
                                         
                                     }
@@ -326,6 +329,9 @@ var APP = (function() {
                                         object.date=k.SAMPLING_POINT[0].SAMPLING;
                                         object.content='<a onclick=\"APP.modules.map.affichageinfo(\''+k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME+'\');\">'+k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME+'</a>';
                                         samples.push(object);
+                                            samples.sort(function(a, b) {
+                                            return parseFloat(a.date) - parseFloat(b.date);
+                                        });
                                         orientation='horizontal';
                                     }
                                 }
@@ -338,6 +344,9 @@ var APP = (function() {
                                         object.date=k.SAMPLING_DATE[0];
                                         object.content='<a onclick=\"APP.modules.map.affichageinfo(\''+k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME+'\');\">'+k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME+'</a>';
                                         samples.push(object);
+                                          samples.sort(function(a, b) {
+                                            return parseFloat(a.date) - parseFloat(b.date);
+                                        });
                                         orientation='horizontal';
                                     }
 
@@ -358,9 +367,7 @@ var APP = (function() {
                             });
                            
                
-                                samples.sort(function(a, b) {
-                                return parseFloat(a.date) - parseFloat(b.date);
-                            });
+                              
                             if (orientation=='vertical') {
                                  prevArrow= '<i class="angle up icon"></i>',
                                  nextArrow= '<i class="angle down icon"></i>'
