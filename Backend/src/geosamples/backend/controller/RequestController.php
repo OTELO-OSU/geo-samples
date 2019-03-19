@@ -119,10 +119,23 @@ class RequestController
         {
             $current = $value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE'];
 
+           
+
             if (!$return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE'][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]])
             {
                 $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_DATE'] = $value['_source']['INTRO']['SAMPLING_DATE'];
+               
+                if (($_SESSION['mail'] && in_array($value['_type'], $_SESSION['projects_access_right_name'])) or ($_SESSION['admin']==1) ) {
                 $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SUPPLEMENTARY_FIELDS'] = $value['_source']['INTRO']['SUPPLEMENTARY_FIELDS'];
+                }else{
+                    $supplementary['CORE_DETAILS']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'];
+                    $supplementary['BLOCK']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['BLOCK'];
+                    $supplementary['SAMPLE_NAME']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME'];
+                    $supplementary['DESCRIPTION']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['DESCRIPTION'];
+                    $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SUPPLEMENTARY_FIELDS'] = $supplementary;
+                }
+         
+
                 $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['TITLE'] = $value['_source']['INTRO']['TITLE'];
                 $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_POINT'] = $value['_source']['INTRO']['SAMPLING_POINT'];
                 $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']]['COORDINATES']['LAT'] = $value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'];
@@ -130,9 +143,11 @@ class RequestController
 
                 foreach ($value['_source']['DATA']['FILES'] as $key => $file)
                 {
-                    if (exif_imagetype($file['ORIGINAL_DATA_URL']))
-                    {
-                        $return[$current][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['PICTURES'][$key] = $file;
+                     if (($_SESSION['mail'] && in_array($value['_type'], $_SESSION['projects_access_right_name'])) or ($_SESSION['admin']==1) ) {
+                        if (exif_imagetype($file['ORIGINAL_DATA_URL']))
+                        {
+                            $return[$current][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['PICTURES'][$key] = $file;
+                        }
                     }
                 }
             }
@@ -141,6 +156,8 @@ class RequestController
             //}
 
         }
+        //var_dump($return);
+        //unset($return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']['SUPPLEMENTARY_FIELDS']);
         $responses = $return;
         $responses = json_encode($responses);
         return $responses;
@@ -378,7 +395,15 @@ echo $generatedfile;
                     $current = $value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE'];
 
                     $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_DATE'] = $value['_source']['INTRO']['SAMPLING_DATE'];
-                    $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SUPPLEMENTARY_FIELDS'] = $value['_source']['INTRO']['SUPPLEMENTARY_FIELDS'];
+           if (($_SESSION['mail'] && in_array($value['_type'], $_SESSION['projects_access_right_name'])) or ($_SESSION['admin']==1) ) {
+                $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SUPPLEMENTARY_FIELDS'] = $value['_source']['INTRO']['SUPPLEMENTARY_FIELDS'];
+                }else{
+                    $supplementary['CORE_DETAILS']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'];
+                    $supplementary['BLOCK']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['BLOCK'];
+                    $supplementary['SAMPLE_NAME']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME'];
+                    $supplementary['DESCRIPTION']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['DESCRIPTION'];
+                    $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SUPPLEMENTARY_FIELDS'] = $supplementary;
+                }
                     $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['TITLE'] = $value['_source']['INTRO']['TITLE'];
                     $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_POINT'] = $value['_source']['INTRO']['SAMPLING_POINT'];
                     $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']]['COORDINATES']['LAT'] = $value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'];
@@ -386,9 +411,11 @@ echo $generatedfile;
 
                     foreach ($value['_source']['DATA']['FILES'] as $key => $file)
                     {
-                        if (exif_imagetype($file['ORIGINAL_DATA_URL']))
-                        {
-                            $return[$current][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['PICTURES'][$key] = $file;
+                        if (($_SESSION['mail'] && in_array($value['_type'], $_SESSION['projects_access_right_name'])) or ($_SESSION['admin']==1) ) {
+                            if (exif_imagetype($file['ORIGINAL_DATA_URL']))
+                            {
+                                $return[$current][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['PICTURES'][$key] = $file;
+                            }
                         }
                     }
 

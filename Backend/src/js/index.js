@@ -65,7 +65,11 @@ var APP = (function() {
             });
         },
         affichageinfo:function(k){
-            $('.ui.modal.preview').modal('hide');
+            //$('.ui.modal.preview').modal('hide');
+
+           // $('.ui.dimmer.modals').css( "background-color", "rgba(0,0,0,0)" );
+                    $('.ui.sidebar.right').css("z-index","2000");
+
             k=k.toUpperCase();
             console.log(APP.data_raw);
             console.log(k)
@@ -382,7 +386,13 @@ var APP = (function() {
                                 $('.ui.longer.modal.preview').modal({
     onVisible: function () {
         $(".ui.longer.modal.preview").modal("refresh");
-    }
+    },
+      onHide: function(){
+    
+       $('.ui.sidebar.right').css("z-index","0");
+            //$('.ui.dimmer.modals').css( "background-color", "rgba(0,0,0,0.85)" );
+
+        },
 }).modal('show');
 
                              }
