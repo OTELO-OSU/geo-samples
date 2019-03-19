@@ -1129,7 +1129,7 @@ else{
 
                             case "methodology3":
                             foreach ($value as $key2 => $value2) {
-                                $arrKey['METHODOLOGY'][$key2+3]['NAME'] =$_POST['methodology2'][$key2] ;
+                                $arrKey['METHODOLOGY'][$key2+3]['NAME'] ="Additional_comments" ;
                                 $arrKey['METHODOLOGY'][$key2+3]['DESCRIPTION'] =htmlspecialchars($value2, ENT_QUOTES); 
                                 $csv[$key2+3][]= 'METHODOLOGY';
                                 $csv[$key2+3][]= htmlspecialchars($_POST['methodology2'][$key2], ENT_QUOTES);
