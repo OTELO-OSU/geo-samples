@@ -1627,6 +1627,12 @@ else{
 
 
                                         fclose($fp);
+                                        $mail = new Mailer();
+                                        $user = new User();
+                                        $referents=$user->getProjectReferent($config['COLLECTION_NAME']);
+                                        foreach ($referents as $key => $value) {
+                                                $mail->Send_mail_data_validate($sample_name,$config['COLLECTION_NAME'],$value->mail);
+                                        }
 
                                    return true;
                                }
@@ -1742,10 +1748,19 @@ function delete_data($id)
         rmdir(dirname($value['ORIGINAL_DATA_URL']));
 
     }
+    
+    $mail = new Mailer();
+    $user = new User();
+    $referents=$user->getProjectReferent($config['COLLECTION_NAME']);
+    foreach ($referents as $key => $value) {
+            $mail->Send_mail_data_refused($id,$config['COLLECTION_NAME'],$value->mail);
+    }
     $bulk = new MongoDB\Driver\BulkWrite;
     $bulk->delete(['_id' => strtoupper($id)]);
 
     $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $bulk);
+exit();
+
 
 
 }

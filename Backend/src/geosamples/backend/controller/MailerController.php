@@ -325,6 +325,54 @@ class MailerController
         return $error;
     }
 
+     public function Send_mail_data_refused($id,$project,$email)
+    {
+        $connected = self::CheckSMTPstatus();
+        if ($connected === true) {
+            $file    = new File();
+            $config  = $file->ConfigFile();
+            $headers = "From:<" . $config['NO_REPLY_MAIL'] . ">\r\n";
+            $headers .= "MIME-Version: 1.0\r\n";
+            $headers .= "Content-Type: text/html; charset=utf-8\r\n";
+            $mail = mail($email, '[' . $config['PROJECT_NAME'] . '] Data was refused by referent for project '.$project.' !', '<html>
+               <head>
+               <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+               </head>
+               <body>
+               <p>Hello, dataset '.$id.' was refused by '.$_SESSION['mail'].' for project '.$project.' </a>. </p>
+               </body>
+               </html> ', $headers);
+
+        } else {
+            $error = "true";
+        }
+        return $error;
+    }
+
+     public function Send_mail_data_validate($id,$project,$email)
+    {
+        $connected = self::CheckSMTPstatus();
+        if ($connected === true) {
+            $file    = new File();
+            $config  = $file->ConfigFile();
+            $headers = "From:<" . $config['NO_REPLY_MAIL'] . ">\r\n";
+            $headers .= "MIME-Version: 1.0\r\n";
+            $headers .= "Content-Type: text/html; charset=utf-8\r\n";
+            $mail = mail($email, '[' . $config['PROJECT_NAME'] . '] Data was accepted by referent for project '.$project.' !', '<html>
+               <head>
+               <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+               </head>
+               <body>
+                  <p>Hello, dataset '.$id.' was accepted by '.$_SESSION['mail'].' for project '.$project.' </a>. </p>
+               </body>
+               </html> ', $headers);
+
+        } else {
+            $error = "true";
+        }
+        return $error;
+    }
+
 
 
 
