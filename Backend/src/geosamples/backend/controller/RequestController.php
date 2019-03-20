@@ -1594,23 +1594,31 @@ else{
                                     $repertoireDestination         = $UPLOAD_FOLDER;
                                     $fp = fopen($repertoireDestination  ."/". $_POST['sample_name'] . "_META/" . $_POST['sample_name'].'_META.csv', 'w');
 
-
+                                 
                                           foreach ($arrcsv as $key=>$line) {
                                             $csv=[];
                                            
                                             if (is_array($line)) {
+
                                                foreach ($line as $key2 => $value) {
                                                 if (is_array($value)) {
                                                     $csv2=[];
                                                     foreach ($value as $key3 => $value2) {
-                                                      $csv2[$key3]=$value2;
+                                                        $csv2[$key3]=$value2;
                                                     }
                                                     $csv[]=$csv2;
                                                      fputcsv($fp, $csv2);
                                                 }else{
 
+                                                   if ($key=='SCIENTIFIC_FIELDS') {
+                                                       $key='SCIENTIFIC_FIELD';
+                                                   }
+                                                   elseif ($key=='KEYWORDS') {
+                                                      $key='KEYWORD';
+                                                   }
 
                                                 $csv=array($key,$value);
+                                                    
                                                 fputcsv($fp, $csv);
                                                 }
                                                
@@ -1619,6 +1627,34 @@ else{
 
                                                }
                                             }else{
+
+                                            if ($key=='LITHOLOGY1') {
+                                                $key='LITHOLOGY';
+                                            }
+                                            elseif ($key=='LITHOLOGY2') {
+                                                $key='LITHOLOGY_2';
+                                            } 
+                                            elseif ($key=='LITHOLOGY3') {
+                                                $key='LITHOLOGY_3';
+                                            }     
+                                            elseif ($key=='ORETYPE1') {
+                                                $key='ORE_TYPE_1';
+                                            }   
+                                            elseif ($key=='ORETYPE2') {
+                                                $key='ORE_TYPE_2';
+                                            }   
+                                            elseif ($key=='ORETYPE3') {
+                                                $key='ORE_TYPE_3';
+                                            }   
+                                            elseif ($key=='TEXTURE1') {
+                                                $key='TEXTURE_STRUCTURE_1';
+                                            }   
+                                            elseif ($key=='TEXTURE2') {
+                                                $key='TEXTURE_STRUCTURE_2';
+                                            }   
+                                            elseif ($key=='TEXTURE3') {
+                                                $key='TEXTURE_STRUCTURE_3';
+                                            }   
                                             $csv=array($key,$line);
                                             fputcsv($fp, $csv);
                                             }
@@ -1759,7 +1795,6 @@ function delete_data($id)
     $bulk->delete(['_id' => strtoupper($id)]);
 
     $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $bulk);
-exit();
 
 
 
