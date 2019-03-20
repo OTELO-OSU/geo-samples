@@ -1592,6 +1592,7 @@ else{
                                    $bulk->delete(['_id' => strtoupper($_POST['original_sample_name'])]);
                                    $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $bulk);
                                     $repertoireDestination         = $UPLOAD_FOLDER;
+                                    mkdir($repertoireDestination  ."/". $_POST['sample_name']."_META");
                                     $fp = fopen($repertoireDestination  ."/". $_POST['sample_name'] . "_META/" . $_POST['sample_name'].'_META.csv', 'w');
 
                                  
