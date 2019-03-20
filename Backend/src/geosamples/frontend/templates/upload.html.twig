@@ -801,11 +801,15 @@ function handleFileSelect(evt) {
 
 
                                           }
+                                          console.log(value)
 
+                                          if (value == "DATA_DESCRIPTION" || value=="DESCRIPTION") {
+                                          	if ($("textarea[name='description']").val()=='') {
 
-                                           if (value == "DATA_DESCRIPTION") {
                                               $("textarea[name='description']").val(values[1]);
+                                          	}
                                           }
+
                                           if (value == "LANGUAGE") {
                                             
                                               $("select[name='language']").val(values[1]);
