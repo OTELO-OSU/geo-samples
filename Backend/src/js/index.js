@@ -179,7 +179,7 @@ var APP = (function() {
                         if(k.SUPPLEMENTARY_FIELDS.REFERENT){
                             k.SUPPLEMENTARY_FIELDS.REFERENT.forEach(function(ref, val) {
                                 if (ref.NAME_REFERENT) {
-                                    referent += '<br> Referent Name: ' + ref.NAME_REFERENT + '<br> Referent First name: ' + ref.FIRST_NAME_REFERENT;
+                                    referent += '<br> Referent Name: ' + ref.NAME_REFERENT + '<br> Referent First name: ' + ref.FIRST_NAME_REFERENT + '<br> Referent mail: ' + ref.MAIL_REFERENT;
                                 }
                             });
                         }

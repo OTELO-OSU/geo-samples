@@ -132,6 +132,7 @@ class RequestController
                     $supplementary['BLOCK']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['BLOCK'];
                     $supplementary['SAMPLE_NAME']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME'];
                     $supplementary['DESCRIPTION']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['DESCRIPTION'];
+                    $supplementary['REFERENT']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['REFERENT'];
                     $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SUPPLEMENTARY_FIELDS'] = $supplementary;
                 }
          
@@ -404,6 +405,7 @@ echo $generatedfile;
                     $supplementary['BLOCK']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['BLOCK'];
                     $supplementary['SAMPLE_NAME']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME'];
                     $supplementary['DESCRIPTION']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['DESCRIPTION'];
+                    $supplementary['REFERENT']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['REFERENT'];
                     $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SUPPLEMENTARY_FIELDS'] = $supplementary;
                 }
                     $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['TITLE'] = $value['_source']['INTRO']['TITLE'];
