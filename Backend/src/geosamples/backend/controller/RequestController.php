@@ -1596,8 +1596,34 @@ else{
                                     $repertoireDestination         = $UPLOAD_FOLDER;
                                     mkdir($repertoireDestination  ."/". $_POST['sample_name']."_META");
                                     $fp = fopen($repertoireDestination  ."/". $_POST['sample_name'] . "_META/" . $_POST['sample_name'].'_META.csv', 'w');
+                                    //var_dump($intersect['FILES']);
+                                   $picture_csv=[];
+                                    $connection = \ssh2_connect($config['SSH_HOST'], 22);
+                                    \ssh2_auth_password($connection, $config['SSH_UNIXUSER'], $config['SSH_UNIXPASSWD']);
+                                    $measurement_csv= str_replace('_RAW', '', $arrKey["MEASUREMENT"][0]["ABBREVIATION"]);
+                                   foreach ($intersect['FILES'] as $key => $value) {
+                                    if ($value['TYPE_DATA']=='Data') {
+                                        $sftp = \ssh2_sftp($connection);
+                                        \ssh2_sftp_mkdir($sftp, $config['OWNCLOUD_FOLDER'].'/data/'.$measurement_csv);
+                                        \ssh2_scp_send($connection, $value['ORIGINAL_DATA_URL'], $config['OWNCLOUD_FOLDER'].'/data/'.$measurement_csv.'/'.$value['DATA_URL'], 0644);
+                                           
+                                       }
+                                       if ($value['TYPE_DATA']=='Pictures') {
+                                        $picture_csv[]='/Metadata/Pictures/'.$value['DATA_URL'];
+                                        \ssh2_scp_send($connection, $value['ORIGINAL_DATA_URL'], $config['OWNCLOUD_FOLDER'].'/Metadata/Pictures/'.$value['DATA_URL'], 0644);
+                                           
+                                       }
+                                   }
+                                    foreach ($rawdata['FILES'] as $key => $value) {
+                                        if ($value['TYPE_DATA']=='Rawdata') {
+                                        $sftp = \ssh2_sftp($connection);
+                                        \ssh2_sftp_mkdir($sftp, $config['OWNCLOUD_FOLDER'].'/Raw-data-measurement/'.$measurement_csv);
+                                        \ssh2_scp_send($connection, $value['ORIGINAL_DATA_URL'], $config['OWNCLOUD_FOLDER'].'/Raw-data-measurement/'.$measurement_csv.'/'.$value['DATA_URL'], 0644);
+                                           
+                                       }
+                                   }
+                                    $arrcsv['PICTURE']=$picture_csv;
 
-                                 
                                           foreach ($arrcsv as $key=>$line) {
                                             $csv=[];
                                            
@@ -1666,6 +1692,7 @@ else{
 
 
                                         fclose($fp);
+                                         \ssh2_scp_send($connection, $repertoireDestination  ."/". $_POST['sample_name'] . "_META/" . $_POST['sample_name'].'_META.csv', $config['OWNCLOUD_FOLDER'].'/Metadata/'.$_POST['sample_name'].'_META.csv', 0644);
                                         $mail = new Mailer();
                                         $user = new User();
                                         $referents=$user->getProjectReferent($config['COLLECTION_NAME']);
