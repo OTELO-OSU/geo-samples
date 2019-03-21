@@ -64,7 +64,7 @@
 		 $(".modal.remove .header").empty();
          $(".modal.remove .content").empty();
          $(".modal.remove .header").append('Are you sure to remove {{id}} ?  ');
-         $(".modal.remove .content").append('<form class="ui form " action="/delete_data" method="post"><input type="hidden" name="csrf_name" value=""><input type="hidden" name="csrf_value" value=""><input type="hidden" name="id" value="{{id}}"> <div class="actions"> <div class="ui black deny button"> Cancel </div> <button class="ui submit green button" >Yes</button> </div> </form>');
+         $(".modal.remove .content").append('<form class="ui form " action="/delete_data" method="post"><input type="hidden" name="csrf_name" value="{{name_CSRF}}"><input type="hidden" name="csrf_value" value="{{value_CSRF}}"><input type="hidden" name="id" value="{{id}}"> <div class="actions"> <div class="ui black deny button"> Cancel </div> <button class="ui submit green button" >Yes</button> </div> </form>');
          $('.ui.modal.remove').modal('show');
 	}
 	JSONForm.fieldTypes['file_data_already_uploaded'] = {

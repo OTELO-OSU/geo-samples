@@ -373,8 +373,17 @@ $app->get('/upload', function (Request $req, Response $responseSlim) {
         $config = $file->ConfigFile();
 		$feeder= $user->is_feeder($_SESSION['mail'],$config['COLLECTION_NAME']);
 		$referent= $user->is_referent($_SESSION['mail'],$config['COLLECTION_NAME']);
+		if ($feeder==true) {
+			$access=2;
+		}
+		if ($referent==true) {
+			$access=1;
+		}
+		if ($_SESSION['admin']==1) {
+			$access=1;
+		}
 		if (($feeder===true )OR ($referent===true) OR $_SESSION['admin']==1) {
-		echo $twig->render('upload.html.twig',['title' => "Upload",'collection_name'=>$config['COLLECTION_NAME'],'route'=>'upload', 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'], 'admin' => $_SESSION['admin'],'access'=>$_SESSION['admin']]);
+		echo $twig->render('upload.html.twig',['title' => "Upload",'collection_name'=>$config['COLLECTION_NAME'],'route'=>'upload', 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'], 'admin' => $_SESSION['admin'],'access'=>$access]);
 		}else{
 			return $responseSlim->withRedirect('accueil');
 		}
@@ -385,7 +394,12 @@ $app->get('/upload', function (Request $req, Response $responseSlim) {
 
 
 $app->post('/upload', function (Request $req, Response $responseSlim) {
-	
+	$nameKey = $this
+		->csrf
+		->getTokenNameKey();
+		$valueKey = $this
+		->csrf
+		->getTokenValueKey();
 		
 		$namecsrf  = $req->getAttribute($nameKey);
 		$valuecsrf = $req->getAttribute($valueKey);
@@ -401,7 +415,7 @@ $app->post('/upload', function (Request $req, Response $responseSlim) {
 		$twig   = new Twig_Environment($loader);
 
 		if ($response === true) {
-					echo $twig->render('display_actions.html.twig',['message'=>'Data submitted to referents']);
+					echo $twig->render('display_actions.html.twig',['message'=>'Data submitted to referents','mail' => $_SESSION['mail'], 'admin' => $_SESSION['admin'],'access'=>$_SESSION['admin']]);
 
 		}else{
 
@@ -548,7 +562,7 @@ $app->get('/modify/{id}', function (Request $req, Response $responseSlim,$args) 
 
 
 	
-});
+})->add($container->get('csrf'));
 
 $app->post('/modify', function (Request $req, Response $responseSlim) {
 	
@@ -571,7 +585,7 @@ $app->post('/modify', function (Request $req, Response $responseSlim) {
 		$twig   = new Twig_Environment($loader);
 
 		if ($response === true) {
-					echo $twig->render('display_actions.html.twig',['message'=>'Data approved']);
+					echo $twig->render('display_actions.html.twig',['message'=>'Data approved','mail' => $_SESSION['mail'], 'admin' => $_SESSION['admin'],'access'=>$_SESSION['admin']]);
 
 		}else{
 
@@ -630,7 +644,7 @@ $app->post('/modify', function (Request $req, Response $responseSlim) {
 		}else{
 			return $responseSlim->withRedirect('accueil');
 		}
-});
+})->add($container->get('csrf'));
 
 
 
@@ -678,7 +692,7 @@ $app->post('/delete_data', function (Request $req, Response $responseSlim) {
 		return $responseSlim->withRedirect('validation');
 	
 
-});
+})->add($container->get('csrf'));
 
 
 
@@ -724,7 +738,7 @@ $app->get('/listusers', function (Request $req, Response $responseSlim) {
 		$Allprojects  = $user->getAllProject();
 		$usersawaitingvalidation = $user->getUserAwaitingValidationFromReferent($Allprojects);
 		$allusers=json_encode($user->getAllUsersApprovedAutocomplete());
-		echo $twig->render('listusers.html.twig', ['title'=> "Administration panel",'usersapproved' => $usersapproved, 'userswaiting' => $userswaiting, 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'],'allprojects'=>$Allprojects,'UsersAwaitingValidation' => $usersawaitingvalidation,'usersreferentsadmin' => $usersreferents,'admin'=> '1','alluser' => $allusers]);
+		echo $twig->render('listusers.html.twig', ['title'=> "Administration panel",'usersapproved' => $usersapproved, 'userswaiting' => $userswaiting, 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'],'allprojects'=>$Allprojects,'UsersAwaitingValidation' => $usersawaitingvalidation,'usersreferentsadmin' => $usersreferents,'admin'=> '1','alluser' => $allusers,'access'=>$_SESSION['admin']]);
 	} else{
 		$loader  = new Twig_Loader_Filesystem('geosamples/frontend/templates');
 		$twig    = new Twig_Environment($loader);
@@ -743,7 +757,17 @@ $app->get('/listusers', function (Request $req, Response $responseSlim) {
 		$readonlyproject = $user->getNotReferentProject();
 		$usersawaitingvalidation = $user->getUserAwaitingValidationFromReferent($Allprojects);
 		$allusers=json_encode($user->getAllUsersApprovedAutocomplete());
-		echo $twig->render('listusers.html.twig', ['usersreferents' => $usersreferents, 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'],'allprojects'=>$Allprojects,'readonlyproject'=>$readonlyproject,'UsersAwaitingValidation' => $usersawaitingvalidation,'alluser' => $allusers]);
+		$file   = new File();
+		$config = $file->ConfigFile();
+		$feeder= $user->is_feeder($_SESSION['mail'],$config['COLLECTION_NAME']);
+		$referent= $user->is_referent($_SESSION['mail'],$config['COLLECTION_NAME']);
+		if ($feeder==true) {
+			$access=2;
+		}
+		if ($referent==true) {
+			$access=1;
+		}
+		echo $twig->render('listusers.html.twig', ['usersreferents' => $usersreferents, 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'],'allprojects'=>$Allprojects,'readonlyproject'=>$readonlyproject,'UsersAwaitingValidation' => $usersawaitingvalidation,'alluser' => $allusers,'access'=>$access]);
 	}
 })->add($mw)->add($container->get('csrf'))->add($check_current_user)->setName('listusers');
 
