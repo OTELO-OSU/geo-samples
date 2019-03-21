@@ -381,17 +381,12 @@ $app->get('/upload', function (Request $req, Response $responseSlim) {
 
 
 	
-});
+})->add($container->get('csrf'));
 
 
 $app->post('/upload', function (Request $req, Response $responseSlim) {
 	
-		$nameKey = $this
-		->csrf
-		->getTokenNameKey();
-		$valueKey = $this
-		->csrf
-		->getTokenValueKey();
+		
 		$namecsrf  = $req->getAttribute($nameKey);
 		$valuecsrf = $req->getAttribute($valueKey);
 		$user      = new User();
@@ -464,7 +459,7 @@ $app->post('/upload', function (Request $req, Response $responseSlim) {
 		}else{
 			return $responseSlim->withRedirect('accueil');
 		}
-});
+})->add($container->get('csrf'));
 
 
 $app->get('/modify/{id}', function (Request $req, Response $responseSlim,$args) {
