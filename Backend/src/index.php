@@ -15,7 +15,8 @@ $container['csrf'] = function ($c) {
 		$request = $request->withAttribute("csrf_status", false);
 		$loader  = new Twig_Loader_Filesystem('geosamples/frontend/templates');
 		$twig    = new Twig_Environment($loader);
-		echo $twig->render('forbidden.html.twig');
+		$response->write($twig->render('forbidden.html.twig'));
+		return $response;
 	});
 	return $guard;
 };
@@ -1086,5 +1087,4 @@ $app->get('/preview_poi_data/{name}', function (Request $req,Response $responseS
 
 
 
-
-$app->run();
+@$app->run();
