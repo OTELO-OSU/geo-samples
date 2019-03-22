@@ -87,9 +87,11 @@ L.AreaSelect = L.Class.extend({
     _setUpHandlerEvents: function(handle, xMod, yMod) {
         xMod = xMod || 1;
         yMod = yMod || 1;
+
         
         var self = this;
         function onMouseDown(event) {
+
             event.stopPropagation();
             self.map.dragging.disable();
             L.DomEvent.removeListener(this, "mousedown", onMouseDown);
@@ -138,6 +140,7 @@ L.AreaSelect = L.Class.extend({
     },
     
     _onMapChange: function() {
+	
         this.fire("change");
     },
     

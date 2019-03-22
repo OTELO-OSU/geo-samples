@@ -56,11 +56,13 @@ var APP = (function() {
                 }
             });
             $(document).keyup(function(event) {
-                if (event.which == "17") {
+                if (event.ctrlKey) {
+                }else{
                     bounds = areaSelect.getBounds();
                     APP.modules.service.searchlithologyanddateandmesure($("input[name='lithology']")[0].value, $("input[name='measurement_abbreviation']")[0].value, $('input[name=mindate]')[0].value, $('input[name=maxdate]')[0].value, bounds['_southWest']['lat'], bounds['_northEast']['lat'], bounds['_northEast']['lng'], bounds['_southWest']['lng']);
                     areaSelect.remove();
                     delete areaSelect;
+                    
                 }
             });
         },
