@@ -1304,9 +1304,9 @@ else{
 
                    try {
                     if(empty($config['authSource']) && empty($config['username']) && empty($config['password'])) {
-                        $this->db = new MongoDB\Driver\Manager("mongodb://" . $config['host'] . ':' . $config['port'], array('journal' => false));
+                        $this->db = new MongoDB\Driver\Manager("mongodb://" . $config['MDBHOST'] . ':' . $config['MDBPORT'], array('journal' => false));
                     } else {
-                        $this->db= new MongoDB\Driver\Manager("mongodb://" . $config['host'] . ':' . $config['port'], array('journal' => false, 'authSource' => $config['authSource'], 'username' => $config['username'], 'password' => $config['password']));
+                        $this->db= new MongoDB\Driver\Manager("mongodb://" . $config['MDBHOST'] . ':' . $config['MDBPORT'], array('journal' => false, 'authSource' => $config['authSource'], 'username' => $config['username'], 'password' => $config['password']));
                     }
                 } catch (Exception $e) {
                     echo $e->getMessage();
@@ -1799,9 +1799,9 @@ function delete_data($id)
 
     try {
         if(empty($config['authSource']) && empty($config['username']) && empty($config['password'])) {
-            $this->db = new MongoDB\Driver\Manager("mongodb://" . $config['host'] . ':' . $config['port'], array('journal' => false));
+            $this->db = new MongoDB\Driver\Manager("mongodb://" . $config['MDBHOST'] . ':' . $config['MDBPORT'], array('journal' => false));
         } else {
-            $this->db= new MongoDB\Driver\Manager("mongodb://" . $config['host'] . ':' . $config['port'], array('journal' => false, 'authSource' => $config['authSource'], 'username' => $config['username'], 'password' => $config['password']));
+            $this->db= new MongoDB\Driver\Manager("mongodb://" . $config['MDBHOST'] . ':' . $config['MDBPORT'], array('journal' => false, 'authSource' => $config['authSource'], 'username' => $config['username'], 'password' => $config['password']));
         }
     } catch (Exception $e) {
         echo $e->getMessage();
