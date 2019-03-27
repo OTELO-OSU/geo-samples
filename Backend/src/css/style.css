@@ -49,5 +49,53 @@
   max-width: 450px;
 }
 
+.sampling_point .title label:after{
+    margin: -.2em 0 0 .2em;
+    content: '*';
+    color: #DB2828;
+}
+.keywords .title label:after{
+    margin: -.2em 0 0 .2em;
+    content: '*';
+    color: #DB2828;
+}
+.institutions .title label:after{
+    margin: -.2em 0 0 .2em;
+    content: '*';
+    color: #DB2828;
+}
+.scientific_fields .title label:after{
+    margin: -.2em 0 0 .2em;
+    content: '*';
+    color: #DB2828;
+}
+
+.jsonform-error-sampling_date label:after{
+    margin: -.2em 0 0 .2em;
+    content: '*';
+    color: #DB2828;
+}
+
+.jsonform-error-core >label:first-child:after{
+    margin: -.2em 0 0 .2em;
+    content: '*';
+    color: #DB2828;
+}
+.jsonform-error-pulp >label:first-child:after{
+    margin: -.2em 0 0 .2em;
+    content: '*';
+    color: #DB2828;
+}
+.jsonform-error-block >label:first-child:after{
+    margin: -.2em 0 0 .2em;
+    content: '*';
+    color: #DB2828;
+}
+.jsonform-error-measurements{
+    margin: -.2em 0 0 .2em;
+    content: '*';
+    color: #DB2828;
+}
+
 
 

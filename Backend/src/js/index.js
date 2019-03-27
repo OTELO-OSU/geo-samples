@@ -59,10 +59,10 @@ var APP = (function() {
                 if (event.ctrlKey) {
                 }else{
                     bounds = areaSelect.getBounds();
-                    APP.modules.service.searchlithologyanddateandmesure($("input[name='lithology']")[0].value, $("input[name='measurement_abbreviation']")[0].value, $('input[name=mindate]')[0].value, $('input[name=maxdate]')[0].value, bounds['_southWest']['lat'], bounds['_northEast']['lat'], bounds['_northEast']['lng'], bounds['_southWest']['lng']);
+                    APP.modules.service.searchlithologyanddateandmesure($("input[name='lithology']")[0].value, $("input[name='measurement_abbreviation']")[0].value, $('input[name=mindate]')[0].value, $('input[name=maxdate]')[0].value,$("input[name='lithology3']")[0].value, bounds['_southWest']['lat'], bounds['_northEast']['lat'], bounds['_northEast']['lng'], bounds['_southWest']['lng']);
                     areaSelect.remove();
                     delete areaSelect;
-                    
+
                 }
             });
         },
@@ -244,7 +244,7 @@ var APP = (function() {
          * methode d'affichage
          * @param data
          */
-         affichagePoi: function(data, all, updatedate, updatemesure, updatelithology) {
+         affichagePoi: function(data, all, updatedate, updatemesure, updatelithology,updatelithology3) {
             data = JSON.parse(data);
             $('.message').empty();
             if (APP.group != null) {
@@ -271,8 +271,10 @@ var APP = (function() {
                 });
                
                 var lithology = [];
+                var lithology3 = [];
                 var creationdate = [];
                 lithology['all'] = 'all';
+                lithology3['all'] = 'all';
                 var measurement_abbreviation = [];
                 var measurement_nature = [];
                 
@@ -331,7 +333,8 @@ var APP = (function() {
                                         orientation='vertical';
                                         
                                     }
-                                    else if (k.SUPPLEMENTARY_FIELDS.BLOCK.toUpperCase() == 'YES' && k.SAMPLING_POINT[0].SAMPLING != null){
+                                    else if (k.SUPPLEMENTARY_FIELDS.BLOCK.toUpperCase() == 'YES' && (k.SAMPLING_POINT[0].SAMPLING != null && k.SAMPLING_POINT[0].SAMPLING.length != 0)){
+                                        console.log(k.SAMPLING_POINT[0].SAMPLING.length)
                                         $('.preview .header').empty();
                                         $('.preview .header').append('OUTCROP');
                                         $('#preview').append('<div id="line"></div>');
@@ -343,6 +346,19 @@ var APP = (function() {
                                             return parseFloat(a.date) - parseFloat(b.date);
                                         });
                                         orientation='horizontal';
+                                    }
+                                     else if (k.SUPPLEMENTARY_FIELDS.BLOCK.toUpperCase() == 'YES' && (k.SAMPLING_POINT[0].SAMPLING == null || k.SAMPLING_POINT[0].SAMPLING.length == 0) && k.SAMPLING_POINT[0].ELEVATION != null){
+                                        $('.preview .header').empty();
+                                        $('.preview .header').append('OUTCROP');
+                                        $('#preview').append('<div id="line"></div>');
+                                        object= new Object();
+                                        object.date=k.SAMPLING_POINT[0].ELEVATION;
+                                        object.content='<a onclick=\"APP.modules.map.affichageinfo(\''+k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME+'\');\">'+k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME+'</a>';
+                                        samples.push(object);
+                                            samples.sort(function(a, b) {
+                                            return parseFloat(a.date) - parseFloat(b.date);
+                                        });
+                                        orientation='vertical';
                                     }
                                 }
                                 if (k.SUPPLEMENTARY_FIELDS.STATION) {
@@ -436,8 +452,17 @@ var APP = (function() {
                      marker.bindPopup(k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME);
                  }
              
-                     if (k.SUPPLEMENTARY_FIELDS.LITHOLOGY!=null)  {
+                     /*if (k.SUPPLEMENTARY_FIELDS.LITHOLOGY!=null)  {
                     lithology[k.SUPPLEMENTARY_FIELDS.LITHOLOGY] = (k.SUPPLEMENTARY_FIELDS.LITHOLOGY);
+                    }*/
+                     if (k.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH!=null && k.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH!='' )  {
+                    lithology[k.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH] = (k.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH);
+                    }
+
+
+
+                     if (k.SUPPLEMENTARY_FIELDS.LITHOLOGY_3!=null && k.SUPPLEMENTARY_FIELDS.LITHOLOGY_3!='')  {
+                    lithology3[k.SUPPLEMENTARY_FIELDS.LITHOLOGY_3] = (k.SUPPLEMENTARY_FIELDS.LITHOLOGY_3);
                     }
 
                     creationdate.push(k.SAMPLING_DATE[0]);
@@ -489,6 +514,12 @@ var APP = (function() {
                     }
                     lithology = '<div class="ui one column"><div class="ui selection dropdown lithology"><input type="hidden" name="lithology"> <i class="dropdown icon"></i><div class="default text">All</div><div class="menu">' + lithology + ' </div></div></div>';
                     append += lithology;
+                    for (key in lithology3) {
+                        item = '<div class="item">' + key + '</div>';
+                        lithology3 += item;
+                    }
+                    lithology3 = '<div class="ui one column"><div class="ui selection dropdown lithology3"><input type="hidden" name="lithology3"> <i class="dropdown icon"></i><div class="default text">All</div><div class="menu">' + lithology3 + ' </div></div></div>';
+                    append += lithology3;
                 }
                 if (updatelithology == true) {
                     $('.control .lithology').remove();
@@ -499,6 +530,20 @@ var APP = (function() {
                     lithology = '<div class="ui one column"><div class="ui selection dropdown lithology"><input type="hidden" name="lithology"> <i class="dropdown icon"></i><div class="default text">All</div><div class="menu">' + lithology + ' </div></div></div>';
                     append += lithology;
                 }
+
+               
+               // console.log(lithology3)
+                if (updatelithology3 == true) {
+                 
+                   $('.control .lithology3').remove();
+                    for (key in lithology3) {
+                        item = '<div class="item">' + key + '</div>';
+                        lithology3 += item;
+                    }
+                    lithology3 = '<div class="ui one column"><div class="ui selection dropdown lithology3"><input type="hidden" name="lithology3"> <i class="dropdown icon"></i><div class="default text">All</div><div class="menu">' + lithology3 + ' </div></div></div>';
+                    append += lithology3;
+                }
+
                 if (updatedate == true) {
                     $('.control button').remove();
                     $('.control .dates').remove();
@@ -519,7 +564,7 @@ var APP = (function() {
                 })
                 $('input[name=measurement_abbreviation]').unbind('change');
                 $("input[name='measurement_abbreviation']").on('change', function(e) {
-                    APP.modules.service.searchlithologyanddateandmesure($("input[name='lithology']")[0].value, $("input[name='measurement_abbreviation']")[0].value, $('input[name=mindate]')[0].value, $('input[name=maxdate]')[0].value);
+                    APP.modules.service.searchlithologyanddateandmesure($("input[name='lithology']")[0].value, $("input[name='measurement_abbreviation']")[0].value, $('input[name=mindate]')[0].value, $('input[name=maxdate]')[0].value,$("input[name='lithology3']")[0].value);
                 })
                 $('.filter').on('click', function(e) {
                     $('.sidebar.left').sidebar('setting', 'transition', 'overlay').sidebar('toggle');
@@ -540,6 +585,15 @@ var APP = (function() {
                             APP.modules.service.getallpoi();
                         } else {
                             APP.modules.service.searchlithology(value);
+                        }
+                    }
+                });
+                $('.ui.dropdown.lithology3').dropdown({
+                    onChange: function(value, text, $selectedItem) {
+                        if (value == 'all') {
+                            APP.modules.service.searchlithology($('input[name=lithology]')[0].value);
+                        } else {
+                            APP.modules.service.searchlithology3(value,$('input[name=lithology]')[0].value);
                         }
                     }
                 });
@@ -569,11 +623,11 @@ APP.modules.service = (function() {
                 APP.modules.map.affichagePoi(data, true, true, true);
             });
         },
-        getpoisorted: function(json, updatedate, updatemesure, updatelithology) {
+        getpoisorted: function(json, updatedate, updatemesure, updatelithology,updatelithology3) {
             $.post("/get_poi_sort", {
                 json: json
             }, function(data) {
-                APP.modules.map.affichagePoi(data, false, updatedate, updatemesure, updatelithology);
+                APP.modules.map.affichagePoi(data, false, updatedate, updatemesure, updatelithology,updatelithology3);
             });
         },
         getdata: function(json) {
@@ -607,9 +661,10 @@ APP.modules.service = (function() {
                 }
             });
         },
-        searchlithologyanddateandmesure: function(lithology, mesure, mindate, maxdate, lat1, lat2, lon1, lon2) {
+        searchlithologyanddateandmesure: function(lithology, mesure, mindate, maxdate,lithology3, lat1, lat2, lon1, lon2) {
             obj = {
                 "lithology": lithology,
+                "lithology3": lithology3,
                 'mesure': mesure,
                 "mindate": mindate,
                 "maxdate": maxdate,
@@ -624,9 +679,9 @@ APP.modules.service = (function() {
             };
             json = JSON.stringify(obj);
             if (lat1 && lat2 && lon1 && lon2) {
-                APP.modules.service.getpoisorted(json, true, true, true);
+                APP.modules.service.getpoisorted(json, true, true, true,true);
             } else {
-                APP.modules.service.getpoisorted(json, false, false, false);
+                APP.modules.service.getpoisorted(json, false, false, false,false);
             }
             APP.modules.service.getdata(json);
             $('.control .button').remove();
@@ -640,16 +695,25 @@ APP.modules.service = (function() {
                 "lithology": lithology
             };
             json = JSON.stringify(obj);
-            APP.modules.service.getpoisorted(json, true, true);
+            APP.modules.service.getpoisorted(json, true, true,false,false);
         },
-        searchlithologyanddate: function(lithology, mindate, maxdate) {
+        searchlithology3: function(lithology3,lithology) {
+            obj = {
+                "lithology3": lithology3,
+                "lithology": lithology
+            };
+            json = JSON.stringify(obj);
+            APP.modules.service.getpoisorted(json, true, true,false,false);
+        },
+        searchlithologyanddate: function(lithology, mindate, maxdate,lithology3) {
             obj = {
                 "lithology": lithology,
+                "lithology3": lithology3,
                 "mindate": mindate,
                 "maxdate": maxdate
             };
             json = JSON.stringify(obj);
-            APP.modules.service.getpoisorted(json, false, true);
+            APP.modules.service.getpoisorted(json, false, true,true,true);
         },
     }
 })();

@@ -176,10 +176,22 @@ class RequestController
         $lithology = '';
         $mesure = '';
         $sort = json_decode($sort, true);
-        if ($sort['lithology'])
+       /* if ($sort['lithology'])
         {
            $lithology = 'INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY:"' . urlencode($sort['lithology']) . '"%20AND%20';
+       }*/
+        if ($sort['lithology'])  // HOST LITOHLOGY SCANDIUM
+        {
+            $host_litho = 'INTRO.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH:"' . urlencode($sort['lithology']) . '"%20AND%20';
+        }
+       if ($sort['lithology3'])
+        {
+           $lithology = 'INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY_3:"' . urlencode($sort['lithology3']) . '"%20AND%20';
        }
+       if ($sort['host_litho'])
+    {
+        $lithology = 'INTRO.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH:"' . urlencode($sort['host_litho']) . '"%20AND%20';
+    }
        if ($sort['mindate'] and $sort['maxdate'])
        {
         $date = 'INTRO.SAMPLING_DATE:[' . $sort['mindate'] . '%20TO%20' . $sort['maxdate'] . ']%20AND%20';
@@ -268,10 +280,22 @@ function Download_data_with_sort($sort)
     $lithology = '';
     $mesure = '';
     $sort = json_decode($sort, true);
-    if ($sort['lithology'])
+   /* if ($sort['lithology'])
     {
        $lithology = 'INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY:"' . urlencode($sort['lithology']) . '"%20AND%20';
-   }
+   }*/
+    if ($sort['lithology'])  // HOST LITOHLOGY SCANDIUM
+    {
+            $host_litho = 'INTRO.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH:"' . urlencode($sort['lithology']) . '"%20AND%20';
+    }
+   if ($sort['lithology3'])
+    {
+        $lithology3 = 'INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY_3:"' . urlencode($sort['lithology3']) . '"%20AND%20';
+    }
+    if ($sort['host_litho'])
+    {
+        $lithology = 'INTRO.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH:"' . urlencode($sort['host_litho']) . '"%20AND%20';
+    }
    if ($sort['mindate'] and $sort['maxdate'])
    {
     $date = 'INTRO.SAMPLING_DATE:[' . $sort['mindate'] . '%20TO%20' . $sort['maxdate'] . ']%20AND%20';
@@ -347,11 +371,20 @@ echo $generatedfile;
     function Request_poi_with_sort($sort)
     {
         $lithology = '';
+        $lithology3 = '';
         $mesure = '';
         $sort = json_decode($sort, true);
-        if ($sort['lithology'])
+       /* if ($sort['lithology'])
         {
             $lithology = 'INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY:"' . urlencode($sort['lithology']) . '"%20AND%20';
+        }*/
+        if ($sort['lithology3'])
+        {
+            $lithology3 = 'INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY_3:"' . urlencode($sort['lithology3']) . '"%20AND%20';
+        }
+        if ($sort['lithology'])  // HOST LITOHLOGY SCANDIUM
+        {
+            $lithology = 'INTRO.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH:"' . urlencode($sort['lithology']) . '"%20AND%20';
         }
         if ($sort['mindate'] and $sort['maxdate'])
         {
@@ -366,7 +399,8 @@ echo $generatedfile;
         }*/
 
         $config = self::ConfigFile();
-        $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology . $mesure . $date . "type=" . $config['COLLECTION_NAME'] ."&size=10000";
+        $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology .$lithology3 . $mesure . $date . "type=" . $config['COLLECTION_NAME'] ."&size=10000";
+
         $postcontent = '{ "_source": { 
             "includes": [ "INTRO.SAMPLING_DATE","INTRO.TITLE","INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY","INTRO.SUPPLEMENTARY_FIELDS.DESCRIPTION","INTRO.SUPPLEMENTARY_FIELDS.SAMPLE_NAME","INTRO.SUPPLEMENTARY_FIELDS.ALTERATION_DEGREE","INTRO.SUPPLEMENTARY_FIELDS.NAME_REFERENT","INTRO.SUPPLEMENTARY_FIELDS.FIRST_NAME_REFERENT",
             "INTRO.SAMPLING_DATE","INTRO.SAMPLING_POINT","INTRO.MEASUREMENT","DATA.FILES" ] 
@@ -1222,7 +1256,35 @@ else{
                               break;
 
                               default:
-                              if (in_array(strtoupper($key), $SUPPLEMENTARY_FIELDS)) {
+                              if (in_array(strtoupper($key), $SUPPLEMENTARY_FIELDS)) {  
+                                $key=strtoupper($key);
+                                if ($key=='LITHOLOGY1') {
+                                                $key='LITHOLOGY';
+                                            }
+                                            elseif ($key=='LITHOLOGY2') {
+                                                $key='LITHOLOGY_2';
+                                            } 
+                                            elseif ($key=='LITHOLOGY3') {
+                                                $key='LITHOLOGY_3';
+                                            }     
+                                            elseif ($key=='ORETYPE1') {
+                                                $key='ORE_TYPE_1';
+                                            }   
+                                            elseif ($key=='ORETYPE2') {
+                                                $key='ORE_TYPE_2';
+                                            }   
+                                            elseif ($key=='ORETYPE3') {
+                                                $key='ORE_TYPE_3';
+                                            }   
+                                            elseif ($key=='TEXTURE1') {
+                                                $key='TEXTURE_STRUCTURE_1';
+                                            }   
+                                            elseif ($key=='TEXTURE2') {
+                                                $key='TEXTURE_STRUCTURE_2';
+                                            }   
+                                            elseif ($key=='TEXTURE3') {
+                                                $key='TEXTURE_STRUCTURE_3';
+                                            } 
                                 $arrKey['SUPPLEMENTARY_FIELDS'][strtoupper($key)] = htmlspecialchars($value, ENT_QUOTES);
                                 $arrcsv[strtoupper($key)] = htmlspecialchars($value, ENT_QUOTES);
 
@@ -1603,22 +1665,55 @@ else{
                                     $measurement_csv= str_replace('_RAW', '', $arrKey["MEASUREMENT"][0]["ABBREVIATION"]);
                                    foreach ($intersect['FILES'] as $key => $value) {
                                     if ($value['TYPE_DATA']=='Data') {
-                                        $sftp = \ssh2_sftp($connection);
-                                        \ssh2_sftp_mkdir($sftp, $config['OWNCLOUD_FOLDER'].'/data/'.$measurement_csv);
-                                        \ssh2_scp_send($connection, $value['ORIGINAL_DATA_URL'], $config['OWNCLOUD_FOLDER'].'/data/'.$measurement_csv.'/'.$value['DATA_URL'], 0644);
+                                         $stream = \ssh2_exec($connection, 'sudo -u ' . $config["DATAFILE_UNIXUSER"] . ' cp ' . $value['ORIGINAL_DATA_URL'].' '.$config['OWNCLOUD_FOLDER'].'/data/'.$measurement_csv.'/'.$value['DATA_URL'], false);
+                                        stream_set_timeout($stream, 3);
+                                        stream_set_blocking($stream, true);
+                                        // read the output into a variable
+                                        $data = '';
+                                        while ($buffer = fread($stream, 4096)) {
+                                            $data .= $buffer;
+                                        }
+                                        // close the stream
+                                        fclose($stream);
+
+                                        //$sftp = \ssh2_sftp($connection);
+                                        //\ssh2_sftp_mkdir($sftp, $config['OWNCLOUD_FOLDER'].'/data/'.$measurement_csv);
+                                       // \ssh2_scp_send($connection, $value['ORIGINAL_DATA_URL'], $config['OWNCLOUD_FOLDER'].'/data/'.$measurement_csv.'/'.$value['DATA_URL'], 0644);
                                            
                                        }
                                        if ($value['TYPE_DATA']=='Pictures') {
                                         $picture_csv[]='/Metadata/Pictures/'.$value['DATA_URL'];
-                                        \ssh2_scp_send($connection, $value['ORIGINAL_DATA_URL'], $config['OWNCLOUD_FOLDER'].'/Metadata/Pictures/'.$value['DATA_URL'], 0644);
+                                        //\ssh2_scp_send($connection, $value['ORIGINAL_DATA_URL'], $config['OWNCLOUD_FOLDER'].'/Metadata/Pictures/'.$value['DATA_URL'], 0644);
+                                        $stream = \ssh2_exec($connection, 'sudo -u ' . $config["DATAFILE_UNIXUSER"] . ' cp ' . $value['ORIGINAL_DATA_URL'].' '.$config['OWNCLOUD_FOLDER'].'/Metadata/Pictures/'.$value['DATA_URL'], false);
+                                        stream_set_timeout($stream, 3);
+                                        stream_set_blocking($stream, true);
+                                        // read the output into a variable
+                                        $data = '';
+                                        while ($buffer = fread($stream, 4096)) {
+                                            $data .= $buffer;
+                                        }
+                                        // close the stream
+                                        fclose($stream);
+
                                            
                                        }
                                    }
                                     foreach ($rawdata['FILES'] as $key => $value) {
                                         if ($value['TYPE_DATA']=='Rawdata') {
-                                        $sftp = \ssh2_sftp($connection);
-                                        \ssh2_sftp_mkdir($sftp, $config['OWNCLOUD_FOLDER'].'/Raw-data-measurement/'.$measurement_csv);
-                                        \ssh2_scp_send($connection, $value['ORIGINAL_DATA_URL'], $config['OWNCLOUD_FOLDER'].'/Raw-data-measurement/'.$measurement_csv.'/'.$value['DATA_URL'], 0644);
+                                        //$sftp = \ssh2_sftp($connection);
+                                        //\ssh2_sftp_mkdir($sftp, $config['OWNCLOUD_FOLDER'].'/Raw-data-measurement/'.$measurement_csv);
+                                        //\ssh2_scp_send($connection, $value['ORIGINAL_DATA_URL'], $config['OWNCLOUD_FOLDER'].'/Raw-data-measurement/'.$measurement_csv.'/'.$value['DATA_URL'], 0644);
+                                        $stream = \ssh2_exec($connection, 'sudo -u ' . $config["DATAFILE_UNIXUSER"] . ' cp ' . $value['ORIGINAL_DATA_URL'].' '.$config['OWNCLOUD_FOLDER'].'/Raw-data-measurement/'.$measurement_csv.'/'.$value['DATA_URL'], false);
+                                        stream_set_timeout($stream, 3);
+                                        stream_set_blocking($stream, true);
+                                        // read the output into a variable
+                                        $data = '';
+                                        while ($buffer = fread($stream, 4096)) {
+                                            $data .= $buffer;
+                                        }
+                                        // close the stream
+                                        fclose($stream);
+
                                            
                                        }
                                    }
@@ -1692,7 +1787,18 @@ else{
 
 
                                         fclose($fp);
-                                         \ssh2_scp_send($connection, $repertoireDestination  ."/". $_POST['sample_name'] . "_META/" . $_POST['sample_name'].'_META.csv', $config['OWNCLOUD_FOLDER'].'/Metadata/'.$_POST['sample_name'].'_META.csv', 0644);
+                                         //\ssh2_scp_send($connection, $repertoireDestination  ."/". $_POST['sample_name'] . "_META/" . $_POST['sample_name'].'_META.csv', $config['OWNCLOUD_FOLDER'].'/Metadata/'.$_POST['sample_name'].'_META.csv', 0644);
+                                         $stream = \ssh2_exec($connection, 'sudo -u ' . $config["DATAFILE_UNIXUSER"] . ' cp ' . $repertoireDestination  ."/". $_POST['sample_name'] . "_META/" . $_POST['sample_name'].'_META.csv'.' '.$config['OWNCLOUD_FOLDER'].'/Metadata/'.$_POST['sample_name'].'_META.csv', false);
+                                        stream_set_timeout($stream, 3);
+                                        stream_set_blocking($stream, true);
+                                        // read the output into a variable
+                                        $data = '';
+                                        while ($buffer = fread($stream, 4096)) {
+                                            $data .= $buffer;
+                                        }
+                                        // close the stream
+                                        fclose($stream);
+
                                         $mail = new Mailer();
                                         $user = new User();
                                         $referents=$user->getProjectReferent($config['COLLECTION_NAME']);
