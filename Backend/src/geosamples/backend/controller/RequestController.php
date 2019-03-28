@@ -236,20 +236,22 @@ class RequestController
     echo "<div class='' ui grid container'  style='overflow-x:auto'><table style='width:700px; height:500px;' class='ui compact unstackable table'></div>";
     foreach ($response as $key => $value)
     {
-        if (strtoupper($sort['mesure']) == strtoupper($value['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION']))
-        {
-
-            $file = $value['_source']['DATA']['FILES'][0]['ORIGINAL_DATA_URL'];
-            $folder = explode('_', strtoupper($value['_source']['DATA']['FILES'][0]['DATA_URL']));
-            $name = $value['_source']['DATA']['FILES'][0]['DATA_URL'];
-            $file_parts = pathinfo($file);
-            if ($file_parts['extension'] == "xlsx")
+         if ($value['_source']['INTRO']['STATUS']!='Awaiting' && !is_null($value['_source']['DATA']['FILES'])) {
+            if (strtoupper($sort['mesure']) == strtoupper($value['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION']))
             {
-                $CSV_FOLDER = $config["CSV_FOLDER"];
-                $file = $CSV_FOLDER . $folder[0] . '_' . $folder[1] . "/" . $name;
+
+                $file = $value['_source']['DATA']['FILES'][0]['ORIGINAL_DATA_URL'];
+                $folder = explode('_', strtoupper($value['_source']['DATA']['FILES'][0]['DATA_URL']));
+                $name = $value['_source']['DATA']['FILES'][0]['DATA_URL'];
+                $file_parts = pathinfo($file);
+                if ($file_parts['extension'] == "xlsx")
+                {
+                    $CSV_FOLDER = $config["CSV_FOLDER"];
+                    $file = $CSV_FOLDER . $folder[0] . '_' . $folder[1] . "/" . $name;
+                }
+                $csv = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+                $finalcsv[] = $csv;
             }
-            $csv = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-            $finalcsv[] = $csv;
         }
     }
     foreach ($finalcsv as $key => $value)
@@ -330,20 +332,22 @@ $finalcsvuniq = array();
 
 foreach ($response as $key => $value)
 {
-    if (strtoupper($sort['mesure']) == strtoupper($value['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION']) or $sort['mesure'] == null)
-    {
-
-        $file = $value['_source']['DATA']['FILES'][0]['ORIGINAL_DATA_URL'];
-        $folder = explode('_', strtoupper($value['_source']['DATA']['FILES'][0]['DATA_URL']));
-        $name = $value['_source']['DATA']['FILES'][0]['DATA_URL'];
-        $file_parts = pathinfo($file);
-        if ($file_parts['extension'] == "xlsx")
+     if ($value['_source']['INTRO']['STATUS']!='Awaiting' && !is_null($value['_source']['DATA'])) {
+        if (strtoupper($sort['mesure']) == strtoupper($value['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION']) or $sort['mesure'] == null)
         {
-            $CSV_FOLDER = $config["CSV_FOLDER"];
-            $file = $CSV_FOLDER . $folder[0] . '_' . $folder[1] . "/" . $name;
+
+            $file = $value['_source']['DATA']['FILES'][0]['ORIGINAL_DATA_URL'];
+            $folder = explode('_', strtoupper($value['_source']['DATA']['FILES'][0]['DATA_URL']));
+            $name = $value['_source']['DATA']['FILES'][0]['DATA_URL'];
+            $file_parts = pathinfo($file);
+            if ($file_parts['extension'] == "xlsx")
+            {
+                $CSV_FOLDER = $config["CSV_FOLDER"];
+                $file = $CSV_FOLDER . $folder[0] . '_' . $folder[1] . "/" . $name;
+            }
+            $csv = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            $finalcsv[] = $csv;
         }
-        $csv = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        $finalcsv[] = $csv;
     }
 }
 foreach ($finalcsv as $key => $value)
@@ -423,6 +427,7 @@ echo $generatedfile;
         $return = array();
         foreach ($response as $key => $value)
         {
+            if ($value['_source']['INTRO']['STATUS']!='Awaiting') {
             $longitude = (float)$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE'];
             $latitude = (float)$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'];
             if ((strtoupper($sort['mesure']) == strtoupper($value['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION']) or $sort['mesure'] == null) and (($latitude >= $sort['lat']['lat1']) && $latitude < $sort['lat']['lat2']) && ($longitude >= $sort['lon']['lon2'] && $longitude < $sort['lon']['lon1']) or $sort['lat'] == null or $sort['lon'] == null)
@@ -463,7 +468,7 @@ echo $generatedfile;
                 //if (($_SESSION['mail'] && in_array($value['_type'], $_SESSION['projects_access_right_name'])) or ($_SESSION['admin']==1) ) {
                  $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['MEASUREMENT'][] = $value['_source']['INTRO']['MEASUREMENT'];
             // }
-
+             }
              $responses = $return;
          }
      }
@@ -751,6 +756,7 @@ function Request_poi_img($id, $picturename)
         $data=array();
         $pictures=array();
         $data_samples  = array();
+        $_POST['sample_name']=strtoupper($_POST['sample_name']);
 
 if ($_POST['original_sample_name']) {
                                     if ($_POST['sample_name'].'_'.strtoupper($_POST['measurements'][1])!=$_POST['original_sample_name']) {
@@ -791,6 +797,7 @@ if ($_POST['original_sample_name']) {
                         mkdir($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]);
                     }
                     if (rename($_FILES["data"]["tmp_name"][$i], $repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]. "/" . $nomDestination)) {
+                        chmod($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]. "/" . $nomDestination, 0640);
                         $extension = new \SplFileInfo($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1] ."/" . $nomDestination);
                         $filetypes = $extension->getExtension();
                         $file=$repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1] ."/" . $nomDestination;
@@ -957,6 +964,7 @@ else{
                 mkdir($repertoireDestination  ."/". $_POST['sample_name']."_META");
             }
             if (rename($_FILES["pictures"]["tmp_name"][$i], $repertoireDestination ."/". $_POST['sample_name'] . "_META/" . $nomDestination)) {
+                chmod($repertoireDestination ."/". $_POST['sample_name'] . "_META/" . $nomDestination, 0640);
                 $extension = new \SplFileInfo($repertoireDestination  ."/". $_POST['sample_name'] . "_META/" . $nomDestination);
                 $filetypes = $extension->getExtension();
                 if (strlen($filetypes) == 0 or strlen($filetypes) > 4) {
@@ -1002,6 +1010,8 @@ else{
                 mkdir($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1].'_RAW');
             }
             if (rename($_FILES["rawdata"]["tmp_name"][$i], $repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1].'_RAW'. "/" . $nomDestination)) {
+                chmod($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1].'_RAW'. "/" . $nomDestination, 0640);
+
                 $extension = new \SplFileInfo($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1].'_RAW' ."/" . $nomDestination);
                 $filetypes = $extension->getExtension();
                 $file=$repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1].'_RAW' ."/" . $nomDestination;
@@ -1613,6 +1623,7 @@ else{
                                     $dir=dirname($newurl);
                                     mkdir($dir);
                                     rename($value['ORIGINAL_DATA_URL'],$newurl);
+                                    chmod($newurl, 0640);
                                     rmdir(dirname($value['ORIGINAL_DATA_URL']));
                                     $intersect['FILES'][$key]['ORIGINAL_DATA_URL']=$newurl;
 
@@ -1629,6 +1640,7 @@ else{
                                     //var_dump($dir);
                                     mkdir($dir);
                                     rename($value['ORIGINAL_DATA_URL'],$newurl);
+                                    chmod($newurl, 0640);
                                     rmdir(dirname($value['ORIGINAL_DATA_URL']));
                                     $rawdata['FILES'][$key]['ORIGINAL_DATA_URL']=$newurl;
 
@@ -1790,6 +1802,8 @@ else{
 
 
                                         fclose($fp);
+                                        chmod($repertoireDestination  ."/". $_POST['sample_name'] . "_META/" . $_POST['sample_name'].'_META.csv', 0640);
+                                        
                                          //\ssh2_scp_send($connection, $repertoireDestination  ."/". $_POST['sample_name'] . "_META/" . $_POST['sample_name'].'_META.csv', $config['OWNCLOUD_FOLDER'].'/Metadata/'.$_POST['sample_name'].'_META.csv', 0644);
                                          $stream = \ssh2_exec($connection, 'sudo -u ' . $config["DATAFILE_UNIXUSER"] . ' cp ' . $repertoireDestination  ."/". $_POST['sample_name'] . "_META/" . $_POST['sample_name'].'_META.csv'.' '.$config['OWNCLOUD_FOLDER'].'/Metadata/'.$_POST['sample_name'].'_META.csv', false);
                                         stream_set_timeout($stream, 3);

@@ -431,7 +431,7 @@ $app->post('/upload', function (Request $req, Response $responseSlim) {
 					echo $twig->render('display_actions.html.twig',['message'=>'Data submitted to referents','mail' => $_SESSION['mail'], 'admin' => $_SESSION['admin'],'access'=>$_SESSION['admin']]);
 
 		}else{
-			var_dump($response['dataform']['METHODOLOGY'][0]['DESCRIPTION']);
+			//var_dump($response['dataform']['METHODOLOGY'][0]['DESCRIPTION']);
 
 			echo $twig->render('upload.html.twig',[ 
 				'collection_name'=>$config['COLLECTION_NAME'],
@@ -535,15 +535,15 @@ $app->get('/modify/{id}', function (Request $req, Response $responseSlim,$args) 
 			  'scientific_fields'=>$response['_source']['INTRO']['SCIENTIFIC_FIELDS'],
 			   'measurement_abbv'=>$response['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION'],
 			   'sampling_date'=>$response['_source']['INTRO']['SAMPLING_DATE'][0],
-			   'lithology1'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['LITHOLOGY1'],
-			   	'lithology2'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['LITHOLOGY2'],
-			   'lithology3'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['LITHOLOGY3'],
-			   'oretype1'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['ORETYPE1'],
-			   	'oretype2'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['ORETYPE2'],
-			   'oretype3'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['ORETYPE3'],
-			   'texture1'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['TEXTURE1'],
-			   	'texture2'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['TEXTURE2'],
-			   'texture3'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['TEXTURE3'],
+			   'lithology1'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['LITHOLOGY'],
+			   	'lithology2'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['LITHOLOGY_2'],
+			   'lithology3'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['LITHOLOGY_3'],
+			   'oretype1'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['ORE_TYPE_1'],
+			   	'oretype2'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['ORE_TYPE_2'],
+			   'oretype3'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['ORE_TYPE_3'],
+			   'texture1'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['TEXTURE_STRUCTURE_1'],
+			   	'texture2'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['TEXTURE_STRUCTURE_2'],
+			   'texture3'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['TEXTURE_STRUCTURE_3'],
 			    'sample_location_facility'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_LOCATION_FACILITY'],
 
 			    'safety_constraints'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAFETY_CONSTRAINTS'],
@@ -629,12 +629,12 @@ $app->post('/modify', function (Request $req, Response $responseSlim) {
 			   'lithology1'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['LITHOLOGY'],
 			   	'lithology2'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['LITHOLOGY_2'],
 			   'lithology3'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['LITHOLOGY_3'],
-			   'oretype1'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['ORETYPE1'],
-			   	'oretype2'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['ORETYPE2'],
-			   'oretype3'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['ORETYPE3'],
-			   'texture1'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['TEXTURE1'],
-			   	'texture2'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['TEXTURE2'],
-			   'texture3'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['TEXTURE3'],
+			   'oretype1'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['ORE_TYPE_1'],
+			   	'oretype2'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['ORE_TYPE_2'],
+			   'oretype3'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['ORE_TYPE_3'],
+			   'texture1'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['TEXTURE_STRUCTURE_1'],
+			   	'texture2'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['TEXTURE_STRUCTURE_2'],
+			   'texture3'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['TEXTURE_STRUCTURE_3'],
 			    'sample_location_facility'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['SAMPLE_LOCATION_FACILITY'],
 
 			    'safety_constraints'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['SAFETY_CONSTRAINTS'],
