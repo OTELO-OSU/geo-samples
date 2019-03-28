@@ -60,7 +60,7 @@ title: 'HOST_LITHOLOGY_OR_PROTOLITH',
 					"COORDINATE_SYSTEM": {
 						"type": "string",
 						"title": "COORDINATE SYSTEM",
-						"enum": [ "","Lambert93", "WGS84 Greenwich" ]
+						"enum": ["Lambert93", "WGS84 Greenwich" ]
 
 
 
@@ -336,14 +336,39 @@ type: 'string',
 			"items": {
 				"type": "section",
 				"items": [
-					"sampling_points[].NAME",
-					"sampling_points[].COORDINATE_SYSTEM",
-					"sampling_points[].ABBREVIATION",
-					"sampling_points[].LONGITUDE",
-					"sampling_points[].LATITUDE",
-					"sampling_points[].ELEVATION_M",
-					"sampling_points[].SAMPLING",
-					"sampling_points[].DESCRIPTION"
+					{
+	"key":"sampling_points[].NAME",
+	 "allowEmpty": true,
+},
+{
+	"key":"sampling_points[].COORDINATE_SYSTEM",
+	 "allowEmpty": true,
+},
+{
+	"key":"sampling_points[].ABBREVIATION",
+	 "allowEmpty": true,
+},
+{
+	"key":"sampling_points[].LONGITUDE",
+	 "allowEmpty": true,
+},
+{
+	"key":"sampling_points[].LATITUDE",
+	 "allowEmpty": true,
+},
+					
+					{
+	"key":"sampling_points[].ELEVATION_M",
+	 "allowEmpty": true,
+},
+									{
+	"key":"sampling_points[].SAMPLING",
+	 "allowEmpty": true,
+},
+								{
+	"key":"sampling_points[].DESCRIPTION",
+	 "allowEmpty": true,
+},
 
 
 				]

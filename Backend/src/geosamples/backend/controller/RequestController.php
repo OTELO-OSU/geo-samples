@@ -1135,7 +1135,10 @@ else{
                             $csv['Measurement_label'][]= 'UNITS';
                         }
 
-
+                        if ($value2=='Select abbreviation') {
+                               $error = 'Measurements must be completed';
+                            
+                        }
                         $arrKey['MEASUREMENT'][0][$name] =htmlspecialchars($value2, ENT_QUOTES); 
 
                         $csv['MEASUREMENT'][]= htmlspecialchars($value2, ENT_QUOTES);
@@ -1201,6 +1204,7 @@ else{
 
                             break;
                             case "sampling_points":
+                            //var_dump($value);
                             $csv['sampling_point_label'][]= '';
                             $csv['sampling_point_label'][]= 'SAMPLING_POINTS';
                             $csv['sampling_point_label'][]= 'COORDINATE_SYSTEM';
@@ -1212,7 +1216,6 @@ else{
                             $csv['sampling_point_label'][]= 'DESCRIPTION';
 
                             $csv['SAMPLING_POINT'][]= 'SAMPLING_POINT';
-
 
 
                             $arrKey['SAMPLING_POINT'][0]['NAME'] =$value[0] ;

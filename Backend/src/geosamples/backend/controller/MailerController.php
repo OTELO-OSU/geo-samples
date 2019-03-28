@@ -315,7 +315,7 @@ class MailerController
                <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
                </head>
                <body>
-               <p>Hello, '.$user.' upload a new dataset to project '.$project.', please go to your account to check it out! </a>. </p>
+               <p>Hello, '.$user.' upload a new dataset to project '.$project.', please go to your account to check it out! <a href="'. $config['REPOSITORY_URL'] .'/validation">Approve</a>. </p>
                </body>
                </html> ', $headers);
 
