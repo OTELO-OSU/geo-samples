@@ -54,7 +54,7 @@ class RequestController
        // var_dump($response['hits']['hits']);
         $array=array();
         foreach ($response['hits']['hits'] as $key => $value) {
-            if ($value['_source']['INTRO']['STATUS']=='Awaiting') {
+            if ($value['_source']['INTRO']['ACCESS_RIGHT']=='Awaiting') {
 
              $array[]=$value['_id'];
          }
@@ -236,7 +236,7 @@ class RequestController
     echo "<div class='' ui grid container'  style='overflow-x:auto'><table style='width:700px; height:500px;' class='ui compact unstackable table'></div>";
     foreach ($response as $key => $value)
     {
-         if ($value['_source']['INTRO']['STATUS']!='Awaiting' && !is_null($value['_source']['DATA']['FILES'])) {
+         if ($value['_source']['INTRO']['ACCESS_RIGHT']!='Awaiting' && !is_null($value['_source']['DATA']['FILES'])) {
             if (strtoupper($sort['mesure']) == strtoupper($value['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION']))
             {
 
@@ -332,7 +332,7 @@ $finalcsvuniq = array();
 
 foreach ($response as $key => $value)
 {
-     if ($value['_source']['INTRO']['STATUS']!='Awaiting' && !is_null($value['_source']['DATA'])) {
+     if ($value['_source']['INTRO']['ACCESS_RIGHT']!='Awaiting' && !is_null($value['_source']['DATA'])) {
         if (strtoupper($sort['mesure']) == strtoupper($value['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION']) or $sort['mesure'] == null)
         {
 
@@ -427,7 +427,7 @@ echo $generatedfile;
         $return = array();
         foreach ($response as $key => $value)
         {
-            if ($value['_source']['INTRO']['STATUS']!='Awaiting') {
+            if ($value['_source']['INTRO']['ACCESS_RIGHT']!='Awaiting') {
             $longitude = (float)$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE'];
             $latitude = (float)$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'];
             if ((strtoupper($sort['mesure']) == strtoupper($value['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION']) or $sort['mesure'] == null) and (($latitude >= $sort['lat']['lat1']) && $latitude < $sort['lat']['lat2']) && ($longitude >= $sort['lon']['lon2'] && $longitude < $sort['lon']['lon1']) or $sort['lat'] == null or $sort['lon'] == null)
@@ -796,7 +796,7 @@ if ($_POST['original_sample_name']) {
                     if (!file_exists($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1])) {
                         mkdir($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]);
                     }
-                    if (rename($_FILES["data"]["tmp_name"][$i], $repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]. "/" . $nomDestination)) {
+                    if (copy($_FILES["data"]["tmp_name"][$i], $repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]. "/" . $nomDestination)) {
                         chmod($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]. "/" . $nomDestination, 0640);
                         $extension = new \SplFileInfo($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1] ."/" . $nomDestination);
                         $filetypes = $extension->getExtension();
@@ -963,7 +963,7 @@ else{
             if (!file_exists($repertoireDestination  ."/". $_POST['sample_name']."_META")) {
                 mkdir($repertoireDestination  ."/". $_POST['sample_name']."_META");
             }
-            if (rename($_FILES["pictures"]["tmp_name"][$i], $repertoireDestination ."/". $_POST['sample_name'] . "_META/" . $nomDestination)) {
+            if (copy($_FILES["pictures"]["tmp_name"][$i], $repertoireDestination ."/". $_POST['sample_name'] . "_META/" . $nomDestination)) {
                 chmod($repertoireDestination ."/". $_POST['sample_name'] . "_META/" . $nomDestination, 0640);
                 $extension = new \SplFileInfo($repertoireDestination  ."/". $_POST['sample_name'] . "_META/" . $nomDestination);
                 $filetypes = $extension->getExtension();
@@ -1009,7 +1009,7 @@ else{
             if (!file_exists($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1].'_RAW')) {
                 mkdir($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1].'_RAW');
             }
-            if (rename($_FILES["rawdata"]["tmp_name"][$i], $repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1].'_RAW'. "/" . $nomDestination)) {
+            if (copy($_FILES["rawdata"]["tmp_name"][$i], $repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1].'_RAW'. "/" . $nomDestination)) {
                 chmod($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1].'_RAW'. "/" . $nomDestination, 0640);
 
                 $extension = new \SplFileInfo($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1].'_RAW' ."/" . $nomDestination);
@@ -1343,29 +1343,31 @@ else{
 
                    $item=count($referents);     
                    $item++;
-                   $arrKey['FILE_CREATOR'][$item]['NAME'] = $_SESSION['name'];
+                   $filecreator[0]['NAME'] = $_SESSION['name'];
                    $arrcsv['NAME'][] = htmlspecialchars($_SESSION['name'], ENT_QUOTES);
 
-                   $arrKey['FILE_CREATOR'][$item]['FIRST_NAME'] = $_SESSION['firstname'];
+                   $filecreator[0]['FIRST_NAME'] = $_SESSION['firstname'];
                    $arrcsv['FIRST_NAME'][] = htmlspecialchars($_SESSION['firstname'], ENT_QUOTES);
 
-                   $arrKey['FILE_CREATOR'][$item]['MAIL'] = $_SESSION['mail'];
+                   $filecreator[0]['MAIL'] = $_SESSION['mail'];
                    $arrcsv['MAIL'][] = htmlspecialchars($_SESSION['mail'], ENT_QUOTES);
 
-                   $arrKey['FILE_CREATOR'][$item]['DISPLAY_NAME'] = $_SESSION['name']." ".$_SESSION['firstname'];
+                   $filecreator[0]['DISPLAY_NAME'] = $_SESSION['name']." ".$_SESSION['firstname'];
                    $arrcsv['FILE_CREATOR'][] = htmlspecialchars($_SESSION['name']." ".$_SESSION['firstname'], ENT_QUOTES);
 
+                   //var_dump($filecreator);
+                   $arrKey['FILE_CREATOR']=array_merge($filecreator,$arrKey['FILE_CREATOR']);
 
 
 
        // foreach ($POST['measurements'] as $key => $value) {
                    $sample_name=$sample_name_old;
-                   $arrKey["ACCESS_RIGHT"] = "Draft";
+                   $arrKey["ACCESS_RIGHT"] = "Awaiting";
                    $arrKey["UPLOAD_DATE"]  = date('Y-m-d');
                    $arrKey["CREATION_DATE"]  = date('Y-m-d');
                    $arrcsv["CREATION_DATE"]  = date('Y-m-d');
                    $arrKey["METADATA_DATE"]  = date('Y-m-d');
-                   $arrKey["STATUS"]  = "Awaiting";
+                   //$arrKey["STATUS"]  = "Awaiting";
             // $sample_name=$sample_name.'_'.$value[1];
                    $sample_name = $sample_name.'_'.$_POST['measurements'][1];
 
@@ -1622,7 +1624,7 @@ else{
                                     //$dir=preg_replace('/'.$value['DATA_URL'].'/', '', $value['ORIGINAL_DATA_URL']);
                                     $dir=dirname($newurl);
                                     mkdir($dir);
-                                    rename($value['ORIGINAL_DATA_URL'],$newurl);
+                                    copy($value['ORIGINAL_DATA_URL'],$newurl);
                                     chmod($newurl, 0640);
                                     rmdir(dirname($value['ORIGINAL_DATA_URL']));
                                     $intersect['FILES'][$key]['ORIGINAL_DATA_URL']=$newurl;
@@ -1639,7 +1641,7 @@ else{
                                     $dir=dirname($newurl);
                                     //var_dump($dir);
                                     mkdir($dir);
-                                    rename($value['ORIGINAL_DATA_URL'],$newurl);
+                                    copy($value['ORIGINAL_DATA_URL'],$newurl);
                                     chmod($newurl, 0640);
                                     rmdir(dirname($value['ORIGINAL_DATA_URL']));
                                     $rawdata['FILES'][$key]['ORIGINAL_DATA_URL']=$newurl;
@@ -1650,7 +1652,7 @@ else{
                             //var_dump($intersect);
                                 $bulk = new MongoDB\Driver\BulkWrite;
                                 try{
-                                   unset($arrKey["STATUS"]);
+                                   //unset($arrKey["STATUS"]);
                                    if (count($intersect)!=0) {
                                         $arrKey["ACCESS_RIGHT"] = "Unpublished";
                                    }
@@ -1659,7 +1661,7 @@ else{
                                     if (count($rawdata)!=0) {
                                        
 
-                                          unset($arrKey["STATUS"]);
+                                          //unset($arrKey["STATUS"]);
                                          // var_dump($rawdata);
                                           $arrKey["MEASUREMENT"][0]["ABBREVIATION"]=$arrKey["MEASUREMENT"][0]["ABBREVIATION"].'_RAW';
                                            $insert=array('_id' => strtoupper($original_sample_name).'_RAW',"INTRO"=>$arrKey,'DATA'=>$rawdata);

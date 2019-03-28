@@ -360,6 +360,15 @@ pictures:{
                               prompt: 'Please enter description'
                           }]
                       },
+
+       measurements: {
+                          identifier: 'measurements.abbreviation',
+                          rules: [{
+                              type: 'doesntContain[Select abbreviation]',
+                              prompt: 'Please enter measurement abbreviation'
+                          }]
+                      },
+
        scientific_field: {
                           identifier: 'scientific_fields[0].scientific_field',
                           rules: [{
@@ -664,6 +673,11 @@ function handleFileSelect(evt) {
                                            if (value == "MEASUREMENT") {
                                               $("input[name='measurements[].nature']").val(values[1]);
                                               $("select[name='measurements[].abbreviation']").val(values[2]);
+                                              if ($("select[name='measurements[].abbreviation']").val()==null) {
+                                              	  $("select[name='measurements[].abbreviation']").val('Select abbreviation');
+                                              	   $("input[name='measurements[].nature']").val(null);
+                                              	   $("input[name='measurements[].unit']").val(null);
+                                              }
                                               $("input[name='measurements[].unit']").val(values[3]);
                                           }
                                            if (value == "CORE") {

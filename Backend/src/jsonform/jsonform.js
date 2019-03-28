@@ -638,7 +638,7 @@ jsonform.elementTypes = {
   'select':{
     'template':'<select name="<%= node.name %>" id="<%= id %>"' +
       'class=\'ui fluid search dropdown form-control<%= (fieldHtmlClass ? " " + fieldHtmlClass : "") %>\'' +
-      '<%= (node.schemaElement && node.schemaElement.disabled? " disabled" : "")%>' +
+      '<%= (node.schemaElement && node.schemaElement.disabled? " disabled" : "")%>' + 'data-validate="<%= node.name.replace("[]","") %>"'+
 
       '> ' +
       '<% _.each(node.options, function(key, val) { if(key instanceof Object) { if (value === key.value) { %> <option selected value="<%= key.value %>"><%= key.title %></option> <% } else { %> <option value="<%= key.value %>"><%= key.title %></option> <% }} else { if (value === key) { %> <option selected value="<%= key %>"><%= key %></option> <% } else { %><option value="<%= key %>"><%= key %></option> <% }}}); %> ' +
@@ -1225,7 +1225,7 @@ $('.ui.dropdown[name*="scientific_fields"]')
     'template':'<div class="<%= elt.htmlClass?elt.htmlClass:"" %>"><%= children %></div>'
   },
   'hidden':{
-    'template':'<input type="hidden" id="<%= id %>" name="<%= node.name %>" value="<%= escape(value) %>" />',
+    'template':'<input type="hidden" id="<%= id %>" name="<%= node.name %>" data-validate="<%= node.name.replace("[]","") %>" value="<%= escape(value) %>" />',
     'inputfield': true
   },
   'selectfieldset': {
