@@ -532,7 +532,7 @@ echo $generatedfile;
 
         if ($identifier == $id)
         {
-
+            
             $response = json_encode($response['hits']['hits'][0]['_source']['DATA']);
 
             return $response;
@@ -606,10 +606,15 @@ function Request_poi_img($id, $picturename)
     {
         if (file_exists($filepath))
         {
+            if(@!is_array(getimagesize($filepath))){
             header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
             header("Content-Disposition: attachment; filename=" . basename($filepath));
             $readfile = file_get_contents($filepath);
             print $readfile;
+            }
+            else{
+                return false;
+            }
         }
         if ($readfile == false)
         {
@@ -678,6 +683,8 @@ function Request_poi_img($id, $picturename)
         }
         if (file_exists($file))
         {
+           if(@!is_array(getimagesize($file))){
+               
 
             $readfile = false;
             $file = fopen($file, "r");
@@ -725,6 +732,13 @@ function Request_poi_img($id, $picturename)
             }
             echo "</table>";
 
+            }
+            else
+        {
+            echo "<h1>Cannot preview file</h1> <p>Sorry, we are unfortunately not able to preview this file.<p>";
+            $readfile = false;
+            header('Content-Type:  text/html');
+        }
         }
 
         else
@@ -1343,20 +1357,25 @@ else{
 
                    $item=count($referents);     
                    $item++;
-                   $filecreator[0]['NAME'] = $_SESSION['name'];
-                   $arrcsv['NAME'][] = htmlspecialchars($_SESSION['name'], ENT_QUOTES);
 
-                   $filecreator[0]['FIRST_NAME'] = $_SESSION['firstname'];
-                   $arrcsv['FIRST_NAME'][] = htmlspecialchars($_SESSION['firstname'], ENT_QUOTES);
+                   if ($route!='modify') {
 
-                   $filecreator[0]['MAIL'] = $_SESSION['mail'];
-                   $arrcsv['MAIL'][] = htmlspecialchars($_SESSION['mail'], ENT_QUOTES);
+                      
 
-                   $filecreator[0]['DISPLAY_NAME'] = $_SESSION['name']." ".$_SESSION['firstname'];
-                   $arrcsv['FILE_CREATOR'][] = htmlspecialchars($_SESSION['name']." ".$_SESSION['firstname'], ENT_QUOTES);
+                   
+                 
 
-                   //var_dump($filecreator);
-                   $arrKey['FILE_CREATOR']=array_merge($filecreator,$arrKey['FILE_CREATOR']);
+                       $filecreator[0]['NAME'] = $_SESSION['name'];
+
+                       $filecreator[0]['FIRST_NAME'] = $_SESSION['firstname'];
+
+                       $filecreator[0]['MAIL'] = $_SESSION['mail'];
+
+                       $filecreator[0]['DISPLAY_NAME'] = $_SESSION['name']." ".$_SESSION['firstname'];
+
+                       $arrKey['FILE_CREATOR']=array_merge($filecreator,$arrKey['FILE_CREATOR']);
+
+                   }
 
 
 
@@ -1416,6 +1435,19 @@ else{
                             $query = new MongoDB\Driver\Query($filter);
                             $cursor = $this->db->executeQuery($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $query);
                             foreach ($cursor as $document) {
+                                //var_dump(($document->INTRO->FILE_CREATOR[0]->DISPLAY_NAME));
+                               $filecreator[0]['NAME'] = $document->INTRO->FILE_CREATOR[0]->NAME;
+                               $arrcsv['NAME'][] = htmlspecialchars($document->INTRO->FILE_CREATOR[0]->NAME, ENT_QUOTES);
+                               $filecreator[0]['FIRST_NAME'] = $document->INTRO->FILE_CREATOR[0]->FIRST_NAME;
+                               $arrcsv['FIRST_NAME'][] = htmlspecialchars($document->INTRO->FILE_CREATOR[0]->FIRST_NAME, ENT_QUOTES);
+                               $filecreator[0]['MAIL'] = $document->INTRO->FILE_CREATOR[0]->MAIL;
+                               $arrcsv['MAIL'][] = htmlspecialchars($document->INTRO->FILE_CREATOR[0]->MAIL, ENT_QUOTES);
+                               $filecreator[0]['DISPLAY_NAME'] = $document->INTRO->FILE_CREATOR[0]->DISPLAY_NAME;
+                               $arrcsv['FILE_CREATOR'][] = htmlspecialchars($document->INTRO->FILE_CREATOR[0]->DISPLAY_NAME, ENT_QUOTES);
+                               //var_dump($filecreator);
+                               $arrKey['FILE_CREATOR']=array_merge($filecreator,$arrKey['FILE_CREATOR']);
+
+
                                 //($document);
                                 $tmp_array=$document->DATA;
                               // var_dump($data);

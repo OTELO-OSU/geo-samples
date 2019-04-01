@@ -86,7 +86,7 @@
 		function switch_measurement(){
 
 				value= $( "select[name='measurements[].abbreviation']" ).val();
-				if (value!='Select abbreviation') {
+				if (value!='Select abbreviation' && value!= null) {
 
 
 				{%if collection_name == 'petrophysics'%}
@@ -290,8 +290,8 @@ data:{
 	rules:[
 	{
         type   : 'regExp',
-        value  : '/^(.*.((csv|xlsx)$))?[^.]*$/i',
-        prompt : 'Please upload a file in suggested format (CSV,XLSX)'
+        value  : '/^([^@$& àâçéèêëîïôûùüÿñæœ]*((csv|xlsx)$))?[^.]*$/i',
+        prompt : 'Please upload a file in suggested format (CSV,XLSX) and with no special character or accent'
       }
  ]
 },
@@ -300,8 +300,8 @@ pictures:{
 	rules:[
 	{
         type   : 'regExp',
-        value  : '/^(.*.((jpeg|gif|png|tiff|tif|jpg)$))?[^.]*$/i',
-        prompt : 'Please upload a file in suggested format (JPEG,GIF,PNG,TIF)'
+        value  : '/^([^@$& àâçéèêëîïôûùüÿñæœ]*((jpeg|gif|png|tiff|tif|jpg)$))?[^.]*$/i',
+        prompt : 'Please upload a file in suggested format (JPEG,GIF,PNG,TIF) and with no special character or accent'
       }
  ]
 },
