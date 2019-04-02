@@ -1351,7 +1351,7 @@ else{
                        $arrKey['SUPPLEMENTARY_FIELDS']['REFERENT'][$key]['FIRST_NAME_REFERENT'] = $value->firstname;
                       $arrcsv['FIRST_NAME_REFERENT'][] = htmlspecialchars($value->firstname, ENT_QUOTES);
 
-                       $arrKey['SUPPLEMENTARY_FIELDS']['REFERENT'][$key]['MAIL'] = $value->mail;
+                       $arrKey['SUPPLEMENTARY_FIELDS']['REFERENT'][$key]['MAIL_REFERENT'] = $value->mail;
                         $arrcsv['MAIL_REFERENT'][] = htmlspecialchars($value->mail, ENT_QUOTES);
 
 
