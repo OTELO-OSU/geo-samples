@@ -96,7 +96,7 @@ class RequestController
         $config = self::ConfigFile();
         $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?type=" . $config['COLLECTION_NAME'] ."&size=10000";
         $postcontent = '{ "_source": { 
-            "includes": [ "INTRO.SAMPLING_DATE","INTRO.TITLE","INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY","INTRO.SUPPLEMENTARY_FIELDS.DESCRIPTION","INTRO.SUPPLEMENTARY_FIELDS.SAMPLE_NAME","INTRO.SUPPLEMENTARY_FIELDS.ALTERATION_DEGREE","INTRO.SUPPLEMENTARY_FIELDS.NAME_REFERENT","INTRO.SUPPLEMENTARY_FIELDS.FIRST_NAME_REFERENT",
+            "includes": [ "INTRO.SAMPLING_DATE","INTRO.TITLE","INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY","INTRO.DATA_DESCRIPTION","INTRO.SUPPLEMENTARY_FIELDS.SAMPLE_NAME","INTRO.SUPPLEMENTARY_FIELDS.ALTERATION_DEGREE","INTRO.SUPPLEMENTARY_FIELDS.NAME_REFERENT","INTRO.SUPPLEMENTARY_FIELDS.FIRST_NAME_REFERENT",
             "INTRO.SAMPLING_DATE","INTRO.SAMPLING_POINT","INTRO.MEASUREMENT","DATA.FILES" ] 
         }}';
         $curlopt = array(
@@ -117,6 +117,7 @@ class RequestController
         $return = array();
         foreach ($response as $key => $value)
         {
+
             $current = $value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE'];
 
            
@@ -131,13 +132,14 @@ class RequestController
                     $supplementary['CORE_DETAILS']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'];
                     $supplementary['BLOCK']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['BLOCK'];
                     $supplementary['SAMPLE_NAME']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME'];
-                    $supplementary['DESCRIPTION']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['DESCRIPTION'];
+                    //$supplementary['DESCRIPTION']=$value['_source']['INTRO']['DATA_DESCRIPTION'];
                     $supplementary['REFERENT']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['REFERENT'];
                     $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SUPPLEMENTARY_FIELDS'] = $supplementary;
                 }
          
 
                 $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['TITLE'] = $value['_source']['INTRO']['TITLE'];
+                $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['DATA_DESCRIPTION'] = $value['_source']['INTRO']['DATA_DESCRIPTION'];
                 $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['INSTITUTION'] = $value['_source']['INTRO']['INSTITUTION'];
 
                 $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_POINT'] = $value['_source']['INTRO']['SAMPLING_POINT'];
@@ -406,7 +408,7 @@ echo $generatedfile;
         $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology .$lithology3 . $mesure . $date . "type=" . $config['COLLECTION_NAME'] ."&size=10000";
 
         $postcontent = '{ "_source": { 
-            "includes": [ "INTRO.SAMPLING_DATE","INTRO.TITLE","INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY","INTRO.SUPPLEMENTARY_FIELDS.DESCRIPTION","INTRO.SUPPLEMENTARY_FIELDS.SAMPLE_NAME","INTRO.SUPPLEMENTARY_FIELDS.ALTERATION_DEGREE","INTRO.SUPPLEMENTARY_FIELDS.NAME_REFERENT","INTRO.SUPPLEMENTARY_FIELDS.FIRST_NAME_REFERENT",
+            "includes": [ "INTRO.SAMPLING_DATE","INTRO.TITLE","INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY","INTRO.DATA_DESCRIPTION","INTRO.SUPPLEMENTARY_FIELDS.SAMPLE_NAME","INTRO.SUPPLEMENTARY_FIELDS.ALTERATION_DEGREE","INTRO.SUPPLEMENTARY_FIELDS.NAME_REFERENT","INTRO.SUPPLEMENTARY_FIELDS.FIRST_NAME_REFERENT",
             "INTRO.SAMPLING_DATE","INTRO.SAMPLING_POINT","INTRO.MEASUREMENT","DATA.FILES" ] 
         }}';
         $curlopt = array(
@@ -443,11 +445,12 @@ echo $generatedfile;
                     $supplementary['CORE_DETAILS']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'];
                     $supplementary['BLOCK']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['BLOCK'];
                     $supplementary['SAMPLE_NAME']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME'];
-                    $supplementary['DESCRIPTION']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['DESCRIPTION'];
+                    //$supplementary['DESCRIPTION']=$value['_source']['INTRO']['DATA_DESCRIPTION'];
                     $supplementary['REFERENT']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['REFERENT'];
                     $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SUPPLEMENTARY_FIELDS'] = $supplementary;
                 }
                     $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['TITLE'] = $value['_source']['INTRO']['TITLE'];
+                    $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['DATA_DESCRIPTION'] = $value['_source']['INTRO']['DATA_DESCRIPTION'];
                     $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['INSTITUTION'] = $value['_source']['INTRO']['INSTITUTION'];
 
                     $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_POINT'] = $value['_source']['INTRO']['SAMPLING_POINT'];
@@ -1061,7 +1064,7 @@ else{
                         }
                     }
 
-                    $SUPPLEMENTARY_FIELDS=array('HOST_LITHOLOGY_OR_PROTOLITH','LITHOLOGY1','LITHOLOGY2','LITHOLOGY3','ORETYPE1','ORETYPE2','ORETYPE3','TEXTURE1','TEXTURE2','TEXTURE3','SUBSTANCE','STORAGE_DETAILS','HOST_AGE','MAIN_EVENT_AGE','OTHER_EVENT_AGE','ALTERATION_DEGREE','SAMPLE_NAME','BLOCK','PULP','SAFETY_CONSTRAINTS','SAMPLE_LOCATION_FACILITY','DESCRIPTION');
+                    $SUPPLEMENTARY_FIELDS=array('HOST_LITHOLOGY_OR_PROTOLITH','LITHOLOGY1','LITHOLOGY2','LITHOLOGY3','ORETYPE1','ORETYPE2','ORETYPE3','TEXTURE1','TEXTURE2','TEXTURE3','SUBSTANCE','STORAGE_DETAILS','HOST_AGE','MAIN_EVENT_AGE','OTHER_EVENT_AGE','ALTERATION_DEGREE','SAMPLE_NAME','BLOCK','PULP','SAFETY_CONSTRAINTS','SAMPLE_LOCATION_FACILITY');
                     $error=null;
 
                     $required = array(
@@ -1101,7 +1104,11 @@ else{
 
                        switch ($key) {
 
-
+                        case "description":
+                            $arrKey[strtoupper('DATA_DESCRIPTION')] = htmlspecialchars($value, ENT_QUOTES);
+                            $arrcsv[strtoupper($key)] = htmlspecialchars($value, ENT_QUOTES);
+                        
+                        break;
                         case "keywords":
                         foreach ($value as $key2 => $value2) {
                             $arrKey[strtoupper($key)][]['NAME'] = htmlspecialchars($value2, ENT_QUOTES);
@@ -1219,7 +1226,7 @@ else{
                             foreach ($value as $key2 => $value2) {
                                 $sc=htmlspecialchars($value2, ENT_QUOTES);;
 
-                                $arrKey[strtoupper($key)][]['NAME'] = $sc;
+                                $arrKey[strtoupper('SCIENTIFIC_FIELD')][]['NAME'] = $sc;
                                 $arrcsv[strtoupper($key)][] = $sc;
 
                             }
@@ -1685,9 +1692,9 @@ else{
                                 $bulk = new MongoDB\Driver\BulkWrite;
                                 try{
                                    //unset($arrKey["STATUS"]);
-                                   if (count($intersect)!=0) {
+                                   
                                         $arrKey["ACCESS_RIGHT"] = "Unpublished";
-                                   }
+                                   
                                    $insert=array('_id' => strtoupper($original_sample_name),"INTRO"=>$arrKey,'DATA'=>$intersect);
                                    $bulk->insert($insert);
                                     if (count($rawdata)!=0) {
