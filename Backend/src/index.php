@@ -1051,7 +1051,7 @@ $app->get('/download_poi_data_awaiting/{name}/{picturename}', function (Request 
 		$picture = $args['picturename'];
 		$request = new RequestApi();
 		$path = $request->Request_poi_data_Awaiting($name,$picture);
-		$download = $request->download($path);
+		$download = $request->download_img($path);
 		if ($download == NULL or $download == false) {
 			return $responseSlim->withStatus(403);
 		}
@@ -1079,7 +1079,7 @@ $app->get('/download_img/{name}/{picturename}', function (Request $req,Response 
 	$picture = $args['picturename'];
 	$request = new RequestApi();
 	$path = $request->Request_poi_img($name,$picture);
-	$download = $request->download($path);
+	$download = $request->download_img($path);
 	 if ($download == NULL or $download == false) {
        return $responseSlim->withStatus(403);
     }

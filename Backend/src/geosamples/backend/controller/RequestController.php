@@ -609,6 +609,7 @@ function Request_poi_img($id, $picturename)
     {
         if (file_exists($filepath))
         {
+
             if(@!is_array(getimagesize($filepath))){
             header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
             header("Content-Disposition: attachment; filename=" . basename($filepath));
@@ -618,6 +619,29 @@ function Request_poi_img($id, $picturename)
             else{
                 return false;
             }
+        }
+        if ($readfile == false)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+        exit;
+    }
+
+    function download_img($filepath)
+    {
+        if (file_exists($filepath))
+        {
+            
+           
+            header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+            header("Content-Disposition: attachment; filename=" . basename($filepath));
+            $readfile = file_get_contents($filepath);
+            print $readfile;
+          
         }
         if ($readfile == false)
         {
