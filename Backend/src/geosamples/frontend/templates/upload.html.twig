@@ -202,6 +202,16 @@
 
 				{%endif%}
 
+				{%if collection_name == 'gitology'%}
+				switch (value) {
+				   case 'EA':
+					  nature="EA" ;
+					  unit="Elemental analysis" ;
+				   break;				 
+				}
+
+				{%endif%}
+
 
 				$( "input[name='measurements[].nature']" ).val(nature);
 				$( "input[name='measurements[].unit']" ).val(unit);
