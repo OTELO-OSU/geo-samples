@@ -241,7 +241,8 @@ class RequestController
          if ($value['_source']['INTRO']['ACCESS_RIGHT']!='Awaiting' && !is_null($value['_source']['DATA']['FILES'])) {
             if (strtoupper($sort['mesure']) == strtoupper($value['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION']))
             {
-
+                if ($value['_source']['DATA']['FILES'][0]['TYPE_DATA']=='Data') {
+                    
                 $file = $value['_source']['DATA']['FILES'][0]['ORIGINAL_DATA_URL'];
                 $folder = explode('_', strtoupper($value['_source']['DATA']['FILES'][0]['DATA_URL']));
                 $name = $value['_source']['DATA']['FILES'][0]['DATA_URL'];
@@ -253,6 +254,7 @@ class RequestController
                 }
                 $csv = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
                 $finalcsv[] = $csv;
+                }
             }
         }
     }
@@ -814,7 +816,387 @@ if ($_POST['original_sample_name']) {
                                 }
                             }
         $UPLOAD_FOLDER    = $config["CSV_FOLDER"];
-        if ($_FILES['data']['error'][0] != '0') {
+     
+
+                    $SUPPLEMENTARY_FIELDS=array('HOST_LITHOLOGY_OR_PROTOLITH','LITHOLOGY1','LITHOLOGY2','LITHOLOGY3','ORETYPE1','ORETYPE2','ORETYPE3','TEXTURE1','TEXTURE2','TEXTURE3','SUBSTANCE','STORAGE_DETAILS','HOST_AGE','MAIN_EVENT_AGE','OTHER_EVENT_AGE','ALTERATION_DEGREE','SAMPLE_NAME','BLOCK','PULP','SAFETY_CONSTRAINTS','SAMPLE_LOCATION_FACILITY');
+                    $error=null;
+
+                    $required = array(
+                        'title',
+                        'language',
+                        'sample_name',
+                        'keywords',
+                        'institution',
+                        'scientific_fields',
+                        'sampling_points',
+
+                    );
+
+                    foreach ($required as $field) {
+            //Verif des champs à traiter
+                        if (empty($_POST[$field]) or empty($_POST[$field][0]) or empty($_POST[$field][0][0])) {
+                            $fields[] = $field;
+                        }
+                    }
+                    if (count($fields) != 0) {
+        //Affichage des champs manquants
+                        $txt = null;
+                        foreach ($fields as $key => $value) {
+                            $txt .= "  " . $value;
+                        }
+                        $error = "Warning there are empty fields: " . $txt;
+                    }
+
+
+
+
+
+
+
+
+                    foreach ($POST as $key => $value) {
+
+                       switch ($key) {
+
+                        case "description":
+                            $arrKey[strtoupper('DATA_DESCRIPTION')] = htmlspecialchars($value, ENT_QUOTES);
+                            $arrcsv[strtoupper($key)] = htmlspecialchars($value, ENT_QUOTES);
+                        
+                        break;
+                        case "keywords":
+                        foreach ($value as $key2 => $value2) {
+                            $arrKey[strtoupper($key)][]['NAME'] = htmlspecialchars($value2, ENT_QUOTES);
+                            $arrcsv[strtoupper($key)][] = htmlspecialchars($value2, ENT_QUOTES);
+                        }
+                        break;
+                        case "core":
+                        $arrKey['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][]['CORE'] = $value;
+                        $csv['CORE_label'][]= '';
+                        $csv['CORE_label'][]= '';
+                        $csv['CORE'][] = 'CORE';
+                        $csv['CORE'][] = htmlspecialchars($value, ENT_QUOTES);
+
+                        break;
+                        case "core_depth":
+                        $arrKey['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][0]['DEPTH'] = htmlspecialchars($value, ENT_QUOTES);
+                        $csv['CORE_label'][]= 'DEPTH';
+                        $csv['CORE'][]= htmlspecialchars($value, ENT_QUOTES);
+
+
+                        break;
+                        case "core_azimut":
+                        $arrKey['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][0]['AZIMUT'] = htmlspecialchars($value, ENT_QUOTES);
+                        $csv['CORE_label'][]= 'AZIMUT';
+                        $csv['CORE'][]= htmlspecialchars($value, ENT_QUOTES);
+
+
+                        break;
+                        case "core_dip":
+                        $arrKey['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][0]['DIP'] = htmlspecialchars($value, ENT_QUOTES);
+                        $csv['CORE_label'][]= 'DIP';
+                        $csv['CORE'][]= htmlspecialchars($value, ENT_QUOTES);
+
+
+                        break;
+                        case "sampling_date":
+                        $arrKey[strtoupper($key)][] = htmlspecialchars($value, ENT_QUOTES);
+                        $arrcsv[strtoupper($key)][] = htmlspecialchars($value, ENT_QUOTES);
+
+                        break;
+
+                        case "measurements":
+                        $csv['Measurement_label'][]= '';
+                        $csv['MEASUREMENT'][]= 'MEASUREMENT';
+                        foreach ($value as $key2 => $value2) {
+                          if ($key2==0) {
+                             $name='NATURE';
+                             $csv['Measurement_label'][]= 'NATURE_OF_MEASUREMENT';
+                         }elseif($key2==1){
+                             $name='ABBREVIATION';
+                            $csv['Measurement_label'][]= 'ABBREVIATION';
+                         }
+                         elseif($key2==2){
+                            $name='UNIT';
+                            $csv['Measurement_label'][]= 'UNITS';
+                        }
+
+                        if ($value2=='Select abbreviation') {
+                               $error = 'Measurements must be completed';
+                            
+                        }
+                        $arrKey['MEASUREMENT'][0][$name] =htmlspecialchars($value2, ENT_QUOTES); 
+
+                        $csv['MEASUREMENT'][]= htmlspecialchars($value2, ENT_QUOTES);
+
+                                    /*$arrKey['MEASUREMENT'][$key2]['NATURE'] =$value2[0] ;
+                                    $arrKey['MEASUREMENT'][$key2]['ABBREVIATION'] =$value2[1] ;
+                                    $arrKey['MEASUREMENT'][$key2]['UNIT'] =$value2[2] ;*/
+                                }
+                                break;
+
+                                case "methodology":
+                                foreach ($value as $key2 => $value2) {
+                                    if ($key2==0) {
+                                     $name='SAMPLING_METHOD';
+                                 }elseif($key2==1){
+                                     $name='CONDITIONNING';
+                                 }
+                                 elseif($key2==2){
+                                    $name='SAMPLE_STORAGE';
+                                }
+
+                                $arrKey['METHODOLOGY'][$key2]['NAME'] =$name ;
+                                $arrKey['METHODOLOGY'][$key2]['DESCRIPTION'] =htmlspecialchars($value2, ENT_QUOTES); 
+                                $csv[$name][]= 'METHODOLOGY';
+                                $csv[$name][]= htmlspecialchars($name, ENT_QUOTES);
+                                $csv[$name][]= htmlspecialchars($value2, ENT_QUOTES);
+
+                            }
+
+                            break;
+
+                            case "methodology3":
+                            foreach ($value as $key2 => $value2) {
+                                $arrKey['METHODOLOGY'][$key2+3]['NAME'] ="Additional_comments" ;
+                                $arrKey['METHODOLOGY'][$key2+3]['DESCRIPTION'] =htmlspecialchars($value2, ENT_QUOTES); 
+                                $csv[$key2+3][]= 'METHODOLOGY';
+                                $csv[$key2+3][]= htmlspecialchars($_POST['methodology2'][$key2], ENT_QUOTES);
+                                $csv[$key2+3][]= htmlspecialchars($value2, ENT_QUOTES);
+                            }
+                            break;
+                            case 'methodology2':
+                            break;
+
+                            case "institution":
+                            foreach ($value as $key2 => $value2) {
+                                $arrKey[strtoupper($key)][]['NAME'] = htmlspecialchars($value2, ENT_QUOTES);
+                                $arrcsv[strtoupper($key)][] = htmlspecialchars($value2, ENT_QUOTES);
+
+                            }
+
+
+                            break;
+                            case "scientific_fields":
+                            foreach ($value as $key2 => $value2) {
+                                $sc=htmlspecialchars($value2, ENT_QUOTES);;
+
+                                $arrKey[strtoupper('SCIENTIFIC_FIELD')][]['NAME'] = $sc;
+                                $arrcsv[strtoupper($key)][] = $sc;
+
+                            }
+                            break;
+
+
+                            break;
+                            case "sampling_points":
+                            //var_dump($value);
+                            $csv['sampling_point_label'][]= '';
+                            $csv['sampling_point_label'][]= 'SAMPLING_POINTS';
+                            $csv['sampling_point_label'][]= 'COORDINATE_SYSTEM';
+                            $csv['sampling_point_label'][]= 'ABBREVIATION';
+                            $csv['sampling_point_label'][]= 'LONGITUDE';
+                            $csv['sampling_point_label'][]= 'LATITUDE';
+                            $csv['sampling_point_label'][]= 'ELEVATION_M';
+                            $csv['sampling_point_label'][]= 'SAMPLING';
+                            $csv['sampling_point_label'][]= 'DESCRIPTION';
+
+                            $csv['SAMPLING_POINT'][]= 'SAMPLING_POINT';
+
+
+                            $arrKey['SAMPLING_POINT'][0]['NAME'] =$value[0] ;
+                            $csv['SAMPLING_POINT'][]= htmlspecialchars($value[0], ENT_QUOTES);
+                            $arrKey['SAMPLING_POINT'][0]['COORDINATE_SYSTEM'] =$value[1] ;
+                              $csv['SAMPLING_POINT'][]= htmlspecialchars($value[1], ENT_QUOTES);
+                            $arrKey['SAMPLING_POINT'][0]['ABBREVIATION'] =$value[2] ;
+                              $csv['SAMPLING_POINT'][]= htmlspecialchars($value[2], ENT_QUOTES);                                    
+                            $arrKey['SAMPLING_POINT'][0]['LONGITUDE'] =$value[3] ;
+                              $csv['SAMPLING_POINT'][]= htmlspecialchars($value[3], ENT_QUOTES);
+                            $arrKey['SAMPLING_POINT'][0]['LATITUDE'] =$value[4] ;
+                              $csv['SAMPLING_POINT'][]= htmlspecialchars($value[4], ENT_QUOTES);
+                            $arrKey['SAMPLING_POINT'][0]['ELEVATION'] =$value[5] ;
+                              $csv['SAMPLING_POINT'][]= htmlspecialchars($value[5], ENT_QUOTES);
+                            $arrKey['SAMPLING_POINT'][0]['SAMPLING'] =$value[6] ;
+                              $csv['SAMPLING_POINT'][]= htmlspecialchars($value[6], ENT_QUOTES);
+                            $arrKey['SAMPLING_POINT'][0]['DESCRIPTION'] =$value[7] ;
+                              $csv['SAMPLING_POINT'][]= htmlspecialchars($value[7], ENT_QUOTES);
+                              /*  foreach ($value as $key2 => $value2) {
+
+
+                                   // $arrKey['SAMPLING_POINT'][strtoupper($key2)] = array_change_key_case ($value2 ,  CASE_UPPER  );
+                              }*/
+
+
+                              break;
+
+                              case "sample_name":
+                              $arrKey['SUPPLEMENTARY_FIELDS'][strtoupper($key)] =strtoupper(htmlspecialchars($value, ENT_QUOTES));
+                              $sample_name=htmlspecialchars($value, ENT_QUOTES);
+                              $arrcsv[strtoupper($key)] = htmlspecialchars($sample_name, ENT_QUOTES);
+                              $sample_name_old=$sample_name;
+                               try {
+                                    if(empty($config['authSource']) && empty($config['username']) && empty($config['password'])) {
+                                        $this->db = new MongoDB\Driver\Manager("mongodb://" . $config['MDBHOST'] . ':' . $config['MDBPORT'], array('journal' => false));
+                                    } else {
+                                        $this->db= new MongoDB\Driver\Manager("mongodb://" . $config['MDBHOST'] . ':' . $config['MDBPORT'], array('journal' => false, 'authSource' => $config['authSource'], 'username' => $config['username'], 'password' => $config['password']));
+                                    }
+                                } catch (Exception $e) {
+                                    echo $e->getMessage();
+                                    $this->logger->error($e->getMessage());
+                                }
+                             try{
+                                            $bulk = new MongoDB\Driver\BulkWrite;
+                                            $filter=array();
+                                            $filter = ['_id' => strtoupper($sample_name.'_'.$_POST['measurements'][1])];
+
+
+                                            $query = new MongoDB\Driver\Query($filter);
+                                            $cursor = $this->db->executeQuery($config['dbname'].'.'.$config['COLLECTION_NAME'], $query);
+
+
+
+                                            foreach ($cursor as $document) {
+                                                if($document->_id== strtoupper($sample_name.'_'.$_POST['measurements'][1])){
+                                                  
+                                                    $error   = 'Sample name already in database';
+                                                  
+                                                }
+                                            }
+                                            
+                                        }
+                                        catch (MongoDB\Driver\Exception\BulkWriteException  $e) {
+                                           
+                                           $error   = 'Sample name already in database';
+                                          
+                                       }
+
+
+                              break;
+                              case "original_sample_name":
+                              break;
+                              case "csrf_value":
+                              break;
+                              case "csrf_name":
+                              break;
+                              case "file_already_uploaded":
+                              break;
+
+                              default:
+                              if (in_array(strtoupper($key), $SUPPLEMENTARY_FIELDS)) {  
+                                $key=strtoupper($key);
+                                if ($key=='LITHOLOGY1') {
+                                                $key='LITHOLOGY';
+                                            }
+                                            elseif ($key=='LITHOLOGY2') {
+                                                $key='LITHOLOGY_2';
+                                            } 
+                                            elseif ($key=='LITHOLOGY3') {
+                                                $key='LITHOLOGY_3';
+                                            }     
+                                            elseif ($key=='ORETYPE1') {
+                                                $key='ORE_TYPE_1';
+                                            }   
+                                            elseif ($key=='ORETYPE2') {
+                                                $key='ORE_TYPE_2';
+                                            }   
+                                            elseif ($key=='ORETYPE3') {
+                                                $key='ORE_TYPE_3';
+                                            }   
+                                            elseif ($key=='TEXTURE1') {
+                                                $key='TEXTURE_STRUCTURE_1';
+                                            }   
+                                            elseif ($key=='TEXTURE2') {
+                                                $key='TEXTURE_STRUCTURE_2';
+                                            }   
+                                            elseif ($key=='TEXTURE3') {
+                                                $key='TEXTURE_STRUCTURE_3';
+                                            } 
+                                $arrKey['SUPPLEMENTARY_FIELDS'][strtoupper($key)] = htmlspecialchars($value, ENT_QUOTES);
+                                $arrcsv[strtoupper($key)] = htmlspecialchars($value, ENT_QUOTES);
+
+                            }else{
+
+                                $arrKey[strtoupper($key)] = htmlspecialchars($value, ENT_QUOTES);
+                                $arrcsv[strtoupper($key)] = htmlspecialchars($value, ENT_QUOTES);
+
+                            }
+
+
+
+
+                        }
+
+
+
+                    }
+                        $arrcsv[]=$csv;
+
+
+                    $user= New User();
+                    $referents=$user->getProjectReferent($config['COLLECTION_NAME']);
+
+                    foreach ($referents as $key => $value) {
+
+                       $arrKey['SUPPLEMENTARY_FIELDS']['REFERENT'][$key]['NAME_REFERENT'] = $value->name;
+                       $arrcsv['NAME_REFERENT'][] = htmlspecialchars($value->name, ENT_QUOTES);
+
+                       $arrKey['SUPPLEMENTARY_FIELDS']['REFERENT'][$key]['FIRST_NAME_REFERENT'] = $value->firstname;
+                      $arrcsv['FIRST_NAME_REFERENT'][] = htmlspecialchars($value->firstname, ENT_QUOTES);
+
+                       $arrKey['SUPPLEMENTARY_FIELDS']['REFERENT'][$key]['MAIL_REFERENT'] = $value->mail;
+                        $arrcsv['MAIL_REFERENT'][] = htmlspecialchars($value->mail, ENT_QUOTES);
+
+
+                       $arrKey['FILE_CREATOR'][$key]['NAME'] = $value->name;
+                       $arrKey['FILE_CREATOR'][$key]['FIRST_NAME'] = $value->firstname;
+                       $arrKey['FILE_CREATOR'][$key]['MAIL'] = $value->mail;
+                       $arrKey['FILE_CREATOR'][$key]['DISPLAY_NAME'] = $value->name." ".$value->firstname;
+                   }
+
+
+                   $item=count($referents);     
+                   $item++;
+
+                   if ($route!='modify') {
+
+                      
+
+                   
+                 
+
+                       $filecreator[0]['NAME'] = $_SESSION['name'];
+
+                       $filecreator[0]['FIRST_NAME'] = $_SESSION['firstname'];
+
+                       $filecreator[0]['MAIL'] = $_SESSION['mail'];
+
+                       $filecreator[0]['DISPLAY_NAME'] = $_SESSION['name']." ".$_SESSION['firstname'];
+
+                       $arrKey['FILE_CREATOR']=array_merge($filecreator,$arrKey['FILE_CREATOR']);
+
+                   }
+
+
+
+       // foreach ($POST['measurements'] as $key => $value) {
+                   $sample_name=$sample_name_old;
+                   $arrKey["ACCESS_RIGHT"] = "Awaiting";
+                   $arrKey["UPLOAD_DATE"]  = date('Y-m-d');
+                   $arrKey["CREATION_DATE"]  = date('Y-m-d');
+                   $arrcsv["CREATION_DATE"]  = date('Y-m-d');
+                   $arrKey["METADATA_DATE"]  = date('Y-m-d');
+                   //$arrKey["STATUS"]  = "Awaiting";
+            // $sample_name=$sample_name.'_'.$value[1];
+                   $sample_name = $sample_name.'_'.$_POST['measurements'][1];
+
+                   
+        //echo   json_encode($arrKey);
+                   if (!$error == null) {
+         //si on rencontre une erreur on retourne le tableau et on l'affiche
+                    $array['dataform'] = $arrKey;
+                    $array['error']    = $error;
+                    return $array;
+                }else{
+                       if ($_FILES['data']['error'][0] != '0') {
 
         }
         else{
@@ -1087,347 +1469,6 @@ else{
 
                         }
                     }
-
-                    $SUPPLEMENTARY_FIELDS=array('HOST_LITHOLOGY_OR_PROTOLITH','LITHOLOGY1','LITHOLOGY2','LITHOLOGY3','ORETYPE1','ORETYPE2','ORETYPE3','TEXTURE1','TEXTURE2','TEXTURE3','SUBSTANCE','STORAGE_DETAILS','HOST_AGE','MAIN_EVENT_AGE','OTHER_EVENT_AGE','ALTERATION_DEGREE','SAMPLE_NAME','BLOCK','PULP','SAFETY_CONSTRAINTS','SAMPLE_LOCATION_FACILITY');
-                    $error=null;
-
-                    $required = array(
-                        'title',
-                        'language',
-                        'sample_name',
-                        'keywords',
-                        'institution',
-                        'scientific_fields',
-                        'sampling_points',
-
-                    );
-
-                    foreach ($required as $field) {
-            //Verif des champs à traiter
-                        if (empty($_POST[$field]) or empty($_POST[$field][0]) or empty($_POST[$field][0][0])) {
-                            $fields[] = $field;
-                        }
-                    }
-                    if (count($fields) != 0) {
-        //Affichage des champs manquants
-                        $txt = null;
-                        foreach ($fields as $key => $value) {
-                            $txt .= "  " . $value;
-                        }
-                        $error = "Warning there are empty fields: " . $txt;
-                    }
-
-
-
-
-
-
-
-
-                    foreach ($POST as $key => $value) {
-
-                       switch ($key) {
-
-                        case "description":
-                            $arrKey[strtoupper('DATA_DESCRIPTION')] = htmlspecialchars($value, ENT_QUOTES);
-                            $arrcsv[strtoupper($key)] = htmlspecialchars($value, ENT_QUOTES);
-                        
-                        break;
-                        case "keywords":
-                        foreach ($value as $key2 => $value2) {
-                            $arrKey[strtoupper($key)][]['NAME'] = htmlspecialchars($value2, ENT_QUOTES);
-                            $arrcsv[strtoupper($key)][] = htmlspecialchars($value2, ENT_QUOTES);
-                        }
-                        break;
-                        case "core":
-                        $arrKey['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][]['CORE'] = $value;
-                        $csv['CORE_label'][]= '';
-                        $csv['CORE_label'][]= '';
-                        $csv['CORE'][] = 'CORE';
-                        $csv['CORE'][] = htmlspecialchars($value, ENT_QUOTES);
-
-                        break;
-                        case "core_depth":
-                        $arrKey['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][0]['DEPTH'] = htmlspecialchars($value, ENT_QUOTES);
-                        $csv['CORE_label'][]= 'DEPTH';
-                        $csv['CORE'][]= htmlspecialchars($value, ENT_QUOTES);
-
-
-                        break;
-                        case "core_azimut":
-                        $arrKey['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][0]['AZIMUT'] = htmlspecialchars($value, ENT_QUOTES);
-                        $csv['CORE_label'][]= 'AZIMUT';
-                        $csv['CORE'][]= htmlspecialchars($value, ENT_QUOTES);
-
-
-                        break;
-                        case "core_dip":
-                        $arrKey['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][0]['DIP'] = htmlspecialchars($value, ENT_QUOTES);
-                        $csv['CORE_label'][]= 'DIP';
-                        $csv['CORE'][]= htmlspecialchars($value, ENT_QUOTES);
-
-
-                        break;
-                        case "sampling_date":
-                        $arrKey[strtoupper($key)][] = htmlspecialchars($value, ENT_QUOTES);
-                        $arrcsv[strtoupper($key)][] = htmlspecialchars($value, ENT_QUOTES);
-
-                        break;
-
-                        case "measurements":
-                        $csv['Measurement_label'][]= '';
-                        $csv['MEASUREMENT'][]= 'MEASUREMENT';
-                        foreach ($value as $key2 => $value2) {
-                          if ($key2==0) {
-                             $name='NATURE';
-                             $csv['Measurement_label'][]= 'NATURE_OF_MEASUREMENT';
-                         }elseif($key2==1){
-                             $name='ABBREVIATION';
-                            $csv['Measurement_label'][]= 'ABBREVIATION';
-                         }
-                         elseif($key2==2){
-                            $name='UNIT';
-                            $csv['Measurement_label'][]= 'UNITS';
-                        }
-
-                        if ($value2=='Select abbreviation') {
-                               $error = 'Measurements must be completed';
-                            
-                        }
-                        $arrKey['MEASUREMENT'][0][$name] =htmlspecialchars($value2, ENT_QUOTES); 
-
-                        $csv['MEASUREMENT'][]= htmlspecialchars($value2, ENT_QUOTES);
-
-                                    /*$arrKey['MEASUREMENT'][$key2]['NATURE'] =$value2[0] ;
-                                    $arrKey['MEASUREMENT'][$key2]['ABBREVIATION'] =$value2[1] ;
-                                    $arrKey['MEASUREMENT'][$key2]['UNIT'] =$value2[2] ;*/
-                                }
-                                break;
-
-                                case "methodology":
-                                foreach ($value as $key2 => $value2) {
-                                    if ($key2==0) {
-                                     $name='SAMPLING_METHOD';
-                                 }elseif($key2==1){
-                                     $name='CONDITIONNING';
-                                 }
-                                 elseif($key2==2){
-                                    $name='SAMPLE_STORAGE';
-                                }
-
-                                $arrKey['METHODOLOGY'][$key2]['NAME'] =$name ;
-                                $arrKey['METHODOLOGY'][$key2]['DESCRIPTION'] =htmlspecialchars($value2, ENT_QUOTES); 
-                                $csv[$name][]= 'METHODOLOGY';
-                                $csv[$name][]= htmlspecialchars($name, ENT_QUOTES);
-                                $csv[$name][]= htmlspecialchars($value2, ENT_QUOTES);
-
-                            }
-
-                            break;
-
-                            case "methodology3":
-                            foreach ($value as $key2 => $value2) {
-                                $arrKey['METHODOLOGY'][$key2+3]['NAME'] ="Additional_comments" ;
-                                $arrKey['METHODOLOGY'][$key2+3]['DESCRIPTION'] =htmlspecialchars($value2, ENT_QUOTES); 
-                                $csv[$key2+3][]= 'METHODOLOGY';
-                                $csv[$key2+3][]= htmlspecialchars($_POST['methodology2'][$key2], ENT_QUOTES);
-                                $csv[$key2+3][]= htmlspecialchars($value2, ENT_QUOTES);
-                            }
-                            break;
-                            case 'methodology2':
-                            break;
-
-                            case "institution":
-                            foreach ($value as $key2 => $value2) {
-                                $arrKey[strtoupper($key)][]['NAME'] = htmlspecialchars($value2, ENT_QUOTES);
-                                $arrcsv[strtoupper($key)][] = htmlspecialchars($value2, ENT_QUOTES);
-
-                            }
-
-
-                            break;
-                            case "scientific_fields":
-                            foreach ($value as $key2 => $value2) {
-                                $sc=htmlspecialchars($value2, ENT_QUOTES);;
-
-                                $arrKey[strtoupper('SCIENTIFIC_FIELD')][]['NAME'] = $sc;
-                                $arrcsv[strtoupper($key)][] = $sc;
-
-                            }
-                            break;
-
-
-                            break;
-                            case "sampling_points":
-                            //var_dump($value);
-                            $csv['sampling_point_label'][]= '';
-                            $csv['sampling_point_label'][]= 'SAMPLING_POINTS';
-                            $csv['sampling_point_label'][]= 'COORDINATE_SYSTEM';
-                            $csv['sampling_point_label'][]= 'ABBREVIATION';
-                            $csv['sampling_point_label'][]= 'LONGITUDE';
-                            $csv['sampling_point_label'][]= 'LATITUDE';
-                            $csv['sampling_point_label'][]= 'ELEVATION_M';
-                            $csv['sampling_point_label'][]= 'SAMPLING';
-                            $csv['sampling_point_label'][]= 'DESCRIPTION';
-
-                            $csv['SAMPLING_POINT'][]= 'SAMPLING_POINT';
-
-
-                            $arrKey['SAMPLING_POINT'][0]['NAME'] =$value[0] ;
-                            $csv['SAMPLING_POINT'][]= htmlspecialchars($value[0], ENT_QUOTES);
-                            $arrKey['SAMPLING_POINT'][0]['COORDINATE_SYSTEM'] =$value[1] ;
-                              $csv['SAMPLING_POINT'][]= htmlspecialchars($value[1], ENT_QUOTES);
-                            $arrKey['SAMPLING_POINT'][0]['ABBREVIATION'] =$value[2] ;
-                              $csv['SAMPLING_POINT'][]= htmlspecialchars($value[2], ENT_QUOTES);                                    
-                            $arrKey['SAMPLING_POINT'][0]['LONGITUDE'] =$value[3] ;
-                              $csv['SAMPLING_POINT'][]= htmlspecialchars($value[3], ENT_QUOTES);
-                            $arrKey['SAMPLING_POINT'][0]['LATITUDE'] =$value[4] ;
-                              $csv['SAMPLING_POINT'][]= htmlspecialchars($value[4], ENT_QUOTES);
-                            $arrKey['SAMPLING_POINT'][0]['ELEVATION'] =$value[5] ;
-                              $csv['SAMPLING_POINT'][]= htmlspecialchars($value[5], ENT_QUOTES);
-                            $arrKey['SAMPLING_POINT'][0]['SAMPLING'] =$value[6] ;
-                              $csv['SAMPLING_POINT'][]= htmlspecialchars($value[6], ENT_QUOTES);
-                            $arrKey['SAMPLING_POINT'][0]['DESCRIPTION'] =$value[7] ;
-                              $csv['SAMPLING_POINT'][]= htmlspecialchars($value[7], ENT_QUOTES);
-                              /*  foreach ($value as $key2 => $value2) {
-
-
-                                   // $arrKey['SAMPLING_POINT'][strtoupper($key2)] = array_change_key_case ($value2 ,  CASE_UPPER  );
-                              }*/
-
-
-                              break;
-
-                              case "sample_name":
-                              $arrKey['SUPPLEMENTARY_FIELDS'][strtoupper($key)] =strtoupper(htmlspecialchars($value, ENT_QUOTES));
-                              $sample_name=htmlspecialchars($value, ENT_QUOTES);
-                              $arrcsv[strtoupper($key)] = htmlspecialchars($sample_name, ENT_QUOTES);
-                              $sample_name_old=$sample_name;
-                              break;
-                              case "original_sample_name":
-                              break;
-                              case "csrf_value":
-                              break;
-                              case "csrf_name":
-                              break;
-                              case "file_already_uploaded":
-                              break;
-
-                              default:
-                              if (in_array(strtoupper($key), $SUPPLEMENTARY_FIELDS)) {  
-                                $key=strtoupper($key);
-                                if ($key=='LITHOLOGY1') {
-                                                $key='LITHOLOGY';
-                                            }
-                                            elseif ($key=='LITHOLOGY2') {
-                                                $key='LITHOLOGY_2';
-                                            } 
-                                            elseif ($key=='LITHOLOGY3') {
-                                                $key='LITHOLOGY_3';
-                                            }     
-                                            elseif ($key=='ORETYPE1') {
-                                                $key='ORE_TYPE_1';
-                                            }   
-                                            elseif ($key=='ORETYPE2') {
-                                                $key='ORE_TYPE_2';
-                                            }   
-                                            elseif ($key=='ORETYPE3') {
-                                                $key='ORE_TYPE_3';
-                                            }   
-                                            elseif ($key=='TEXTURE1') {
-                                                $key='TEXTURE_STRUCTURE_1';
-                                            }   
-                                            elseif ($key=='TEXTURE2') {
-                                                $key='TEXTURE_STRUCTURE_2';
-                                            }   
-                                            elseif ($key=='TEXTURE3') {
-                                                $key='TEXTURE_STRUCTURE_3';
-                                            } 
-                                $arrKey['SUPPLEMENTARY_FIELDS'][strtoupper($key)] = htmlspecialchars($value, ENT_QUOTES);
-                                $arrcsv[strtoupper($key)] = htmlspecialchars($value, ENT_QUOTES);
-
-                            }else{
-
-                                $arrKey[strtoupper($key)] = htmlspecialchars($value, ENT_QUOTES);
-                                $arrcsv[strtoupper($key)] = htmlspecialchars($value, ENT_QUOTES);
-
-                            }
-
-
-
-
-                        }
-
-
-
-                    }
-                        $arrcsv[]=$csv;
-
-
-                    $user= New User();
-                    $referents=$user->getProjectReferent($config['COLLECTION_NAME']);
-
-                    foreach ($referents as $key => $value) {
-
-                       $arrKey['SUPPLEMENTARY_FIELDS']['REFERENT'][$key]['NAME_REFERENT'] = $value->name;
-                       $arrcsv['NAME_REFERENT'][] = htmlspecialchars($value->name, ENT_QUOTES);
-
-                       $arrKey['SUPPLEMENTARY_FIELDS']['REFERENT'][$key]['FIRST_NAME_REFERENT'] = $value->firstname;
-                      $arrcsv['FIRST_NAME_REFERENT'][] = htmlspecialchars($value->firstname, ENT_QUOTES);
-
-                       $arrKey['SUPPLEMENTARY_FIELDS']['REFERENT'][$key]['MAIL_REFERENT'] = $value->mail;
-                        $arrcsv['MAIL_REFERENT'][] = htmlspecialchars($value->mail, ENT_QUOTES);
-
-
-                       $arrKey['FILE_CREATOR'][$key]['NAME'] = $value->name;
-                       $arrKey['FILE_CREATOR'][$key]['FIRST_NAME'] = $value->firstname;
-                       $arrKey['FILE_CREATOR'][$key]['MAIL'] = $value->mail;
-                       $arrKey['FILE_CREATOR'][$key]['DISPLAY_NAME'] = $value->name." ".$value->firstname;
-                   }
-
-
-                   $item=count($referents);     
-                   $item++;
-
-                   if ($route!='modify') {
-
-                      
-
-                   
-                 
-
-                       $filecreator[0]['NAME'] = $_SESSION['name'];
-
-                       $filecreator[0]['FIRST_NAME'] = $_SESSION['firstname'];
-
-                       $filecreator[0]['MAIL'] = $_SESSION['mail'];
-
-                       $filecreator[0]['DISPLAY_NAME'] = $_SESSION['name']." ".$_SESSION['firstname'];
-
-                       $arrKey['FILE_CREATOR']=array_merge($filecreator,$arrKey['FILE_CREATOR']);
-
-                   }
-
-
-
-       // foreach ($POST['measurements'] as $key => $value) {
-                   $sample_name=$sample_name_old;
-                   $arrKey["ACCESS_RIGHT"] = "Awaiting";
-                   $arrKey["UPLOAD_DATE"]  = date('Y-m-d');
-                   $arrKey["CREATION_DATE"]  = date('Y-m-d');
-                   $arrcsv["CREATION_DATE"]  = date('Y-m-d');
-                   $arrKey["METADATA_DATE"]  = date('Y-m-d');
-                   //$arrKey["STATUS"]  = "Awaiting";
-            // $sample_name=$sample_name.'_'.$value[1];
-                   $sample_name = $sample_name.'_'.$_POST['measurements'][1];
-
-        //echo   json_encode($arrKey);
-                   if (!$error == null) {
-         //si on rencontre une erreur on retourne le tableau et on l'affiche
-                    $array['dataform'] = $arrKey;
-                    $array['error']    = $error;
-                    return $array;
-                }else{
 
                    try {
                     if(empty($config['authSource']) && empty($config['username']) && empty($config['password'])) {
