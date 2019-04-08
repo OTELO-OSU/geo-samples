@@ -232,12 +232,16 @@ var APP = (function() {
                             picture = $(this).children()[0].value;
                             name = k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME;
                             name = name.replace("/ /g", "");
-                            $("#preview").empty();
-                            $("#preview").append('<img class="ui fluid image" src="/preview_img/' + name + '/' + picture + '""</img>');
+                            $(".modal .header").empty();
+                            $(".modal .header").append(picture);
+                            $("#preview ").empty();
+                            $("#preview").append('<img height="560" width="850" class="ui  image" src="/preview_img/' + name + '/' + picture + '""</img>');
                             $(".actions a").remove();
                             $(".actions .download").remove();
                             $(".actions").append(' <a href="/download_img/' + name + '/' + picture + '"><div class="ui green  button">Download</div></a>')
-                            $('.ui.modal.preview').modal('show');
+                            $('.ui.modal.preview').modal('show')
+                            //$('.ui.modal.preview').modal('show');
+                             $('.ui.modal.preview').modal('refresh')
                         });
         },
         /**
