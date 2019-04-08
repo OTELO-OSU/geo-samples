@@ -1248,20 +1248,20 @@ if ($_POST['original_sample_name']) {
                                 foreach ($cellIterator as $cell) {
                                     $indice = \PHPExcel_Cell::columnIndexFromString($cell->getColumn());
                                     if ($ligne == 1) {
-                                        $key = trim($cell->getValue());
+                                        $key = trim($cell->getCalculatedValue());
                                         if (strpos($key, ".") !== false) {
                                             $msg = "\t Caractere '.' detecte dans la clef [$key] : suppression";
                                             echo PHP_EOL . $msg . PHP_EOL;
                                             $this->logger->warning($msg);
                                             $key = preg_replace('/./', '', $key);
                                         }
-                                        $units[$key] = $sheet->getCellByColumnAndRow($indice - 1, $ligne + 1)->getValue();
+                                        $units[$key] = $sheet->getCellByColumnAndRow($indice - 1, $ligne + 1)->getCalculatedValue();
 
                                         if ($indice == $highestColumn) {
                                             $keys = array_keys($units);
                                         }
                                     } else if ($ligne > $startFields) {
-                                        $value = $cell->getValue();
+                                        $value = (string)$cell->getCalculatedValue();
                                         if (!empty($keys[$indice - 1])) {
 
                                             $obj[$keys[$indice - 1]] = $value;
@@ -1270,6 +1270,7 @@ if ($_POST['original_sample_name']) {
                                         if ($indice == $highestColumn) {
 
                                                                // $arrKey["SAMPLES"][] = $obj;
+                                            $obj=array_map('strval', $obj);
                                             $data_samples["SAMPLES"][]=$obj;
                                         }
                                     }
@@ -1303,27 +1304,29 @@ if ($_POST['original_sample_name']) {
                             foreach ($cellIterator as $cell) {
                                 $indice = \PHPExcel_Cell::columnIndexFromString($cell->getColumn());
                                 if ($ligne == 1) {
-                                    $key = trim($cell->getValue());
+                                    $key = trim($cell->getCalculatedValue());
                                     if (strpos($key, ".") !== false) {
                                         $msg = "\t Caractere '.' detecte dans la clef [$key] : suppression";
                                         echo PHP_EOL . $msg . PHP_EOL;
                                         $this->logger->warning($msg);
                                         $key = preg_replace('/./', '', $key);
                                     }
-                                    $units[$key] = $sheet->getCellByColumnAndRow($indice - 1, $ligne + 1)->getValue();
+                                    $units[$key] = $sheet->getCellByColumnAndRow($indice - 1, $ligne + 1)->getCalculatedValue();
 
                                     if ($indice == $highestColumn) {
                                         $keys = array_keys($units);
                                     }
                                 } else if ($ligne > $startFields) {
-                                    $value = $cell->getValue();
+                                    $value = $cell->getCalculatedValue();
                                     if (!empty($keys[$indice - 1])) {
-
+                                        if ($value!=null) {
                                         $obj[$keys[$indice - 1]] = $value;
+                                        }
                                     }
 
                                     if ($indice == $highestColumn) {
 
+                                        $obj=array_map('strval', $obj);
                                                                // $arrKey["SAMPLES"][] = $obj;
                                         $data_samples["SAMPLES"][]=$obj;
                                     }
