@@ -673,6 +673,12 @@ function Request_poi_img($id, $picturename)
             $mime = "image/jpg";
             header('Content-Type:  ' . $mime);
         }
+        elseif ($mime == 'jpeg')
+        {
+            $readfile = readfile($path);
+            $mime = "image/jpg";
+            header('Content-Type:  ' . $mime);
+        }
         elseif ($mime == 'gif')
         {
             $readfile = readfile($path);
