@@ -26,3 +26,25 @@ Exemple de page d'accueil d'un projet.
 
 
 
+# Fonctionalités <a name="Fonctionalités"></a>
+
+- Cinq profils utilisateurs :
+	* World (Tout le monde non authentifiés)
+	* User (droit de lecture sur les jeux de données)
+	* User Feeder (droit de lecture sur les jeux de données et depot de nouveau jeux)	
+	* User Referent (droit de lecture sur les jeux de données et depot de nouveau jeux, validation des jeux deposé par les feeders. Gestion des personnes faisant partie du projet)
+	* Admin (Tous les droits sur tout les projets)
+	
+- Depôt en ligne via un formulaire. 
+
+- Gestion des utilisateurs via l'interface.
+
+- Visualisation cartographique avec filtrage possible.
+
+- Extraction des données au format CSV possible.
+
+- Telechargement des données et images pour les membres authentifiés.
+
+- Connexion via votre CAS institutionnel possible.
+
+
