@@ -5,7 +5,7 @@ Geographical representation
 Sommaire:
 =================
 * [Présentation](#presentation)
-* [Fonctionalités](#Fonctionalités)
+* [Fonctionnalités](#Fonctionnalités)
 * [Installation](/Docs/Installation.md)
 * [Utilisation](/Docs/Utilisation.md)
 * [Organisation (code et Bdd)](/Docs/Organisation.md)
@@ -26,7 +26,7 @@ Exemple de page d'accueil d'un projet.
 
 
 
-# Fonctionalités <a name="Fonctionalités"></a>
+# Fonctionnalités <a name="Fonctionnalités"></a>
 
 - Cinq profils utilisateurs :
 	* World (Tout le monde non authentifiés)
