@@ -6,7 +6,7 @@ Sommaire:
 =================
 * [Présentation](#presentation)
 * [Fonctionalités](#Fonctionalités)
-* [Installation (non docker)](/Docs/Installation.md)
+* [Installation](/Docs/Installation.md)
 * [Utilisation](/Docs/Utilisation.md)
 * [Organisation (code et Bdd)](/Docs/Organisation.md)
 
