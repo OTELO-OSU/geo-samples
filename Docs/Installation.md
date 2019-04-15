@@ -121,14 +121,15 @@ Rendez vous dans Backend/config.ini :
     sudo a2enmod rewrite
 
     Modifier la configuration apache:
-    DocumentRoot /var/www/html/ORDaR/Frontend/src/
+    DocumentRoot /var/www/html/geo-samples/Backend/src
 
 
-    <Directory "/var/www/html/ORDaR/Frontend/src/">
-            AllowOverride All
-            Order allow,deny
-            Allow from all
-        </Directory>
+	<Directory "/var/www/html/geo-samples/Backend/src">
+		AllowOverride All
+		Order allow,deny
+		Allow from all
+	    </Directory>
+
 
 
 **Configuration php.ini:**
@@ -261,5 +262,27 @@ Voici un exemple de code pour configurer apache avec shibboleth:
 	
 Il faut ensuite modifier la route logout afin de se deconnecter du serveur single sign in (Shibboleth, CAS).
 Modifier le Redirect vers la route logout de votre service.
+
+
+**Modification affichage**
+
+Si vous souhaitez modifier l'affichage des metadonnées dans l'application, il faut se rendre dans le fichier Frontend/src/js/index.js , ligne 159
+$('.ui.sidebar.right').append(HTMLCONTENT)
+Il faut modifier le HTML present dans append.
+
+**Authentification**
+
+Le compte admin par défaut est admin@geosample.fr, son mot de passe est : G30Sample@
+Il faut créé un nouveau compte utilisateur et le definir en tant que admin et supprimé le compte par défaut.
+
+**Importer des utilisateurs en masse:**
+
+Vous devez au préalable avoir un fichier csv d'utilisateurs avec ces colonnes:
+
+	MAIL		NAME		FIRSTNAME
+
+
+Ensuite, il suffit d'executer le script php PopulateAuthDB.php avec en parametre le nom du fichier CSV et le nom du projet. Les utilisateurs sont créés avec un mot de passe aléatoire, dans le cas d'une connexion avec le CAS, le compte est utilisable dés à présent, sinon pour l'authentification traditionnelle l'utilisateur doit effectuer une demande de réinitialisation de mot de passe.Les utilisateurs sont ajoutés dans le projet specifiés en parametre.
+
 
 
