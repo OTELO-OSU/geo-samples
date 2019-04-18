@@ -54,7 +54,8 @@
 
 ![Alt text](/Img_doc/schema_auth.png?raw=true)
 
-***Schéma de vie des données ***:
+
+**Schéma de vie des données**:
 
 ![Alt text](/Img_doc/schema_de_vie.png?raw=true)
 
