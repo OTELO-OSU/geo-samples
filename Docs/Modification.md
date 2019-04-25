@@ -18,7 +18,6 @@ On distingue trois grande partie dans ce fichier de construction du formulaire:
 
 - schema ( definit la structure à utiliser, on definit un type, un titre et ici une liste avec enum) 
 	exemple :
-
 	"core": {
 	      "type": "string",
 	      "title": "Core",
@@ -53,26 +52,25 @@ exemple:
 	
 	function handlefileselect:  
 
-								if (value == "CORE") {
+	if (value == "CORE") {
 								   
-													    	if(values[1].toUpperCase()=='YES'){
-								   						                var radios = $('input:radio[name=core]');
-								   						                radios.filter('[value=Yes]').prop('checked', true);
-								   						                 $('.form-group.jsonform-error-core_depth').removeClass("hidden field");
-								   								        $('.form-group.jsonform-error-core_azimut').removeClass("hidden field");
-								   								        $('.form-group.jsonform-error-core_dip').removeClass("hidden field");
-								   								      $("input[name='core_depth']").val(values[2]);
-													       $("input[name='core_azimut']").val(values[3]);
-													       $("input[name='core_dip']").val(values[4]);
+																if(values[1].toUpperCase()=='YES'){
+																	var radios = $('input:radio[name=core]');
+																	radios.filter('[value=Yes]').prop('checked', true);
+																	$('.form-group.jsonform-error-core_depth').removeClass("hidden field");
+
+	$('.form-group.jsonform-error-core_azimut').removeClass("hidden field");
+																	$('.form-group.jsonform-error-core_dip').removeClass("hidden field");
+																	$("input[name='core_depth']").val(values[2]);
+																         $("input[name='core_azimut']").val(values[3]);
+																        $("input[name='core_dip']").val(values[4]);
 								   
    
-   						            }else{
-   						            	 var radios = $('input:radio[name=core]');
-   						                radios.filter('[value=No]').prop('checked', true);
-   
-   						            }
-                                               
-                                           }
+   	}else{
+   	var radios = $('input:radio[name=core]');
+   	radios.filter('[value=No]').prop('checked', true);
+	}
+	}
 
 
 	
@@ -91,25 +89,25 @@ Pour la définir, il suffit de la declarer dans le fichier JSON projet comme cec
 Dans le fichier upload.html.twig, la fonction switch_measurement() définit la nature et l'unité de chaque measurement pour un projet definit.
 
 Exemple: 
-				{%if collection_name == 'scandium'%}
-		   		switch (value) {
-		   		 
-		   		   case 'BGC':
-		   			  nature="BULK_GEOCHEM" ;
-		   			  unit="%WT_AND_PPMWT" ;
-		   		   break;
-		   		   case 'EMPA':
-		   			  nature="ELECTRONIC_MICROPROBE" ;
-		   			  unit="%WT" ;
-		   		   break;
-		   		   case 'LAICPMS':
-		   			  nature="LA-ICP-MS" ;
-		   			  unit="PPMWT" ;
-		   		   break;
-		   		 
-		   		}
-		   
-		   		{%endif%}
+
+		{%if collection_name == 'scandium'%}
+			switch (value) {
+			  case 'BGC':
+				nature="BULK_GEOCHEM" ;
+				unit="%WT_AND_PPMWT" ;
+				break;
+			case 'EMPA':
+				nature="ELECTRONIC_MICROPROBE" ;
+				unit="%WT" ;
+				break;
+			case 'LAICPMS':
+				nature="LA-ICP-MS" ;
+				unit="PPMWT" ;
+				break;
+
+			}
+
+		   {%endif%}
 
 
 
