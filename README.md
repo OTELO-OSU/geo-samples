@@ -9,6 +9,7 @@ Sommaire:
 * [Installation](/Docs/Installation.md)
 * [Utilisation](/Docs/Utilisation.md)
 * [Organisation (code et Bdd)](/Docs/Organisation.md)
+* [Modification du formulaire de saisie](/Docs/Modification.md)
 
 
 
