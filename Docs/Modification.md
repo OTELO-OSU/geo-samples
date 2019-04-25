@@ -18,36 +18,40 @@ On distingue trois grande partie dans ce fichier de construction du formulaire:
 
 - schema ( definit la structure à utiliser, on definit un type, un titre et ici une liste avec enum) 
 	exemple :
-	"core": {
-	      "type": "string",
-	      "title": "Core",
-	      "enum": [ "Yes", "No" ]
-	    },
+	
+		"core": {
+		      "type": "string",
+		      "title": "Core",
+		      "enum": [ "Yes", "No" ]
+		    },
+	    
 - form ( definit le comportement du champs dans le formulaire, on definit le type de champs html, et ici un event change avec du JS) 
 	exemple: 
-	"key": "core",
-	"type":"radios",
-	 "onChange": function (evt) {
-		var value = $(evt.target).val();
-		if (value=='Yes') {
-		$('.form-group.jsonform-error-core_depth').removeClass("hidden field");
-		$('.form-group.jsonform-error-core_azimut').removeClass("hidden field");
-		$('.form-group.jsonform-error-core_dip').removeClass("hidden field");
-		}
-		else{
-		$('.form-group.jsonform-error-core_depth').addClass("hidden field");
-		$('.form-group.jsonform-error-core_azimut').addClass("hidden field");
-		$('.form-group.jsonform-error-core_dip').addClass("hidden field");
-		}
-	      }
-	},
+	
+		"key": "core",
+		"type":"radios",
+		 "onChange": function (evt) {
+			var value = $(evt.target).val();
+			if (value=='Yes') {
+			$('.form-group.jsonform-error-core_depth').removeClass("hidden field");
+			$('.form-group.jsonform-error-core_azimut').removeClass("hidden field");
+			$('.form-group.jsonform-error-core_dip').removeClass("hidden field");
+			}
+			else{
+			$('.form-group.jsonform-error-core_depth').addClass("hidden field");
+			$('.form-group.jsonform-error-core_azimut').addClass("hidden field");
+			$('.form-group.jsonform-error-core_dip').addClass("hidden field");
+			}
+		      }
+		},
 
 
 - value (permet de charger des valeurs precedemment entré (utilisé pour le chargement de templates, ou l'édition))
 exemple:
+	
 	"core":"{{core}}", ({{core}} etant une variable twig)
 
-	on peut aussi effectuer un chargement à la volée en JS pour une templates de données CSV: 
+on peut aussi effectuer un chargement à la volée en JS pour une templates de données CSV: 
 	dans le fichier upload.html.twig : 
 	
 	function handlefileselect:  
