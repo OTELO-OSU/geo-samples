@@ -1,255 +1,245 @@
 {% include 'header.html.twig' %}
+
 <body>
-{%if error%}
-{{error}}
-{%endif%}
+    {%if error%} {{error}} {%endif%}
 
-  <div class="ui grid container">
-    <div class="row"></div>
-    <div class="row">
-      <h1 class="ui dividing header">Administration panel </h1>
-    </div>
-    <div class="ui twelve wide column centered">
-      {%if userswaiting%} 
-      <h2>Users waiting for account approvement</h2>
-      <div class="ui relaxed divided list waitinglist">
-        {%for user in userswaiting%}
-        <div class="item">
-          <div class="right floated content">
-            <button class="ui green button" name="approve">Approve</button>
-            <button class="ui red button" name="remove">Remove</button>
-          </div>
-          <div class="content">
-            <input type="hidden" name="name" value="{{user.name}}">
-            <input type="hidden" name="firstname" value="{{user.firstname}}">
-            <input type="hidden" name="mail" value="{{user.mail}}">
-
-            <a class="header"><i class="large user middle aligned icon"></i>      {{user.name}}  {{user.firstname}} 
-            </a>
-            <div class="description"> {%if user.type==1%} 
-              <div class="ui red horizontal label">Administrator</div> 
-              {%else%} 
-              <div class="ui green horizontal label">User</div> 
-            {%endif%} {{user.mail}} </div>
-          </div>
-        </div>
-        {%endfor%}
-
-      </div> 
-      {%endif%}
-      <div class="ui twelve wide column centered">
-      {%if UsersAwaitingValidation%} 
-      <h2>Users want to access to your projects</h2>
-      <div class="ui relaxed divided list waitinglist">
-        {%for user in UsersAwaitingValidation%}
-        <div class="item">
-          <div class="right floated content">
-            <button class="ui green button" name="approve_project">Approve</button>
-            <button class="ui red button" name="remove_project">Remove</button>
-          </div>
-          <div class="content">
-            <input type="hidden" name="name" value="{{user.name}}">
-            <input type="hidden" name="firstname" value="{{user.firstname}}">
-            <input type="hidden" name="mail" value="{{user.mail}}">
-            <input type="hidden" name="project_name" value="{{user.project_name}}">
-
-
-            <a class="header"><i class="large user middle aligned icon"></i>       {{user.name}}  {{user.firstname}} want access to {{user.project_name}}
-            </a>
-            <div class="description"> {%if user.type==1%} 
-              <div class="ui red horizontal label">Administrator</div> 
-              {%elseif user.type==2%} 
-              <div class="ui blue horizontal label">Referent</div>
-        {%elseif user.type==3%} 
-              <div class="ui orange horizontal label">User Feeder</div>
-              {%else%} 
-              <div class="ui green horizontal label">User</div> 
-            {%endif%} {{user.mail}} </div>
-          </div>
-        </div>
-        {%endfor%}
-</div>
-</div>
-      {%endif%}
-     
-
-
-
-      {%if usersapproved%}
-      <h2>All users</h2>
-      <div class="ui relaxed divided list userapprovedlist">
-        {%for user in usersapproved%}
-        <div class="item">
-          <div class="right floated content">
-            <button class="ui green button" name="modify">Modify profile</button>
-            <button class="ui button" name="disable">Disable</button>
-            <button class="ui red button" name="remove">Remove</button>
-          </div>
-          <div class="content">
-
-           <input type="hidden" name="name" value="{{user.name}}">
-           <input type="hidden" name="firstname" value="{{user.firstname}}">
-           <input type="hidden" name="mail" value="{{user.mail}}">
-           <input type="hidden" name="type" value="{{user.type}}">
-           <a class="header"><i class="large user middle aligned icon"></i>      {{user.name}}  {{user.firstname}}    
-             
-            
-           </a>
-           <div class="description"> {%if user.type==1%} 
-            <div class="ui red horizontal label">Administrator</div> 
-            
-            {%else%} <div class="ui green horizontal label">User</div> 
-          {%endif%}{{user.mail}} </div>
-        </div>
-      </div>
-      {%endfor%}
-       {%endif%}
-       {%if usersreferents%}
-      <h2>Manage right in your projects (only user and feeder)</h2>
-      <div class="ui relaxed divided list userapprovedlist">
-        {%for key,project in usersreferents%}
-        {%if project|length >= 1 %}
-        <h3>{{key}}</h3> <div class="ui search"><div class="ui icon input"><input class="prompt" name="usermail_add_{{key}}" type="text" placeholder="Select user to add"><i class="search icon"></i></div><div class="results"></div><button onclick="APP.modules.account.add_user('{{key}}');"  class="ui blue button adduser">Add user</button></div>
-
-        {%endif%}
-        <br>
-        {%for user in project%}
-        <div class="item">
-          <div class="right floated content">
-            {%if user.user_type==3 or user.user_type==0%}
-            <button class="ui green button" name="modify_referent">Modify right</button>
-            <button class="ui red button" onclick="APP.modules.account.delete_user_from_project('{{user.mail}}','{{key}}')">Remove</button>
-            {%endif%}
-          </div>
-          <div class="content">
-
-           <input type="hidden" name="mail" value="{{user.mail}}">
-           <input type="hidden" name="type" value="{{user.user_type}}">
-          <input type="hidden" name="project_name_modify" value="{{user.project_name}}">
-           <a class="header"><i class="large user middle aligned icon"></i>      {{user.name}}  {{user.firstname}}    
-             
-            
-           </a>
-           <div class="description"> 
-            {%if user.user_type==3%}
-              <div class="ui orange horizontal label">User Feeder</div>
-            {%elseif user.user_type==0%} <div class="ui green horizontal label">User</div> 
-             {%elseif user.user_type==2%} <div class="ui blue horizontal label">Referent</div>
-          {%endif%}{{user.mail}} </div>
-        </div>
-      </div>
-      {%endfor%}
-      {%endfor%}
-       <script>
-      $('.ui.search')
-  .search({
-   type: 'standard',
-    source: {{alluser|raw}},
-    searchFields: ['title'],
-    minCharacters : 1,
-  });
-</script>
-       {%endif%}
-     </div>
-          {%if usersreferentsadmin%}
-      <h2>Manage rights on projects</h2>
-      <div class="ui relaxed divided list userapprovedlist">
-        {%for key,project in usersreferentsadmin%}
-       
-        <h3>{{key}}</h3><div class="ui search"><div class="ui icon input"><input class="prompt" name="usermail_add_{{key}}" type="text" placeholder="Select user to add"><i class="search icon"></i></div><div class="results"></div><button onclick="APP.modules.account.add_user('{{key}}');" class="ui blue button adduser">Add user</button></div>
-       
-        <br>
-        {%for user in project%}
-        <div class="item">
-          <div class="right floated content">
-            <button class="ui green button" name="modify_referent_admin">Modify right</button>
-            <button class="ui red button" onclick="APP.modules.account.delete_user_from_project('{{user.mail}}','{{key}}')">Remove</button>
-          </div>
-          <div class="content">
-
-           <input type="hidden" name="mail" value="{{user.mail}}">
-           <input type="hidden" name="type" value="{{user.user_type}}">
-          <input type="hidden" name="project_name_modify" value="{{user.project_name}}">
-           <a class="header"><i class="large user middle aligned icon"></i>      {{user.name}}  {{user.firstname}}    
-             
-            
-           </a>
-           <div class="description"> 
-            {%if user.user_type==3%}
-              <div class="ui orange horizontal label">User Feeder</div>
-            {%elseif user.user_type==0%} <div class="ui green horizontal label">User</div> 
-            {%elseif user.user_type==2%} <div class="ui blue horizontal label">Referent</div> 
-          {%endif%}{{user.mail}} </div>
-        </div>
-      </div>
-      {%endfor%}
-      {%endfor%}
-      <script>
-      $('.ui.search')
-  .search({
-   type: 'standard',
-    source: {{alluser|raw}},
-    searchFields: ['title'],
-    minCharacters : 1,
-  });
-</script>
-       {%endif%}
-
-      
-
-    {%if admin==1%}
-    <button class="ui blue button" onclick="APP.modules.account.add_project('{{name_CSRF}}','{{value_CSRF}}')" name="createproject">Add a new project</button>
-    {%endif%}
-    {%if admin!=1%}
-     <h2>Others projects</h2>
-     {%endif%}
-    <div class="ui relaxed divided list userapprovedlist">
-      {%for key,value in readonlyproject%}
-      <div class="item">
-        <div class="content">
-          <h3>{{value}}:</h3>
-          You are 
-{%if key == 0%}
-<div class="ui green horizontal label">User</div>
-{%elseif key == 3%}
-<div class="ui orange horizontal label">User Feeder</div>
-{%endif%}
-in this project
-          {%endfor%}
-    </div>
-
-
-
-          
-        </div>
+    <div class="ui grid container">
         <div class="row"></div>
-      </div>
-    </div>
+        <div class="row">
+            <h1 class="ui dividing header">Administration panel </h1>
+        </div>
+        <div class="ui twelve wide column centered">
+            {%if userswaiting%}
+            <h2>Users waiting for account approvement</h2>
+            <div class="ui relaxed divided list waitinglist">
+                {%for user in userswaiting%}
+                <div class="item">
+                    <div class="right floated content">
+                        <button class="ui green button" name="approve">Approve</button>
+                        <button class="ui red button" name="remove">Remove</button>
+                    </div>
+                    <div class="content">
+                        <input type="hidden" name="name" value="{{user.name}}">
+                        <input type="hidden" name="firstname" value="{{user.firstname}}">
+                        <input type="hidden" name="mail" value="{{user.mail}}">
 
+                        <a class="header"><i class="large user middle aligned icon"></i>      {{user.name}}  {{user.firstname}} 
+            </a>
+                        <div class="description"> {%if user.type==1%}
+                            <div class="ui red horizontal label">Administrator</div>
+                            {%else%}
+                            <div class="ui green horizontal label">User</div>
+                            {%endif%} {{user.mail}} </div>
+                    </div>
+                </div>
+                {%endfor%}
 
-    <div class="ui modal user">
-     <i class="close icon"></i>
-     <div class="header">
-     </div>
-     <div class="content">
-      
-       
-     </div>
+            </div>
+            {%endif%}
+            <div class="ui twelve wide column centered">
+                {%if UsersAwaitingValidation%}
+                <h2>Users want to access to your projects</h2>
+                <div class="ui relaxed divided list waitinglist">
+                    {%for user in UsersAwaitingValidation%}
+                    <div class="item">
+                        <div class="right floated content">
+                            <button class="ui green button" name="approve_project">Approve</button>
+                            <button class="ui red button" name="remove_project">Remove</button>
+                        </div>
+                        <div class="content">
+                            <input type="hidden" name="name" value="{{user.name}}">
+                            <input type="hidden" name="firstname" value="{{user.firstname}}">
+                            <input type="hidden" name="mail" value="{{user.mail}}">
+                            <input type="hidden" name="project_name" value="{{user.project_name}}">
 
-   </div>
+                            <a class="header"><i class="large user middle aligned icon"></i>       {{user.name}}  {{user.firstname}} want access to {{user.project_name}}
+            </a>
+                            <div class="description"> {%if user.type==1%}
+                                <div class="ui red horizontal label">Administrator</div>
+                                {%elseif user.type==2%}
+                                <div class="ui blue horizontal label">Referent</div>
+                                {%elseif user.type==3%}
+                                <div class="ui orange horizontal label">User Feeder</div>
+                                {%else%}
+                                <div class="ui green horizontal label">User</div>
+                                {%endif%} {{user.mail}} </div>
+                        </div>
+                    </div>
+                    {%endfor%}
+                </div>
+            </div>
+            {%endif%} {%if usersapproved%}
+            <h2>All users</h2>
+            <div class="ui relaxed divided list userapprovedlist">
+                {%for user in usersapproved%}
+                <div class="item">
+                    <div class="right floated content">
+                        <button class="ui green button" name="modify">Modify profile</button>
+                        <button class="ui button" name="disable">Disable</button>
+                        <button class="ui red button" name="remove">Remove</button>
+                    </div>
+                    <div class="content">
 
+                        <input type="hidden" name="name" value="{{user.name}}">
+                        <input type="hidden" name="firstname" value="{{user.firstname}}">
+                        <input type="hidden" name="mail" value="{{user.mail}}">
+                        <input type="hidden" name="type" value="{{user.type}}">
+                        <a class="header"><i class="large user middle aligned icon"></i>      {{user.name}}  {{user.firstname}}    
 
+           </a>
+                        <div class="description"> {%if user.type==1%}
+                            <div class="ui red horizontal label">Administrator</div>
 
- </body>
- <script type="text/javascript">
-   $('.button').on('click', function(e) {
-    APP.modules.account.check_clicked(e,"{{name_CSRF}}","{{value_CSRF}}",$($($(this).parent()[0]).parent()).find('input[name="name"]').val(),$($($(this).parent()[0]).parent()).find('input[name="firstname"]').val(),$($($(this).parent()[0]).parent()).find('input[name="mail"]').val(),$($($(this).parent()[0]).parent()).find('input[name="type"]').val(),$($($(this).parent()[0]).parent()).find('input[name="project_name"]').val(),$($($(this).parent()[0]).parent()).find('input[name="project_name_modify"]').val());
-  });
+                            {%else%}
+                            <div class="ui green horizontal label">User</div>
+                            {%endif%}{{user.mail}} </div>
+                    </div>
+                </div>
+                {%endfor%} {%endif%} {%if usersreferents%}
+                <h2>Manage right in your projects (only user and feeder)</h2>
+                <div class="ui relaxed divided list userapprovedlist">
+                    {%for key,project in usersreferents%} {%if project|length >= 1 %}
+                    <h3>{{key}}</h3>
+                    <div class="ui search">
+                        <div class="ui icon input">
+                            <input class="prompt" name="usermail_add_{{key}}" type="text" placeholder="Select user to add"><i class="search icon"></i></div>
+                        <div class="results"></div>
+                        <button onclick="APP.modules.account.add_user('{{key}}');" class="ui blue button adduser">Add user</button>
+                    </div>
+
+                    {%endif%}
+                    <br> {%for user in project%}
+                    <div class="item">
+                        <div class="right floated content">
+                            {%if user.user_type==3 or user.user_type==0%}
+                            <button class="ui green button" name="modify_referent">Modify right</button>
+                            <button class="ui red button" onclick="APP.modules.account.delete_user_from_project('{{user.mail}}','{{key}}')">Remove</button>
+                            {%endif%}
+                        </div>
+                        <div class="content">
+
+                            <input type="hidden" name="mail" value="{{user.mail}}">
+                            <input type="hidden" name="type" value="{{user.user_type}}">
+                            <input type="hidden" name="project_name_modify" value="{{user.project_name}}">
+                            <a class="header"><i class="large user middle aligned icon"></i>      {{user.name}}  {{user.firstname}}    
+
+           </a>
+                            <div class="description">
+                                {%if user.user_type==3%}
+                                <div class="ui orange horizontal label">User Feeder</div>
+                                {%elseif user.user_type==0%}
+                                <div class="ui green horizontal label">User</div>
+                                {%elseif user.user_type==2%}
+                                <div class="ui blue horizontal label">Referent</div>
+                                {%endif%}{{user.mail}} </div>
+                        </div>
+                    </div>
+                    {%endfor%} {%endfor%}
+                    <script>
+                        $('.ui.search')
+                            .search({
+                                type: 'standard',
+                                source: {
+                                    {
+                                        alluser | raw
+                                    }
+                                },
+                                searchFields: ['title'],
+                                minCharacters: 1,
+                            });
+                    </script>
+                    {%endif%}
+                </div>
+                {%if usersreferentsadmin%}
+                <h2>Manage rights on projects</h2>
+                <div class="ui relaxed divided list userapprovedlist">
+                    {%for key,project in usersreferentsadmin%}
+
+                    <h3>{{key}}</h3>
+                    <div class="ui search">
+                        <div class="ui icon input">
+                            <input class="prompt" name="usermail_add_{{key}}" type="text" placeholder="Select user to add"><i class="search icon"></i></div>
+                        <div class="results"></div>
+                        <button onclick="APP.modules.account.add_user('{{key}}');" class="ui blue button adduser">Add user</button>
+                    </div>
+
+                    <br> {%for user in project%}
+                    <div class="item">
+                        <div class="right floated content">
+                            <button class="ui green button" name="modify_referent_admin">Modify right</button>
+                            <button class="ui red button" onclick="APP.modules.account.delete_user_from_project('{{user.mail}}','{{key}}')">Remove</button>
+                        </div>
+                        <div class="content">
+
+                            <input type="hidden" name="mail" value="{{user.mail}}">
+                            <input type="hidden" name="type" value="{{user.user_type}}">
+                            <input type="hidden" name="project_name_modify" value="{{user.project_name}}">
+                            <a class="header"><i class="large user middle aligned icon"></i>      {{user.name}}  {{user.firstname}}    
+
+           </a>
+                            <div class="description">
+                                {%if user.user_type==3%}
+                                <div class="ui orange horizontal label">User Feeder</div>
+                                {%elseif user.user_type==0%}
+                                <div class="ui green horizontal label">User</div>
+                                {%elseif user.user_type==2%}
+                                <div class="ui blue horizontal label">Referent</div>
+                                {%endif%}{{user.mail}} </div>
+                        </div>
+                    </div>
+                    {%endfor%} {%endfor%}
+                    <script>
+                        $('.ui.search')
+                            .search({
+                                type: 'standard',
+                                source: {
+                                    {
+                                        alluser | raw
+                                    }
+                                },
+                                searchFields: ['title'],
+                                minCharacters: 1,
+                            });
+                    </script>
+                    {%endif%} {%if admin==1%}
+                    <button class="ui blue button" onclick="APP.modules.account.add_project('{{name_CSRF}}','{{value_CSRF}}')" name="createproject">Add a new project</button>
+                    {%endif%} {%if admin!=1%}
+                    <h2>Others projects</h2> {%endif%}
+                    <div class="ui relaxed divided list userapprovedlist">
+                        {%for key,value in readonlyproject%}
+                        <div class="item">
+                            <div class="content">
+                                <h3>{{value}}:</h3> You are {%if key == 0%}
+                                <div class="ui green horizontal label">User</div>
+                                {%elseif key == 3%}
+                                <div class="ui orange horizontal label">User Feeder</div>
+                                {%endif%} in this project {%endfor%}
+                            </div>
+
+                        </div>
+                        <div class="row"></div>
+                    </div>
+                </div>
+
+                <div class="ui modal user">
+                    <i class="close icon"></i>
+                    <div class="header">
+                    </div>
+                    <div class="content">
+
+                    </div>
+
+                </div>
+
+</body>
+<script type="text/javascript">
+    $('.button').on('click', function(e) {
+        APP.modules.account.check_clicked(e, "{{name_CSRF}}", "{{value_CSRF}}", $($($(this).parent()[0]).parent()).find('input[name="name"]').val(), $($($(this).parent()[0]).parent()).find('input[name="firstname"]').val(), $($($(this).parent()[0]).parent()).find('input[name="mail"]').val(), $($($(this).parent()[0]).parent()).find('input[name="type"]').val(), $($($(this).parent()[0]).parent()).find('input[name="project_name"]').val(), $($($(this).parent()[0]).parent()).find('input[name="project_name_modify"]').val());
+    });
 </script>
 <style type="text/css">
-  .adduser{
-    margin-left: 23px!important;
-  }
+    .adduser {
+        margin-left: 23px!important;
+    }
 </style>
 {% include 'footer.html.twig' %}
-

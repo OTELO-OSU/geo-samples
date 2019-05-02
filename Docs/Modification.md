@@ -49,9 +49,9 @@ On distingue trois grande partie dans ce fichier de construction du formulaire:
 - value (permet de charger des valeurs precedemment entré (utilisé pour le chargement de templates, ou l'édition))
 exemple:
 	
-	"core":"{{core}}", ({{core}} etant une variable twig)
+		"core":"{{core}}", ({{core}} etant une variable twig)
 
-on peut aussi effectuer un chargement à la volée en JS pour une templates de données CSV: 
+On peut aussi effectuer un chargement à la volée en JS pour une templates de données CSV: 
 	dans le fichier upload.html.twig : 
 	
 	function handlefileselect:  
@@ -63,7 +63,7 @@ on peut aussi effectuer un chargement à la volée en JS pour une templates de d
 																	radios.filter('[value=Yes]').prop('checked', true);
 																	$('.form-group.jsonform-error-core_depth').removeClass("hidden field");
 
-	$('.form-group.jsonform-error-core_azimut').removeClass("hidden field");
+$('.form-group.jsonform-error-core_azimut').removeClass("hidden field");
 																	$('.form-group.jsonform-error-core_dip').removeClass("hidden field");
 																	$("input[name='core_depth']").val(values[2]);
 																         $("input[name='core_azimut']").val(values[3]);
@@ -80,7 +80,7 @@ on peut aussi effectuer un chargement à la volée en JS pour une templates de d
 	
 
 **Gestion des measurements par projet:**
-La liste de measurment est gérée au niveau du fichier projet via la variable twig list_measurements.
+La liste de measurements est gérée au niveau du fichier projet via la variable twig list_measurements.
 
 Pour la définir, il suffit de la declarer dans le fichier JSON projet comme ceci:
 
@@ -96,7 +96,7 @@ Exemple:
 
 		{%if collection_name == 'scandium'%}
 			switch (value) {
-			  case 'BGC':
+			case 'BGC':
 				nature="BULK_GEOCHEM" ;
 				unit="%WT_AND_PPMWT" ;
 				break;
@@ -111,7 +111,7 @@ Exemple:
 
 			}
 
-		   {%endif%}
+		{%endif%}
 
 
 
