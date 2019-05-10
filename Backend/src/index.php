@@ -449,6 +449,7 @@ $app->post('/upload', function (Request $req, Response $responseSlim) {
 			  'block'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['BLOCK'],
 			  'pulp'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['PULP'],
 			  'core'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][0]['CORE'],
+			  'ANTHROPOGENIC_MATERIAL'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['ANTHROPOGENIC_MATERIAL'],
 
 			  'language'=>$response['dataform']['LANGUAGE'],
 			  'keywords'=>$response['dataform']['KEYWORDS'],
@@ -528,7 +529,7 @@ $app->get('/modify/{id}', function (Request $req, Response $responseSlim,$args) 
 			  'block'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['BLOCK'],
 			  'pulp'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['PULP'],
 			  'core'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][0]['CORE'],
-
+			  'ANTHROPOGENIC_MATERIAL'=>$response['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['ANTHROPOGENIC_MATERIAL'],
 			  'language'=>$response['_source']['INTRO']['LANGUAGE'],
 			  'keywords'=>$response['_source']['INTRO']['KEYWORDS'],
 			  'institutions'=>$response['_source']['INTRO']['INSTITUTION'],
@@ -619,7 +620,7 @@ $app->post('/modify', function (Request $req, Response $responseSlim) {
 			  'block'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['BLOCK'],
 			  'pulp'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['PULP'],
 			  'core'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][0]['CORE'],
-
+			  'ANTHROPOGENIC_MATERIAL'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['ANTHROPOGENIC_MATERIAL'],
 			  'language'=>$response['dataform']['LANGUAGE'],
 			  'keywords'=>$response['dataform']['KEYWORDS'],
 			  'institutions'=>$response['dataform']['INSTITUTION'],
