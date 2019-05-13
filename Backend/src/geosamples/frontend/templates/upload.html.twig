@@ -32,7 +32,7 @@
       {% endif %}
       <form method="post" action="/{{route}}" class="ui form" name="form" enctype="multipart/form-data">
          <div class="ui error message"></div>
-         <a href="javascript:history.back();" class="ui red button"><i class="cancel icon"></i>Cancel</a>
+         <a onclick="cancel();" class="ui red button"><i class="cancel icon"></i>Cancel</a>
          <button type="submit" class="ui submit right floated green  button"><i class="checkmark icon"></i>Submit</button>
          {%if edit%}
          <a onclick="remove();" class="ui  black  button"><i class="trash alternate icon"></i>Remove</a>		
@@ -57,6 +57,17 @@
           $(".modal.remove .header").append('Are you sure to remove {{id}} ?  ');
           $(".modal.remove .content").append('<form class="ui form " action="/delete_data" method="post"><input type="hidden" name="csrf_name" value="{{name_CSRF}}"><input type="hidden" name="csrf_value" value="{{value_CSRF}}"><input type="hidden" name="id" value="{{id}}"> <div class="actions"> <div class="ui black deny button"> Cancel </div> <button class="ui submit green button" >Yes</button> </div> </form>');
           $('.ui.modal.remove').modal('show');
+   }
+
+   function cancel(){
+   if(confirm("Are you sure you want to cancel the entry?"))
+    {
+        history.back();
+    }
+    else
+    {
+        e.preventDefault();
+    }
    }
    JSONForm.fieldTypes['file_data_already_uploaded'] = {
      template: '<%=node.value%>'
@@ -106,8 +117,8 @@
    			  nature="Grain Density";
    			  unit="g/cm3" ;
    		   break;
-   		   case 'Porosity-TW':
-   			  nature="Triple Weight Porosity" ;
+   		   case 'POR-TW':
+   			  nature="WATER POROSITY (TRIPLE WEIGHT)" ;
    			  unit="%" ;
    		   break;
    		   case 'Porosity-He':
