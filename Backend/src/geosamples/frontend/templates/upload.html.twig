@@ -93,23 +93,68 @@
    
    		{%if collection_name == 'petrophysics'%}
    		switch (value) {
-   		  case 'AMS':
+   		 case 'PETPHY':
+	   			  nature="PETROPHYSICS" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'XRT':
+	   			  nature="X_RAY_TOMOGRAPHY" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'SS':
+	   			  nature="SPECIFIC_SURFACE_AREA" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'GRANUL':
+	   			  nature="GRANULOMETRY" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'DENS':
+	   			  nature="DENSITY" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'POR':
+	   			  nature="POROSITY" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'POR-HE':
+	   			  nature="HELIUM POROSITY" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'POR-HG':
+	   			  nature="MERCURY POROSITY" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'POR-TW':
+	   			  nature="WATER POROSITY (TRIPLE WEIGHT)" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'PERM-N2':
+	   			  nature="NITROGEN PERMEABILITY" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'PERM-F':
+	   			  nature="FIELD PERMEABILITY" ;
+	   			  unit="None" ;
+	   		break;
+
+	   		 case 'AMS':
    			  nature="Anisotropy of Magnetic Susceptibility without ferrofluid" ;
    			  unit="SI" ;
    		   break;
-   		   case 'Tcond-D':
+   		   case 'TCOND-D':
    			  nature="Thermal Conductivity dry" ;
    			  unit="W/m/K" ;
    		   break;
-   		   case 'Tdif-D':
+   		   case 'TDIF-D':
    			  nature="Thermal Diffusivity dry" ;
    			  unit="mm2/s" ;
    		   break;
-   		   case 'P-Wave-D':
+   		   case 'P-WAVE-D':
    			  nature="P-wave Velocity dry" ;
    			  unit="m/s" ;
    		   break;
-   		   case 'S-Wave-D':
+   		   case 'S-WAVE-D':
    			  nature="S-wave Velocity dry" ;
    			  unit="m/s" ;
    		   break;
@@ -122,14 +167,14 @@
    			  unit="%" ;
    		   break;
    		   case 'Porosity-He':
-   			  nature="Helium Porosity" ;
+   			  nature="HELIUM POROSITY" ;
    			  unit="%" ;
    		   break;
    		   case 'Perm-Ni':
    			  nature="Permeability Nitrogen" ;
    			  unit="m2" ;
    		   break;
-   		   case 'AMS-ferro':
+   		   case 'AMS-FERRO':
    			  nature="Anisotropty of Magnetic Susceptibility with ferrofluid saturation" ;
    			  unit="SI" ;
    		   break;
@@ -137,11 +182,11 @@
    			  nature="Mercury Porosity" ;
    			  unit="%" ;
    		   break;
-   		   case 'GD-powder':
+   		   case 'GD-DENS-POWDER':
    			  nature="Grain Density with powder porphyriser" ;
    			  unit="g/cm3" ;
    		   break;
-   		   case 'S-Wave-W':
+   		   case 'S-WAVE-W':
    			  nature="S-wave Velocity wet" ;
    			  unit="m/s" ;
    		   break;
@@ -149,11 +194,11 @@
    			  nature="Specific Heat Capacity" ;
    			  unit="kJ/kg/K" ;
    		   break;
-   		   case 'Tdif-W':
+   		   case 'TDIF-W':
    			  nature="Thermal Diffusivity wet" ;
    			  unit="mm2/s" ;
    		   break;
-   		   case 'Tcond-W':
+   		   case 'TCOND-W':
    			  nature="Thermal Conductivity wet" ;
    			  unit="W/m/K" ;
    		   break;
@@ -161,7 +206,7 @@
    			  nature="Field Permeameter" ;
    			  unit="m2" ;
    		   break;
-   		   case 'P-Wave-W':
+   		   case 'P-WAVE-W':
    			  nature="P-wave Velocity wet" ;
    			  unit="m/s" ;
    		   break;
@@ -169,13 +214,15 @@
    			  nature="Magnetic susceptibility" ;
    			  unit="SI" ;
    		   break;
-   		 
-   		}
-   		{%endif%}
-   
-   		{%if collection_name == 'scandium'%}
-   		switch (value) {
-   		 
+   		    case 'E-RES':
+   			  nature="Electric resistivity" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'NMR':
+   			  nature="NMR-porosity" ;
+   			  unit="None" ;
+   		   break;
+
    		   case 'BGC':
    			  nature="BULK_GEOCHEM" ;
    			  unit="%WT_AND_PPMWT" ;
@@ -188,7 +235,675 @@
    			  nature="LA-ICP-MS" ;
    			  unit="PPMWT" ;
    		   break;
-   		 
+   		   case 'OGC':
+   			  nature="ORGANIC_GEOCHEMISTRY" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'SEM':
+   			  nature="SCANNING ELECTRON MICROSCOPE" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'SAM':
+   			  nature="SCANNING_AUGER_MICROSCOPE" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'STEM':
+   			  nature="TRANSMISSION_ELECTRON_MICROSCOPE" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'MXRF':
+   			  nature="MICRO_XRF" ;
+   			  unit="None" ;
+   		   break; 
+   		   case 'PXRF':
+   			  nature="PORTABLE_XRF" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'LIBS':
+   			  nature="LIBS" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'XRD':
+   			  nature="XRD BULK SAMPLE" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'CL-XRD':
+   			  nature="XRD CLAY" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'CL-CRIS':
+   			  nature="CLAY CRYSTALLOGRAPHY" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'IR':
+   			  nature="INFRA_RED_SPECTROSCOPY" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'RAMAN':
+   			  nature="RAMAN SPECTROSCOPY" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'EXAFS':
+   			  nature="EXAFS" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'XANES':
+   			  nature="XANES" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'MOSS':
+   			  nature="MÖSSBAUER_SPECTROSCOPY" ;
+   			  unit="None" ;
+   		   break;
+   		      case 'XPS':
+   			  nature="X_RAY_PHOTOELECTRON_SPECTROSCOPY" ;
+   			  unit="None" ;
+   		   break;
+		   case 'SC':
+   			  nature="SCINTILLOMETRY" ;
+   			  unit="None" ;
+   		   break;
+
+		   case 'GS':
+   			  nature="GAMMA_SPECTROMETRY" ;
+   			  unit="None" ;
+   		   break;
+
+		   case 'SIMS':
+   			  nature="SIMS" ;
+   			  unit="None" ;
+   		   break;
+
+		   case 'NSIMS':
+   			  nature="NANOSIMS" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'ISOT-C':
+   			  nature="ISOTOPY C" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'ISOT-H':
+   			  nature="ISOTOPY H" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'ISOT-O':
+   			  nature="ISOTOPY O" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'ISOT-N':
+   			  nature="ISOTOPY N" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'ISOT-S':
+   			  nature="ISOTOPY S" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'ISOT-UPB':
+   			  nature="ISOTOPY U-PB" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'ISOT-LUHF':
+   			  nature="ISOTOPY LU-HF" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'ISOT-REOS':
+   			  nature="ISOTOPY RE-OS" ;
+   			  unit="None" ;
+   		   break;
+
+
+
+		 
+
+
+
+
+
+	   			 
+   		}
+   		{%endif%}
+   
+   		{%if collection_name == 'scandium'%}
+   		switch (value) {
+   		 case 'PETPHY':
+	   			  nature="PETROPHYSICS" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'XRT':
+	   			  nature="X_RAY_TOMOGRAPHY" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'SS':
+	   			  nature="SPECIFIC_SURFACE_AREA" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'GRANUL':
+	   			  nature="GRANULOMETRY" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'DENS':
+	   			  nature="DENSITY" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'POR':
+	   			  nature="POROSITY" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'POR-HE':
+	   			  nature="HELIUM POROSITY" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'POR-HG':
+	   			  nature="MERCURY POROSITY" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'POR-TW':
+	   			  nature="WATER POROSITY (TRIPLE WEIGHT)" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'PERM-N2':
+	   			  nature="NITROGEN PERMEABILITY" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'PERM-F':
+	   			  nature="FIELD PERMEABILITY" ;
+	   			  unit="None" ;
+	   		break;
+
+	   		 case 'AMS':
+   			  nature="Anisotropy of Magnetic Susceptibility without ferrofluid" ;
+   			  unit="SI" ;
+   		   break;
+   		   case 'TCOND-D':
+   			  nature="Thermal Conductivity dry" ;
+   			  unit="W/m/K" ;
+   		   break;
+   		   case 'TDIF-D':
+   			  nature="Thermal Diffusivity dry" ;
+   			  unit="mm2/s" ;
+   		   break;
+   		   case 'P-WAVE-D':
+   			  nature="P-wave Velocity dry" ;
+   			  unit="m/s" ;
+   		   break;
+   		   case 'S-WAVE-D':
+   			  nature="S-wave Velocity dry" ;
+   			  unit="m/s" ;
+   		   break;
+   		   case 'GD':
+   			  nature="Grain Density";
+   			  unit="g/cm3" ;
+   		   break;
+   		   case 'POR-TW':
+   			  nature="WATER POROSITY (TRIPLE WEIGHT)" ;
+   			  unit="%" ;
+   		   break;
+   		   case 'Porosity-He':
+   			  nature="HELIUM POROSITY" ;
+   			  unit="%" ;
+   		   break;
+   		   case 'Perm-Ni':
+   			  nature="Permeability Nitrogen" ;
+   			  unit="m2" ;
+   		   break;
+   		   case 'AMS-FERRO':
+   			  nature="Anisotropty of Magnetic Susceptibility with ferrofluid saturation" ;
+   			  unit="SI" ;
+   		   break;
+   		   case 'Porosity-Hg':
+   			  nature="Mercury Porosity" ;
+   			  unit="%" ;
+   		   break;
+   		   case 'GD-DENS-POWDER':
+   			  nature="Grain Density with powder porphyriser" ;
+   			  unit="g/cm3" ;
+   		   break;
+   		   case 'S-WAVE-W':
+   			  nature="S-wave Velocity wet" ;
+   			  unit="m/s" ;
+   		   break;
+   		   case 'SHC':
+   			  nature="Specific Heat Capacity" ;
+   			  unit="kJ/kg/K" ;
+   		   break;
+   		   case 'TDIF-W':
+   			  nature="Thermal Diffusivity wet" ;
+   			  unit="mm2/s" ;
+   		   break;
+   		   case 'TCOND-W':
+   			  nature="Thermal Conductivity wet" ;
+   			  unit="W/m/K" ;
+   		   break;
+   		   case 'Perm-F':
+   			  nature="Field Permeameter" ;
+   			  unit="m2" ;
+   		   break;
+   		   case 'P-WAVE-W':
+   			  nature="P-wave Velocity wet" ;
+   			  unit="m/s" ;
+   		   break;
+   		     case 'MS':
+   			  nature="Magnetic susceptibility" ;
+   			  unit="SI" ;
+   		   break;
+   		    case 'E-RES':
+   			  nature="Electric resistivity" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'NMR':
+   			  nature="NMR-porosity" ;
+   			  unit="None" ;
+   		   break;
+
+   		   case 'BGC':
+   			  nature="BULK_GEOCHEM" ;
+   			  unit="%WT_AND_PPMWT" ;
+   		   break;
+   		   case 'EMPA':
+   			  nature="ELECTRONIC_MICROPROBE" ;
+   			  unit="%WT" ;
+   		   break;
+   		   case 'LAICPMS':
+   			  nature="LA-ICP-MS" ;
+   			  unit="PPMWT" ;
+   		   break;
+   		   case 'OGC':
+   			  nature="ORGANIC_GEOCHEMISTRY" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'SEM':
+   			  nature="SCANNING ELECTRON MICROSCOPE" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'SAM':
+   			  nature="SCANNING_AUGER_MICROSCOPE" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'STEM':
+   			  nature="TRANSMISSION_ELECTRON_MICROSCOPE" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'MXRF':
+   			  nature="MICRO_XRF" ;
+   			  unit="None" ;
+   		   break; 
+   		   case 'PXRF':
+   			  nature="PORTABLE_XRF" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'LIBS':
+   			  nature="LIBS" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'XRD':
+   			  nature="XRD BULK SAMPLE" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'CL-XRD':
+   			  nature="XRD CLAY" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'CL-CRIS':
+   			  nature="CLAY CRYSTALLOGRAPHY" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'IR':
+   			  nature="INFRA_RED_SPECTROSCOPY" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'RAMAN':
+   			  nature="RAMAN SPECTROSCOPY" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'EXAFS':
+   			  nature="EXAFS" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'XANES':
+   			  nature="XANES" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'MOSS':
+   			  nature="MÖSSBAUER_SPECTROSCOPY" ;
+   			  unit="None" ;
+   		   break;
+   		      case 'XPS':
+   			  nature="X_RAY_PHOTOELECTRON_SPECTROSCOPY" ;
+   			  unit="None" ;
+   		   break;
+		   case 'SC':
+   			  nature="SCINTILLOMETRY" ;
+   			  unit="None" ;
+   		   break;
+
+		   case 'GS':
+   			  nature="GAMMA_SPECTROMETRY" ;
+   			  unit="None" ;
+   		   break;
+
+		   case 'SIMS':
+   			  nature="SIMS" ;
+   			  unit="None" ;
+   		   break;
+
+		   case 'NSIMS':
+   			  nature="NANOSIMS" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'ISOT-C':
+   			  nature="ISOTOPY C" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'ISOT-H':
+   			  nature="ISOTOPY H" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'ISOT-O':
+   			  nature="ISOTOPY O" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'ISOT-N':
+   			  nature="ISOTOPY N" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'ISOT-S':
+   			  nature="ISOTOPY S" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'ISOT-UPB':
+   			  nature="ISOTOPY U-PB" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'ISOT-LUHF':
+   			  nature="ISOTOPY LU-HF" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'ISOT-REOS':
+   			  nature="ISOTOPY RE-OS" ;
+   			  unit="None" ;
+   		   break;
+
+
+
+		 
+
+
+
+
+
+	   			 
+   		}
+   
+   		{%endif%}
+   		{%if collection_name == 'cigar'%}
+   		switch (value) {
+   		 case 'PETPHY':
+	   			  nature="PETROPHYSICS" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'XRT':
+	   			  nature="X_RAY_TOMOGRAPHY" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'SS':
+	   			  nature="SPECIFIC_SURFACE_AREA" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'GRANUL':
+	   			  nature="GRANULOMETRY" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'DENS':
+	   			  nature="DENSITY" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'POR':
+	   			  nature="POROSITY" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'POR-HE':
+	   			  nature="HELIUM POROSITY" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'POR-HG':
+	   			  nature="MERCURY POROSITY" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'POR-TW':
+	   			  nature="WATER POROSITY (TRIPLE WEIGHT)" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'PERM-N2':
+	   			  nature="NITROGEN PERMEABILITY" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'PERM-F':
+	   			  nature="FIELD PERMEABILITY" ;
+	   			  unit="None" ;
+	   		break;
+
+	   		 case 'AMS':
+   			  nature="Anisotropy of Magnetic Susceptibility without ferrofluid" ;
+   			  unit="SI" ;
+   		   break;
+   		   case 'TCOND-D':
+   			  nature="Thermal Conductivity dry" ;
+   			  unit="W/m/K" ;
+   		   break;
+   		   case 'TDIF-D':
+   			  nature="Thermal Diffusivity dry" ;
+   			  unit="mm2/s" ;
+   		   break;
+   		   case 'P-WAVE-D':
+   			  nature="P-wave Velocity dry" ;
+   			  unit="m/s" ;
+   		   break;
+   		   case 'S-WAVE-D':
+   			  nature="S-wave Velocity dry" ;
+   			  unit="m/s" ;
+   		   break;
+   		   case 'GD':
+   			  nature="Grain Density";
+   			  unit="g/cm3" ;
+   		   break;
+   		   case 'POR-TW':
+   			  nature="WATER POROSITY (TRIPLE WEIGHT)" ;
+   			  unit="%" ;
+   		   break;
+   		   case 'Porosity-He':
+   			  nature="HELIUM POROSITY" ;
+   			  unit="%" ;
+   		   break;
+   		   case 'Perm-Ni':
+   			  nature="Permeability Nitrogen" ;
+   			  unit="m2" ;
+   		   break;
+   		   case 'AMS-FERRO':
+   			  nature="Anisotropty of Magnetic Susceptibility with ferrofluid saturation" ;
+   			  unit="SI" ;
+   		   break;
+   		   case 'Porosity-Hg':
+   			  nature="Mercury Porosity" ;
+   			  unit="%" ;
+   		   break;
+   		   case 'GD-DENS-POWDER':
+   			  nature="Grain Density with powder porphyriser" ;
+   			  unit="g/cm3" ;
+   		   break;
+   		   case 'S-WAVE-W':
+   			  nature="S-wave Velocity wet" ;
+   			  unit="m/s" ;
+   		   break;
+   		   case 'SHC':
+   			  nature="Specific Heat Capacity" ;
+   			  unit="kJ/kg/K" ;
+   		   break;
+   		   case 'TDIF-W':
+   			  nature="Thermal Diffusivity wet" ;
+   			  unit="mm2/s" ;
+   		   break;
+   		   case 'TCOND-W':
+   			  nature="Thermal Conductivity wet" ;
+   			  unit="W/m/K" ;
+   		   break;
+   		   case 'Perm-F':
+   			  nature="Field Permeameter" ;
+   			  unit="m2" ;
+   		   break;
+   		   case 'P-WAVE-W':
+   			  nature="P-wave Velocity wet" ;
+   			  unit="m/s" ;
+   		   break;
+   		     case 'MS':
+   			  nature="Magnetic susceptibility" ;
+   			  unit="SI" ;
+   		   break;
+   		    case 'E-RES':
+   			  nature="Electric resistivity" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'NMR':
+   			  nature="NMR-porosity" ;
+   			  unit="None" ;
+   		   break;
+
+   		   case 'BGC':
+   			  nature="BULK_GEOCHEM" ;
+   			  unit="%WT_AND_PPMWT" ;
+   		   break;
+   		   case 'EMPA':
+   			  nature="ELECTRONIC_MICROPROBE" ;
+   			  unit="%WT" ;
+   		   break;
+   		   case 'LAICPMS':
+   			  nature="LA-ICP-MS" ;
+   			  unit="PPMWT" ;
+   		   break;
+   		   case 'OGC':
+   			  nature="ORGANIC_GEOCHEMISTRY" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'SEM':
+   			  nature="SCANNING ELECTRON MICROSCOPE" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'SAM':
+   			  nature="SCANNING_AUGER_MICROSCOPE" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'STEM':
+   			  nature="TRANSMISSION_ELECTRON_MICROSCOPE" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'MXRF':
+   			  nature="MICRO_XRF" ;
+   			  unit="None" ;
+   		   break; 
+   		   case 'PXRF':
+   			  nature="PORTABLE_XRF" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'LIBS':
+   			  nature="LIBS" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'XRD':
+   			  nature="XRD BULK SAMPLE" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'CL-XRD':
+   			  nature="XRD CLAY" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'CL-CRIS':
+   			  nature="CLAY CRYSTALLOGRAPHY" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'IR':
+   			  nature="INFRA_RED_SPECTROSCOPY" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'RAMAN':
+   			  nature="RAMAN SPECTROSCOPY" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'EXAFS':
+   			  nature="EXAFS" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'XANES':
+   			  nature="XANES" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'MOSS':
+   			  nature="MÖSSBAUER_SPECTROSCOPY" ;
+   			  unit="None" ;
+   		   break;
+   		      case 'XPS':
+   			  nature="X_RAY_PHOTOELECTRON_SPECTROSCOPY" ;
+   			  unit="None" ;
+   		   break;
+		   case 'SC':
+   			  nature="SCINTILLOMETRY" ;
+   			  unit="None" ;
+   		   break;
+
+		   case 'GS':
+   			  nature="GAMMA_SPECTROMETRY" ;
+   			  unit="None" ;
+   		   break;
+
+		   case 'SIMS':
+   			  nature="SIMS" ;
+   			  unit="None" ;
+   		   break;
+
+		   case 'NSIMS':
+   			  nature="NANOSIMS" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'ISOT-C':
+   			  nature="ISOTOPY C" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'ISOT-H':
+   			  nature="ISOTOPY H" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'ISOT-O':
+   			  nature="ISOTOPY O" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'ISOT-N':
+   			  nature="ISOTOPY N" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'ISOT-S':
+   			  nature="ISOTOPY S" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'ISOT-UPB':
+   			  nature="ISOTOPY U-PB" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'ISOT-LUHF':
+   			  nature="ISOTOPY LU-HF" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'ISOT-REOS':
+   			  nature="ISOTOPY RE-OS" ;
+   			  unit="None" ;
+   		   break;
+
+
+
+		 
+
+
+
+
+
+	   			 
    		}
    
    		{%endif%}
@@ -206,17 +921,289 @@
    
    		{%if collection_name == 'gitology'%}
    		switch (value) {
-   		   case 'EA':
-   			  nature="EA" ;
-   			  unit="Elemental analysis" ;
-   		   break;				 
+   		 case 'PETPHY':
+	   			  nature="PETROPHYSICS" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'XRT':
+	   			  nature="X_RAY_TOMOGRAPHY" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'SS':
+	   			  nature="SPECIFIC_SURFACE_AREA" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'GRANUL':
+	   			  nature="GRANULOMETRY" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'DENS':
+	   			  nature="DENSITY" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'POR':
+	   			  nature="POROSITY" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'POR-HE':
+	   			  nature="HELIUM POROSITY" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'POR-HG':
+	   			  nature="MERCURY POROSITY" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'POR-TW':
+	   			  nature="WATER POROSITY (TRIPLE WEIGHT)" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'PERM-N2':
+	   			  nature="NITROGEN PERMEABILITY" ;
+	   			  unit="None" ;
+	   		break;
+	   		case 'PERM-F':
+	   			  nature="FIELD PERMEABILITY" ;
+	   			  unit="None" ;
+	   		break;
+
+	   		 case 'AMS':
+   			  nature="Anisotropy of Magnetic Susceptibility without ferrofluid" ;
+   			  unit="SI" ;
+   		   break;
+   		   case 'TCOND-D':
+   			  nature="Thermal Conductivity dry" ;
+   			  unit="W/m/K" ;
+   		   break;
+   		   case 'TDIF-D':
+   			  nature="Thermal Diffusivity dry" ;
+   			  unit="mm2/s" ;
+   		   break;
+   		   case 'P-WAVE-D':
+   			  nature="P-wave Velocity dry" ;
+   			  unit="m/s" ;
+   		   break;
+   		   case 'S-WAVE-D':
+   			  nature="S-wave Velocity dry" ;
+   			  unit="m/s" ;
+   		   break;
+   		   case 'GD':
+   			  nature="Grain Density";
+   			  unit="g/cm3" ;
+   		   break;
+   		   case 'POR-TW':
+   			  nature="WATER POROSITY (TRIPLE WEIGHT)" ;
+   			  unit="%" ;
+   		   break;
+   		   case 'Porosity-He':
+   			  nature="HELIUM POROSITY" ;
+   			  unit="%" ;
+   		   break;
+   		   case 'Perm-Ni':
+   			  nature="Permeability Nitrogen" ;
+   			  unit="m2" ;
+   		   break;
+   		   case 'AMS-FERRO':
+   			  nature="Anisotropty of Magnetic Susceptibility with ferrofluid saturation" ;
+   			  unit="SI" ;
+   		   break;
+   		   case 'Porosity-Hg':
+   			  nature="Mercury Porosity" ;
+   			  unit="%" ;
+   		   break;
+   		   case 'GD-DENS-POWDER':
+   			  nature="Grain Density with powder porphyriser" ;
+   			  unit="g/cm3" ;
+   		   break;
+   		   case 'S-WAVE-W':
+   			  nature="S-wave Velocity wet" ;
+   			  unit="m/s" ;
+   		   break;
+   		   case 'SHC':
+   			  nature="Specific Heat Capacity" ;
+   			  unit="kJ/kg/K" ;
+   		   break;
+   		   case 'TDIF-W':
+   			  nature="Thermal Diffusivity wet" ;
+   			  unit="mm2/s" ;
+   		   break;
+   		   case 'TCOND-W':
+   			  nature="Thermal Conductivity wet" ;
+   			  unit="W/m/K" ;
+   		   break;
+   		   case 'Perm-F':
+   			  nature="Field Permeameter" ;
+   			  unit="m2" ;
+   		   break;
+   		   case 'P-WAVE-W':
+   			  nature="P-wave Velocity wet" ;
+   			  unit="m/s" ;
+   		   break;
+   		     case 'MS':
+   			  nature="Magnetic susceptibility" ;
+   			  unit="SI" ;
+   		   break;
+   		    case 'E-RES':
+   			  nature="Electric resistivity" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'NMR':
+   			  nature="NMR-porosity" ;
+   			  unit="None" ;
+   		   break;
+
+   		   case 'BGC':
+   			  nature="BULK_GEOCHEM" ;
+   			  unit="%WT_AND_PPMWT" ;
+   		   break;
+   		   case 'EMPA':
+   			  nature="ELECTRONIC_MICROPROBE" ;
+   			  unit="%WT" ;
+   		   break;
+   		   case 'LAICPMS':
+   			  nature="LA-ICP-MS" ;
+   			  unit="PPMWT" ;
+   		   break;
+   		   case 'OGC':
+   			  nature="ORGANIC_GEOCHEMISTRY" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'SEM':
+   			  nature="SCANNING ELECTRON MICROSCOPE" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'SAM':
+   			  nature="SCANNING_AUGER_MICROSCOPE" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'STEM':
+   			  nature="TRANSMISSION_ELECTRON_MICROSCOPE" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'MXRF':
+   			  nature="MICRO_XRF" ;
+   			  unit="None" ;
+   		   break; 
+   		   case 'PXRF':
+   			  nature="PORTABLE_XRF" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'LIBS':
+   			  nature="LIBS" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'XRD':
+   			  nature="XRD BULK SAMPLE" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'CL-XRD':
+   			  nature="XRD CLAY" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'CL-CRIS':
+   			  nature="CLAY CRYSTALLOGRAPHY" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'IR':
+   			  nature="INFRA_RED_SPECTROSCOPY" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'RAMAN':
+   			  nature="RAMAN SPECTROSCOPY" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'EXAFS':
+   			  nature="EXAFS" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'XANES':
+   			  nature="XANES" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'MOSS':
+   			  nature="MÖSSBAUER_SPECTROSCOPY" ;
+   			  unit="None" ;
+   		   break;
+   		      case 'XPS':
+   			  nature="X_RAY_PHOTOELECTRON_SPECTROSCOPY" ;
+   			  unit="None" ;
+   		   break;
+		   case 'SC':
+   			  nature="SCINTILLOMETRY" ;
+   			  unit="None" ;
+   		   break;
+
+		   case 'GS':
+   			  nature="GAMMA_SPECTROMETRY" ;
+   			  unit="None" ;
+   		   break;
+
+		   case 'SIMS':
+   			  nature="SIMS" ;
+   			  unit="None" ;
+   		   break;
+
+		   case 'NSIMS':
+   			  nature="NANOSIMS" ;
+   			  unit="None" ;
+   		   break;
+   		    case 'ISOT-C':
+   			  nature="ISOTOPY C" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'ISOT-H':
+   			  nature="ISOTOPY H" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'ISOT-O':
+   			  nature="ISOTOPY O" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'ISOT-N':
+   			  nature="ISOTOPY N" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'ISOT-S':
+   			  nature="ISOTOPY S" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'ISOT-UPB':
+   			  nature="ISOTOPY U-PB" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'ISOT-LUHF':
+   			  nature="ISOTOPY LU-HF" ;
+   			  unit="None" ;
+   		   break;
+   		   case 'ISOT-REOS':
+   			  nature="ISOTOPY RE-OS" ;
+   			  unit="None" ;
+   		   break;
+
+
+
+		 
+
+
+
+
+
+	   			 
    		}
    
    		{%endif%}
    
    
    		$( "input[name='measurements[].nature']" ).val(nature);
+   		if(unit!='None'){
    		$( "input[name='measurements[].unit']" ).val(unit);
+		$( "input[name='measurements[].unit']" ).prop("type","hidden");
+   		}
+   		else{
+   			console.log('{{measurement_unit}}')
+   			$( "input[name='measurements[].unit']" ).val('{{measurement_unit}}');
+   			$( "input[name='measurements[].unit']" ).prop("type","text");
+   			$( "input[name='measurements[].unit']" ).prop("placeholder","Specify a unit");
+   		}
    	}
      
    
@@ -551,6 +1538,7 @@
                        reader.onload = function(event) {
                            var csv = event.target.result;
                            console.log(csv)
+                           csv=csv.replace(/;/g, ',');
                            var data = $.csv.toArrays(csv);
                            if (data.length == 0) {
                                alert('Your CSV file is empty!')
