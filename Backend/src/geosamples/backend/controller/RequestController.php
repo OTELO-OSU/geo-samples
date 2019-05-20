@@ -56,11 +56,11 @@ class RequestController
         foreach ($response['hits']['hits'] as $key => $value) {
             if ($value['_source']['INTRO']['ACCESS_RIGHT']=='Awaiting') {
 
-             $array[]=$value['_id'];
-         }
-     }
-     return $array;
- }
+               $array[]=$value['_id'];
+           }
+       }
+       return $array;
+   }
 
 
     /**
@@ -120,23 +120,24 @@ class RequestController
 
             $current = $value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE'];
 
-           
+            
 
             if (!$return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE'][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]])
             {
                 $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_DATE'] = $value['_source']['INTRO']['SAMPLING_DATE'];
-               
+                
                 if (($_SESSION['mail'] && in_array($value['_type'], $_SESSION['projects_access_right_name'])) or ($_SESSION['admin']==1) ) {
-                $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SUPPLEMENTARY_FIELDS'] = $value['_source']['INTRO']['SUPPLEMENTARY_FIELDS'];
+                    $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SUPPLEMENTARY_FIELDS'] = $value['_source']['INTRO']['SUPPLEMENTARY_FIELDS'];
                 }else{
                     $supplementary['CORE_DETAILS']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'];
                     $supplementary['BLOCK']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['BLOCK'];
+                     $supplementary['STATION']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['STATION'];
                     $supplementary['SAMPLE_NAME']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME'];
                     //$supplementary['DESCRIPTION']=$value['_source']['INTRO']['DATA_DESCRIPTION'];
                     $supplementary['REFERENT']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['REFERENT'];
                     $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SUPPLEMENTARY_FIELDS'] = $supplementary;
                 }
-         
+                
 
                 $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['TITLE'] = $value['_source']['INTRO']['TITLE'];
                 $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['DATA_DESCRIPTION'] = $value['_source']['INTRO']['DATA_DESCRIPTION'];
@@ -148,25 +149,25 @@ class RequestController
 
                 foreach ($value['_source']['DATA']['FILES'] as $key => $file)
                 {
-                     if (($_SESSION['mail'] && in_array($value['_type'], $_SESSION['projects_access_right_name'])) or ($_SESSION['admin']==1) ) {
-                        if (exif_imagetype($file['ORIGINAL_DATA_URL']))
-                        {
-                            $return[$current][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['PICTURES'][$key] = $file;
-                        }
+                   if (($_SESSION['mail'] && in_array($value['_type'], $_SESSION['projects_access_right_name'])) or ($_SESSION['admin']==1) ) {
+                    if (exif_imagetype($file['ORIGINAL_DATA_URL']))
+                    {
+                        $return[$current][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['PICTURES'][$key] = $file;
                     }
                 }
             }
+        }
             //if (($_SESSION['mail'] && in_array($value['_type'], $_SESSION['projects_access_right_name'])) or ($_SESSION['admin']==1) ) {
-                $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['MEASUREMENT'][] = $value['_source']['INTRO']['MEASUREMENT'];
+        $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['MEASUREMENT'][] = $value['_source']['INTRO']['MEASUREMENT'];
             //}
 
-        }
+    }
         //var_dump($return);
         //unset($return[$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']['SUPPLEMENTARY_FIELDS']);
-        $responses = $return;
-        $responses = json_encode($responses);
-        return $responses;
-    }
+    $responses = $return;
+    $responses = json_encode($responses);
+    return $responses;
+}
 
     /**
      *  Methode de requetes vers elasticsearch
@@ -186,16 +187,16 @@ class RequestController
         {
             $host_litho = 'INTRO.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH:"' . urlencode($sort['lithology']) . '"%20AND%20';
         }
-       if ($sort['lithology3'])
+        if ($sort['lithology3'])
         {
-           $lithology = 'INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY_3:"' . urlencode($sort['lithology3']) . '"%20AND%20';
-       }
-       if ($sort['host_litho'])
-    {
+         $lithology = 'INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY_3:"' . urlencode($sort['lithology3']) . '"%20AND%20';
+     }
+     if ($sort['host_litho'])
+     {
         $lithology = 'INTRO.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH:"' . urlencode($sort['host_litho']) . '"%20AND%20';
     }
-       if ($sort['mindate'] and $sort['maxdate'])
-       {
+    if ($sort['mindate'] and $sort['maxdate'])
+    {
         $date = 'INTRO.SAMPLING_DATE:[' . $sort['mindate'] . '%20TO%20' . $sort['maxdate'] . ']%20AND%20';
     }
     if ($sort['mesure'])
@@ -238,11 +239,11 @@ class RequestController
     echo "<div class='' ui grid container'  style='overflow-x:auto'><table style='width:700px; height:500px;' class='ui compact unstackable table'></div>";
     foreach ($response as $key => $value)
     {
-         if ($value['_source']['INTRO']['ACCESS_RIGHT']!='Awaiting' && !is_null($value['_source']['DATA']['FILES'])) {
-            if (strtoupper($sort['mesure']) == strtoupper($value['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION']))
-            {
-                if ($value['_source']['DATA']['FILES'][0]['TYPE_DATA']=='Data') {
-                    
+       if ($value['_source']['INTRO']['ACCESS_RIGHT']!='Awaiting' && !is_null($value['_source']['DATA']['FILES'])) {
+        if (strtoupper($sort['mesure']) == strtoupper($value['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION']))
+        {
+            if ($value['_source']['DATA']['FILES'][0]['TYPE_DATA']=='Data') {
+                
                 $file = $value['_source']['DATA']['FILES'][0]['ORIGINAL_DATA_URL'];
                 $folder = explode('_', strtoupper($value['_source']['DATA']['FILES'][0]['DATA_URL']));
                 $name = $value['_source']['DATA']['FILES'][0]['DATA_URL'];
@@ -254,30 +255,30 @@ class RequestController
                 }
                 $csv = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
                 $finalcsv[] = $csv;
-                }
             }
         }
     }
-    foreach ($finalcsv as $key => $value)
+}
+foreach ($finalcsv as $key => $value)
+{
+    foreach ($value as $key => $value)
     {
-        foreach ($value as $key => $value)
-        {
-            $finalcsvuniq[] = $value;
-        }
+        $finalcsvuniq[] = $value;
     }
-    $finalcsvuniq = array_unique($finalcsvuniq);
-    foreach ($finalcsvuniq as $key => $value)
+}
+$finalcsvuniq = array_unique($finalcsvuniq);
+foreach ($finalcsvuniq as $key => $value)
+{
+    $value = str_getcsv($value);
+    echo "<tr>";
+    foreach ($value as $cell)
     {
-        $value = str_getcsv($value);
-        echo "<tr>";
-        foreach ($value as $cell)
-        {
-            echo "<td>" . htmlspecialchars($cell) . "</td>";
-        }
-        echo "</tr>\n";
+        echo "<td>" . htmlspecialchars($cell) . "</td>";
+    }
+    echo "</tr>\n";
 
-    }
-    echo "\n</table></body></html>";
+}
+echo "\n</table></body></html>";
 
 }
 
@@ -292,9 +293,9 @@ function Download_data_with_sort($sort)
    }*/
     if ($sort['lithology'])  // HOST LITOHLOGY SCANDIUM
     {
-            $host_litho = 'INTRO.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH:"' . urlencode($sort['lithology']) . '"%20AND%20';
+        $host_litho = 'INTRO.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH:"' . urlencode($sort['lithology']) . '"%20AND%20';
     }
-   if ($sort['lithology3'])
+    if ($sort['lithology3'])
     {
         $lithology3 = 'INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY_3:"' . urlencode($sort['lithology3']) . '"%20AND%20';
     }
@@ -302,41 +303,41 @@ function Download_data_with_sort($sort)
     {
         $lithology = 'INTRO.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH:"' . urlencode($sort['host_litho']) . '"%20AND%20';
     }
-   if ($sort['mindate'] and $sort['maxdate'])
-   {
-    $date = 'INTRO.SAMPLING_DATE:[' . $sort['mindate'] . '%20TO%20' . $sort['maxdate'] . ']%20AND%20';
-}
-if ($sort['mesure'])
-{
-    $mesure = 'INTRO.MEASUREMENT.ABBREVIATION:"' . urlencode($sort['mesure']) . '"%20AND%20';
-}
-$config = self::ConfigFile();
-$url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology . $mesure . $date . "type=" . $config['COLLECTION_NAME'] ."&size=10000";
+    if ($sort['mindate'] and $sort['maxdate'])
+    {
+        $date = 'INTRO.SAMPLING_DATE:[' . $sort['mindate'] . '%20TO%20' . $sort['maxdate'] . ']%20AND%20';
+    }
+    if ($sort['mesure'])
+    {
+        $mesure = 'INTRO.MEASUREMENT.ABBREVIATION:"' . urlencode($sort['mesure']) . '"%20AND%20';
+    }
+    $config = self::ConfigFile();
+    $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology . $mesure . $date . "type=" . $config['COLLECTION_NAME'] ."&size=10000";
 
-$postcontent = '{ "_source": { 
-    "includes": [ "DATA","INTRO.MEASUREMENT.ABBREVIATION" ] 
-}}';
-$curlopt = array(
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_ENCODING => "",
-    CURLOPT_PORT => $config['ESPORT'],
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 30,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-    CURLOPT_HTTPHEADER     => "Content-type: application/json",
-    CURLOPT_CUSTOMREQUEST => "POST",
-    CURLOPT_POSTFIELDS => $postcontent
-);
-$response = self::Curlrequest($url, $curlopt);
-$response = json_decode($response, true);
-$response = $response['hits']['hits'];
-$responses = array();
-$finalcsv = array();
-$finalcsvuniq = array();
+    $postcontent = '{ "_source": { 
+        "includes": [ "DATA","INTRO.MEASUREMENT.ABBREVIATION" ] 
+    }}';
+    $curlopt = array(
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_PORT => $config['ESPORT'],
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_HTTPHEADER     => "Content-type: application/json",
+        CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_POSTFIELDS => $postcontent
+    );
+    $response = self::Curlrequest($url, $curlopt);
+    $response = json_decode($response, true);
+    $response = $response['hits']['hits'];
+    $responses = array();
+    $finalcsv = array();
+    $finalcsvuniq = array();
 
-foreach ($response as $key => $value)
-{
-     if ($value['_source']['INTRO']['ACCESS_RIGHT']!='Awaiting' && !is_null($value['_source']['DATA'])) {
+    foreach ($response as $key => $value)
+    {
+       if ($value['_source']['INTRO']['ACCESS_RIGHT']!='Awaiting' && !is_null($value['_source']['DATA'])) {
         if (strtoupper($sort['mesure']) == strtoupper($value['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION']) or $sort['mesure'] == null)
         {
 
@@ -432,106 +433,107 @@ echo $generatedfile;
         foreach ($response as $key => $value)
         {
             if ($value['_source']['INTRO']['ACCESS_RIGHT']!='Awaiting') {
-            $longitude = (float)$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE'];
-            $latitude = (float)$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'];
-            if ((strtoupper($sort['mesure']) == strtoupper($value['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION']) or $sort['mesure'] == null) and (($latitude >= $sort['lat']['lat1']) && $latitude < $sort['lat']['lat2']) && ($longitude >= $sort['lon']['lon2'] && $longitude < $sort['lon']['lon1']) or $sort['lat'] == null or $sort['lon'] == null)
-            {
-                if (!$return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']])
+                $longitude = (float)$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE'];
+                $latitude = (float)$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'];
+                if ((strtoupper($sort['mesure']) == strtoupper($value['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION']) or $sort['mesure'] == null) and (($latitude >= $sort['lat']['lat1']) && $latitude < $sort['lat']['lat2']) && ($longitude >= $sort['lon']['lon2'] && $longitude < $sort['lon']['lon1']) or $sort['lat'] == null or $sort['lon'] == null)
                 {
-                    $current = $value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE'];
-
-                    $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_DATE'] = $value['_source']['INTRO']['SAMPLING_DATE'];
-           if (($_SESSION['mail'] && in_array($value['_type'], $_SESSION['projects_access_right_name'])) or ($_SESSION['admin']==1) ) {
-                $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SUPPLEMENTARY_FIELDS'] = $value['_source']['INTRO']['SUPPLEMENTARY_FIELDS'];
-                }else{
-                    $supplementary['CORE_DETAILS']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'];
-                    $supplementary['BLOCK']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['BLOCK'];
-                    $supplementary['SAMPLE_NAME']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME'];
-                    //$supplementary['DESCRIPTION']=$value['_source']['INTRO']['DATA_DESCRIPTION'];
-                    $supplementary['REFERENT']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['REFERENT'];
-                    $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SUPPLEMENTARY_FIELDS'] = $supplementary;
-                }
-                    $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['TITLE'] = $value['_source']['INTRO']['TITLE'];
-                    $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['DATA_DESCRIPTION'] = $value['_source']['INTRO']['DATA_DESCRIPTION'];
-                    $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['INSTITUTION'] = $value['_source']['INTRO']['INSTITUTION'];
-
-                    $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_POINT'] = $value['_source']['INTRO']['SAMPLING_POINT'];
-                    $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']]['COORDINATES']['LAT'] = $value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'];
-                    $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']]['COORDINATES']['LONG'] = $value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE'];
-
-                    foreach ($value['_source']['DATA']['FILES'] as $key => $file)
+                    if (!$return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']])
                     {
+                        $current = $value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE'];
+
+                        $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_DATE'] = $value['_source']['INTRO']['SAMPLING_DATE'];
                         if (($_SESSION['mail'] && in_array($value['_type'], $_SESSION['projects_access_right_name'])) or ($_SESSION['admin']==1) ) {
-                            if (exif_imagetype($file['ORIGINAL_DATA_URL']))
-                            {
-                                $return[$current][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['PICTURES'][$key] = $file;
+                            $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SUPPLEMENTARY_FIELDS'] = $value['_source']['INTRO']['SUPPLEMENTARY_FIELDS'];
+                        }else{
+                            $supplementary['CORE_DETAILS']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'];
+                            $supplementary['BLOCK']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['BLOCK'];
+                            $supplementary['STATION']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['STATION'];
+                            $supplementary['SAMPLE_NAME']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME'];
+                    //$supplementary['DESCRIPTION']=$value['_source']['INTRO']['DATA_DESCRIPTION'];
+                            $supplementary['REFERENT']=$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['REFERENT'];
+                            $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SUPPLEMENTARY_FIELDS'] = $supplementary;
+                        }
+                        $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['TITLE'] = $value['_source']['INTRO']['TITLE'];
+                        $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['DATA_DESCRIPTION'] = $value['_source']['INTRO']['DATA_DESCRIPTION'];
+                        $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['INSTITUTION'] = $value['_source']['INTRO']['INSTITUTION'];
+
+                        $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['SAMPLING_POINT'] = $value['_source']['INTRO']['SAMPLING_POINT'];
+                        $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']]['COORDINATES']['LAT'] = $value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'];
+                        $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']]['COORDINATES']['LONG'] = $value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE'];
+
+                        foreach ($value['_source']['DATA']['FILES'] as $key => $file)
+                        {
+                            if (($_SESSION['mail'] && in_array($value['_type'], $_SESSION['projects_access_right_name'])) or ($_SESSION['admin']==1) ) {
+                                if (exif_imagetype($file['ORIGINAL_DATA_URL']))
+                                {
+                                    $return[$current][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['PICTURES'][$key] = $file;
+                                }
                             }
                         }
+
                     }
-
-                }
                 //if (($_SESSION['mail'] && in_array($value['_type'], $_SESSION['projects_access_right_name'])) or ($_SESSION['admin']==1) ) {
-                 $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['MEASUREMENT'][] = $value['_source']['INTRO']['MEASUREMENT'];
+                    $return[$value['_source']['INTRO']['SAMPLING_POINT'][0]['LATITUDE'].'/'.$value['_source']['INTRO']['SAMPLING_POINT'][0]['LONGITUDE']][$value['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME']]['MEASUREMENT'][] = $value['_source']['INTRO']['MEASUREMENT'];
             // }
-             }
-             $responses = $return;
-         }
-     }
-     $responses = json_encode($responses);
-     return $responses;
- }
-
-
- function Request_poi_data_awaiting($id, $name)
-{
-    $explode = explode('_', $id, 2);
-    $config = self::ConfigFile();
-    $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . '/_search?q=(INTRO.MEASUREMENT.ABBREVIATION:"' . $explode[1] . '"%20AND%20INTRO.SUPPLEMENTARY_FIELDS.SAMPLE_NAME:"' . $explode[0] . '")&type=' . $config['COLLECTION_NAME'].'_sandbox' ;
-    $curlopt = array(
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => "",
-        CURLOPT_PORT => $config['ESPORT'],
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 30,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_HTTPHEADER     => "Content-type: application/json",
-        CURLOPT_CUSTOMREQUEST => "GET"
-    );
-    $response = self::Curlrequest($url, $curlopt);
-    $response = json_decode($response, true);
-
-    foreach ($response['hits']['hits'][0]['_source']['DATA']['FILES'] as $key => $value)
-    {
-
-        if ($value['DATA_URL'] == $name)
-        {
-            $img = $value['ORIGINAL_DATA_URL'];
+                }
+                $responses = $return;
+            }
         }
-
+        $responses = json_encode($responses);
+        return $responses;
     }
-    return $img;
-}
+
+
+    function Request_poi_data_awaiting($id, $name)
+    {
+        $explode = explode('_', $id, 2);
+        $config = self::ConfigFile();
+        $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . '/_search?q=(INTRO.MEASUREMENT.ABBREVIATION:"' . $explode[1] . '"%20AND%20INTRO.SUPPLEMENTARY_FIELDS.SAMPLE_NAME:"' . $explode[0] . '")&type=' . $config['COLLECTION_NAME'].'_sandbox' ;
+        $curlopt = array(
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_PORT => $config['ESPORT'],
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_HTTPHEADER     => "Content-type: application/json",
+            CURLOPT_CUSTOMREQUEST => "GET"
+        );
+        $response = self::Curlrequest($url, $curlopt);
+        $response = json_decode($response, true);
+
+        foreach ($response['hits']['hits'][0]['_source']['DATA']['FILES'] as $key => $value)
+        {
+
+            if ($value['DATA_URL'] == $name)
+            {
+                $img = $value['ORIGINAL_DATA_URL'];
+            }
+
+        }
+        return $img;
+    }
 
 
 
- function Request_poi_data($id)
- {
-    $explode = explode('_', $id, 3);
-    $id=$explode[0].'_'.$explode[1];
-    $config = self::ConfigFile();
-    $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . '/_search?q=(INTRO.MEASUREMENT.ABBREVIATION:"' . $explode[1] . '"%20AND%20INTRO.SUPPLEMENTARY_FIELDS.SAMPLE_NAME:"' . $explode[0] . '")&type=' . $config['COLLECTION_NAME'] ;
-    $curlopt = array(
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => "",
-        CURLOPT_PORT => $config['ESPORT'],
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 30,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_HTTPHEADER     => "Content-type: application/json",
-        CURLOPT_CUSTOMREQUEST => "GET"
-    );
-    $response = self::Curlrequest($url, $curlopt);
-    $response = json_decode($response, true);
+    function Request_poi_data($id)
+    {
+        $explode = explode('_', $id, 3);
+        $id=$explode[0].'_'.$explode[1];
+        $config = self::ConfigFile();
+        $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . '/_search?q=(INTRO.MEASUREMENT.ABBREVIATION:"' . $explode[1] . '"%20AND%20INTRO.SUPPLEMENTARY_FIELDS.SAMPLE_NAME:"' . $explode[0] . '")&type=' . $config['COLLECTION_NAME'] ;
+        $curlopt = array(
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_PORT => $config['ESPORT'],
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_HTTPHEADER     => "Content-type: application/json",
+            CURLOPT_CUSTOMREQUEST => "GET"
+        );
+        $response = self::Curlrequest($url, $curlopt);
+        $response = json_decode($response, true);
     //if (($_SESSION['mail'] && in_array($response['hits']['hits'][0]['_type'], $_SESSION['projects_access_right_name'])) or ($_SESSION['admin']==1) ) {
         $identifier = $response['hits']['hits'][0]['_source']['INTRO']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME'] . '_' . $response['hits']['hits'][0]['_source']['INTRO']['MEASUREMENT'][0]['ABBREVIATION'];
 
@@ -545,63 +547,63 @@ echo $generatedfile;
     }
 //}
 
-function Request_poi_raw_data($id)
-{
-    $config = self::ConfigFile();
-    $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . '/_search?q=INTRO.MEASUREMENT.ABBREVIATION:"' . $id .'"&type=' . $config['COLLECTION_NAME'] ;
-    $curlopt = array(
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => "",
-        CURLOPT_PORT => $config['ESPORT'],
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 30,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_HTTPHEADER     => "Content-type: application/json",
-        CURLOPT_CUSTOMREQUEST => "GET"
-    );
-    $response = self::Curlrequest($url, $curlopt);
-    $response = json_decode($response, true);
-
-    if (count($response['hits']['hits'])==1) {
-        $response = json_encode($response['hits']['hits'][0]['_source']['DATA']);
-        return $response;
-    }
-
-}
-
-
-function Request_poi_img($id, $picturename)
-{
-    $explode = explode('_', $id, 2);
-    $config = self::ConfigFile();
-    $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . '/_search?q=(INTRO.MEASUREMENT.ABBREVIATION:"' . $explode[1] . '"%20AND%20INTRO.SUPPLEMENTARY_FIELDS.SAMPLE_NAME:"' . $explode[0] . '")&type=' . $config['COLLECTION_NAME'] ;
-    $curlopt = array(
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => "",
-        CURLOPT_PORT => $config['ESPORT'],
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 30,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_HTTPHEADER     => "Content-type: application/json",
-        CURLOPT_CUSTOMREQUEST => "GET"
-    );
-    $response = self::Curlrequest($url, $curlopt);
-    $response = json_decode($response, true);
-
-    foreach ($response['hits']['hits'] as $key => $value)
+    function Request_poi_raw_data($id)
     {
-        foreach ($value['_source']['DATA']['FILES'] as $key => $value) {
-        if ($value['DATA_URL'] == $picturename)
-        {
-            $img = $value['ORIGINAL_DATA_URL'];
-        }
-            
-        }
+        $config = self::ConfigFile();
+        $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . '/_search?q=INTRO.MEASUREMENT.ABBREVIATION:"' . $id .'"&type=' . $config['COLLECTION_NAME'] ;
+        $curlopt = array(
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_PORT => $config['ESPORT'],
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_HTTPHEADER     => "Content-type: application/json",
+            CURLOPT_CUSTOMREQUEST => "GET"
+        );
+        $response = self::Curlrequest($url, $curlopt);
+        $response = json_decode($response, true);
 
+        if (count($response['hits']['hits'])==1) {
+            $response = json_encode($response['hits']['hits'][0]['_source']['DATA']);
+            return $response;
+        }
 
     }
-   return $img;
-}
+
+
+    function Request_poi_img($id, $picturename)
+    {
+        $explode = explode('_', $id, 2);
+        $config = self::ConfigFile();
+        $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . '/_search?q=(INTRO.MEASUREMENT.ABBREVIATION:"' . $explode[1] . '"%20AND%20INTRO.SUPPLEMENTARY_FIELDS.SAMPLE_NAME:"' . $explode[0] . '")&type=' . $config['COLLECTION_NAME'] ;
+        $curlopt = array(
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_PORT => $config['ESPORT'],
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_HTTPHEADER     => "Content-type: application/json",
+            CURLOPT_CUSTOMREQUEST => "GET"
+        );
+        $response = self::Curlrequest($url, $curlopt);
+        $response = json_decode($response, true);
+
+        foreach ($response['hits']['hits'] as $key => $value)
+        {
+            foreach ($value['_source']['DATA']['FILES'] as $key => $value) {
+                if ($value['DATA_URL'] == $picturename)
+                {
+                    $img = $value['ORIGINAL_DATA_URL'];
+                }
+                
+            }
+
+
+        }
+        return $img;
+    }
 
     /**
      * Download a file
@@ -613,10 +615,10 @@ function Request_poi_img($id, $picturename)
         {
 
             if(@!is_array(getimagesize($filepath))){
-            header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-            header("Content-Disposition: attachment; filename=" . basename($filepath));
-            $readfile = file_get_contents($filepath);
-            print $readfile;
+                header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+                header("Content-Disposition: attachment; filename=" . basename($filepath));
+                $readfile = file_get_contents($filepath);
+                print $readfile;
             }
             else{
                 return false;
@@ -638,12 +640,12 @@ function Request_poi_img($id, $picturename)
         if (file_exists($filepath))
         {
             
-           
+         
             header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
             header("Content-Disposition: attachment; filename=" . basename($filepath));
             $readfile = file_get_contents($filepath);
             print $readfile;
-          
+            
         }
         if ($readfile == false)
         {
@@ -718,8 +720,8 @@ function Request_poi_img($id, $picturename)
         }
         if (file_exists($file))
         {
-           if(@!is_array(getimagesize($file))){
-               
+         if(@!is_array(getimagesize($file))){
+             
 
             $readfile = false;
             $file = fopen($file, "r");
@@ -767,50 +769,50 @@ function Request_poi_img($id, $picturename)
             }
             echo "</table>";
 
-            }
-            else
-        {
-            echo "<h1>Cannot preview file</h1> <p>Sorry, we are unfortunately not able to preview this file.<p>";
-            $readfile = false;
-            header('Content-Type:  text/html');
         }
-        }
-
         else
         {
             echo "<h1>Cannot preview file</h1> <p>Sorry, we are unfortunately not able to preview this file.<p>";
             $readfile = false;
             header('Content-Type:  text/html');
         }
-
-        if ($readfile == false)
-        {
-            return false;
-        }
-        else
-        {
-            return $mime;
-        }
-        exit;
-
     }
-     
 
-
-    function Post_Processing($POST,$route)
+    else
     {
+        echo "<h1>Cannot preview file</h1> <p>Sorry, we are unfortunately not able to preview this file.<p>";
+        $readfile = false;
+        header('Content-Type:  text/html');
+    }
 
-        $config = self::ConfigFile();
-        $rawdata=array();
-        $data=array();
-        $pictures=array();
-        $data_samples  = array();
-        $_POST['sample_name']=strtoupper($_POST['sample_name']);
+    if ($readfile == false)
+    {
+        return false;
+    }
+    else
+    {
+        return $mime;
+    }
+    exit;
 
-if ($_POST['original_sample_name']) {
-                                    if ($_POST['sample_name'].'_'.strtoupper($_POST['measurements'][1])!=$_POST['original_sample_name']) {
+}
+
+
+
+function Post_Processing($POST,$route)
+{
+
+    $config = self::ConfigFile();
+    $rawdata=array();
+    $data=array();
+    $pictures=array();
+    $data_samples  = array();
+    $_POST['sample_name']=strtoupper($_POST['sample_name']);
+
+    if ($_POST['original_sample_name']) {
+        if ($_POST['sample_name'].'_'.strtoupper($_POST['measurements'][1])!=$_POST['original_sample_name']) {
                                         //$sample_name=$_POST['sample_name'];
-                                        $original_sample_name=$_POST['sample_name'].'_'.$_POST['measurements'][1];
+            $original_sample_name=$_POST['sample_name'].'_'.$_POST['measurements'][1];
                                        /* if (strpos($_POST['original_sample_name'], '_RAW') !== false) {
                                            $original_sample_name=$_POST['sample_name'].'_'.$_POST['measurements'][1].'_RAW';
                                        }*/
@@ -821,118 +823,118 @@ if ($_POST['original_sample_name']) {
 
                                 }
                             }
-        $UPLOAD_FOLDER    = $config["CSV_FOLDER"];
-     
-
-                    $SUPPLEMENTARY_FIELDS=array('HOST_LITHOLOGY_OR_PROTOLITH','LITHOLOGY1','LITHOLOGY2','LITHOLOGY3','ORETYPE1','ORETYPE2','ORETYPE3','TEXTURE1','TEXTURE2','TEXTURE3','SUBSTANCE','STORAGE_DETAILS','HOST_AGE','MAIN_EVENT_AGE','OTHER_EVENT_AGE','ALTERATION_DEGREE','SAMPLE_NAME','BLOCK','PULP','SAFETY_CONSTRAINTS','SAMPLE_LOCATION_FACILITY','ANTHROPOGENIC_MATERIAL');
-                    $error=null;
-
-                    $required = array(
-                        'title',
-                        'language',
-                        'sample_name',
-                        'keywords',
-                        'institution',
-                        'scientific_fields',
-                        'sampling_points',
-
-                    );
-
-                    foreach ($required as $field) {
-            //Verif des champs à traiter
-                        if (empty($_POST[$field]) or empty($_POST[$field][0]) or empty($_POST[$field][0][0])) {
-                            $fields[] = $field;
-                        }
-                    }
-                    if (count($fields) != 0) {
-        //Affichage des champs manquants
-                        $txt = null;
-                        foreach ($fields as $key => $value) {
-                            $txt .= "  " . $value;
-                        }
-                        $error = "Warning there are empty fields: " . $txt;
-                    }
-
-
-
-
-
-
-
-
-                    foreach ($POST as $key => $value) {
-
-                       switch ($key) {
-
-                        case "description":
-                            $arrKey[strtoupper('DATA_DESCRIPTION')] = htmlspecialchars($value, ENT_QUOTES);
-                            $arrcsv[strtoupper($key)] = htmlspecialchars($value, ENT_QUOTES);
-                        
-                        break;
-                        case "keywords":
-                        foreach ($value as $key2 => $value2) {
-                            $arrKey[strtoupper($key)][]['NAME'] = htmlspecialchars($value2, ENT_QUOTES);
-                            $arrcsv[strtoupper($key)][] = htmlspecialchars($value2, ENT_QUOTES);
-                        }
-                        break;
-                        case "core":
-                        $arrKey['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][]['CORE'] = $value;
-                        $csv['CORE_label'][]= '';
-                        $csv['CORE_label'][]= '';
-                        $csv['CORE'][] = 'CORE';
-                        $csv['CORE'][] = htmlspecialchars($value, ENT_QUOTES);
-
-                        break;
-                        case "core_depth":
-                        $arrKey['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][0]['DEPTH'] = htmlspecialchars($value, ENT_QUOTES);
-                        $csv['CORE_label'][]= 'DEPTH';
-                        $csv['CORE'][]= htmlspecialchars($value, ENT_QUOTES);
-
-
-                        break;
-                        case "core_azimut":
-                        $arrKey['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][0]['AZIMUT'] = htmlspecialchars($value, ENT_QUOTES);
-                        $csv['CORE_label'][]= 'AZIMUT';
-                        $csv['CORE'][]= htmlspecialchars($value, ENT_QUOTES);
-
-
-                        break;
-                        case "core_dip":
-                        $arrKey['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][0]['DIP'] = htmlspecialchars($value, ENT_QUOTES);
-                        $csv['CORE_label'][]= 'DIP';
-                        $csv['CORE'][]= htmlspecialchars($value, ENT_QUOTES);
-
-
-                        break;
-                        case "sampling_date":
-                        $arrKey[strtoupper($key)][] = htmlspecialchars($value, ENT_QUOTES);
-                        $arrcsv[strtoupper($key)][] = htmlspecialchars($value, ENT_QUOTES);
-
-                        break;
-
-                        case "measurements":
-                        $csv['Measurement_label'][]= '';
-                        $csv['MEASUREMENT'][]= 'MEASUREMENT';
-                        foreach ($value as $key2 => $value2) {
-                          if ($key2==0) {
-                             $name='NATURE';
-                             $csv['Measurement_label'][]= 'NATURE_OF_MEASUREMENT';
-                         }elseif($key2==1){
-                             $name='ABBREVIATION';
-                            $csv['Measurement_label'][]= 'ABBREVIATION';
-                         }
-                         elseif($key2==2){
-                            $name='UNIT';
-                            $csv['Measurement_label'][]= 'UNITS';
-                        }
-
-                        if ($value2=='Select abbreviation') {
-                               $error = 'Measurements must be completed';
+                            $UPLOAD_FOLDER    = $config["CSV_FOLDER"];
                             
-                        }
-                        $arrKey['MEASUREMENT'][0][$name] =htmlspecialchars($value2, ENT_QUOTES); 
 
-                        $csv['MEASUREMENT'][]= htmlspecialchars($value2, ENT_QUOTES);
+                            $SUPPLEMENTARY_FIELDS=array('HOST_LITHOLOGY_OR_PROTOLITH','LITHOLOGY1','LITHOLOGY2','LITHOLOGY3','ORETYPE1','ORETYPE2','ORETYPE3','TEXTURE1','TEXTURE2','TEXTURE3','SUBSTANCE','STORAGE_DETAILS','HOST_AGE','MAIN_EVENT_AGE','OTHER_EVENT_AGE','ALTERATION_DEGREE','SAMPLE_NAME','BLOCK','PULP','SAFETY_CONSTRAINTS','SAMPLE_LOCATION_FACILITY','ANTHROPOGENIC_MATERIAL');
+                            $error=null;
+
+                            $required = array(
+                                'title',
+                                'language',
+                                'sample_name',
+                                'keywords',
+                                'institution',
+                                'scientific_fields',
+                                'sampling_points',
+
+                            );
+
+                            foreach ($required as $field) {
+            //Verif des champs à traiter
+                                if (empty($_POST[$field]) or empty($_POST[$field][0]) or empty($_POST[$field][0][0])) {
+                                    $fields[] = $field;
+                                }
+                            }
+                            if (count($fields) != 0) {
+        //Affichage des champs manquants
+                                $txt = null;
+                                foreach ($fields as $key => $value) {
+                                    $txt .= "  " . $value;
+                                }
+                                $error = "Warning there are empty fields: " . $txt;
+                            }
+
+
+
+
+
+
+
+
+                            foreach ($POST as $key => $value) {
+
+                             switch ($key) {
+
+                                case "description":
+                                $arrKey[strtoupper('DATA_DESCRIPTION')] = htmlspecialchars($value, ENT_QUOTES);
+                                $arrcsv[strtoupper($key)] = htmlspecialchars($value, ENT_QUOTES);
+                                
+                                break;
+                                case "keywords":
+                                foreach ($value as $key2 => $value2) {
+                                    $arrKey[strtoupper($key)][]['NAME'] = htmlspecialchars($value2, ENT_QUOTES);
+                                    $arrcsv[strtoupper($key)][] = htmlspecialchars($value2, ENT_QUOTES);
+                                }
+                                break;
+                                case "core":
+                                $arrKey['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][]['CORE'] = $value;
+                                $csv['CORE_label'][]= '';
+                                $csv['CORE_label'][]= '';
+                                $csv['CORE'][] = 'CORE';
+                                $csv['CORE'][] = htmlspecialchars($value, ENT_QUOTES);
+
+                                break;
+                                case "core_depth":
+                                $arrKey['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][0]['DEPTH'] = htmlspecialchars($value, ENT_QUOTES);
+                                $csv['CORE_label'][]= 'DEPTH';
+                                $csv['CORE'][]= htmlspecialchars($value, ENT_QUOTES);
+
+
+                                break;
+                                case "core_azimut":
+                                $arrKey['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][0]['AZIMUT'] = htmlspecialchars($value, ENT_QUOTES);
+                                $csv['CORE_label'][]= 'AZIMUT';
+                                $csv['CORE'][]= htmlspecialchars($value, ENT_QUOTES);
+
+
+                                break;
+                                case "core_dip":
+                                $arrKey['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][0]['DIP'] = htmlspecialchars($value, ENT_QUOTES);
+                                $csv['CORE_label'][]= 'DIP';
+                                $csv['CORE'][]= htmlspecialchars($value, ENT_QUOTES);
+
+
+                                break;
+                                case "sampling_date":
+                                $arrKey[strtoupper($key)][] = htmlspecialchars($value, ENT_QUOTES);
+                                $arrcsv[strtoupper($key)][] = htmlspecialchars($value, ENT_QUOTES);
+
+                                break;
+
+                                case "measurements":
+                                $csv['Measurement_label'][]= '';
+                                $csv['MEASUREMENT'][]= 'MEASUREMENT';
+                                foreach ($value as $key2 => $value2) {
+                                  if ($key2==0) {
+                                   $name='NATURE';
+                                   $csv['Measurement_label'][]= 'NATURE_OF_MEASUREMENT';
+                               }elseif($key2==1){
+                                   $name='ABBREVIATION';
+                                   $csv['Measurement_label'][]= 'ABBREVIATION';
+                               }
+                               elseif($key2==2){
+                                $name='UNIT';
+                                $csv['Measurement_label'][]= 'UNITS';
+                            }
+
+                            if ($value2=='Select abbreviation') {
+                             $error = 'Measurements must be completed';
+                             
+                         }
+                         $arrKey['MEASUREMENT'][0][$name] =htmlspecialchars($value2, ENT_QUOTES); 
+
+                         $csv['MEASUREMENT'][]= htmlspecialchars($value2, ENT_QUOTES);
 
                                     /*$arrKey['MEASUREMENT'][$key2]['NATURE'] =$value2[0] ;
                                     $arrKey['MEASUREMENT'][$key2]['ABBREVIATION'] =$value2[1] ;
@@ -943,11 +945,11 @@ if ($_POST['original_sample_name']) {
                                 case "methodology":
                                 foreach ($value as $key2 => $value2) {
                                     if ($key2==0) {
-                                     $name='SAMPLING_METHOD';
-                                 }elseif($key2==1){
-                                     $name='CONDITIONNING';
-                                 }
-                                 elseif($key2==2){
+                                       $name='SAMPLING_METHOD';
+                                   }elseif($key2==1){
+                                       $name='CONDITIONNING';
+                                   }
+                                   elseif($key2==2){
                                     $name='SAMPLE_STORAGE';
                                 }
 
@@ -1012,19 +1014,19 @@ if ($_POST['original_sample_name']) {
                             $arrKey['SAMPLING_POINT'][0]['NAME'] =$value[0] ;
                             $csv['SAMPLING_POINT'][]= htmlspecialchars($value[0], ENT_QUOTES);
                             $arrKey['SAMPLING_POINT'][0]['COORDINATE_SYSTEM'] =$value[1] ;
-                              $csv['SAMPLING_POINT'][]= htmlspecialchars($value[1], ENT_QUOTES);
+                            $csv['SAMPLING_POINT'][]= htmlspecialchars($value[1], ENT_QUOTES);
                             $arrKey['SAMPLING_POINT'][0]['ABBREVIATION'] =$value[2] ;
-                              $csv['SAMPLING_POINT'][]= htmlspecialchars($value[2], ENT_QUOTES);                                    
+                            $csv['SAMPLING_POINT'][]= htmlspecialchars($value[2], ENT_QUOTES);                                    
                             $arrKey['SAMPLING_POINT'][0]['LONGITUDE'] =$value[3] ;
-                              $csv['SAMPLING_POINT'][]= htmlspecialchars($value[3], ENT_QUOTES);
+                            $csv['SAMPLING_POINT'][]= htmlspecialchars($value[3], ENT_QUOTES);
                             $arrKey['SAMPLING_POINT'][0]['LATITUDE'] =$value[4] ;
-                              $csv['SAMPLING_POINT'][]= htmlspecialchars($value[4], ENT_QUOTES);
+                            $csv['SAMPLING_POINT'][]= htmlspecialchars($value[4], ENT_QUOTES);
                             $arrKey['SAMPLING_POINT'][0]['ELEVATION'] =$value[5] ;
-                              $csv['SAMPLING_POINT'][]= htmlspecialchars($value[5], ENT_QUOTES);
+                            $csv['SAMPLING_POINT'][]= htmlspecialchars($value[5], ENT_QUOTES);
                             $arrKey['SAMPLING_POINT'][0]['SAMPLING'] =$value[6] ;
-                              $csv['SAMPLING_POINT'][]= htmlspecialchars($value[6], ENT_QUOTES);
+                            $csv['SAMPLING_POINT'][]= htmlspecialchars($value[6], ENT_QUOTES);
                             $arrKey['SAMPLING_POINT'][0]['DESCRIPTION'] =$value[7] ;
-                              $csv['SAMPLING_POINT'][]= htmlspecialchars($value[7], ENT_QUOTES);
+                            $csv['SAMPLING_POINT'][]= htmlspecialchars($value[7], ENT_QUOTES);
                               /*  foreach ($value as $key2 => $value2) {
 
 
@@ -1039,216 +1041,272 @@ if ($_POST['original_sample_name']) {
                               $sample_name=htmlspecialchars($value, ENT_QUOTES);
                               $arrcsv[strtoupper($key)] = htmlspecialchars($sample_name, ENT_QUOTES);
                               $sample_name_old=$sample_name;
-                               try {
-                                    if(empty($config['authSource']) && empty($config['username']) && empty($config['password'])) {
-                                        $this->db = new MongoDB\Driver\Manager("mongodb://" . $config['MDBHOST'] . ':' . $config['MDBPORT'], array('journal' => false));
-                                    } else {
-                                        $this->db= new MongoDB\Driver\Manager("mongodb://" . $config['MDBHOST'] . ':' . $config['MDBPORT'], array('journal' => false, 'authSource' => $config['authSource'], 'username' => $config['username'], 'password' => $config['password']));
-                                    }
-                                } catch (Exception $e) {
-                                    echo $e->getMessage();
-                                    $this->logger->error($e->getMessage());
+                              try {
+                                if(empty($config['authSource']) && empty($config['username']) && empty($config['password'])) {
+                                    $this->db = new MongoDB\Driver\Manager("mongodb://" . $config['MDBHOST'] . ':' . $config['MDBPORT'], array('journal' => false));
+                                } else {
+                                    $this->db= new MongoDB\Driver\Manager("mongodb://" . $config['MDBHOST'] . ':' . $config['MDBPORT'], array('journal' => false, 'authSource' => $config['authSource'], 'username' => $config['username'], 'password' => $config['password']));
                                 }
-                             try{
-                                            $bulk = new MongoDB\Driver\BulkWrite;
-                                            $filter=array();
-                                            $filter = ['_id' => strtoupper($sample_name.'_'.$_POST['measurements'][1])];
-
-
-                                            $query = new MongoDB\Driver\Query($filter);
-                                            $cursor = $this->db->executeQuery($config['dbname'].'.'.$config['COLLECTION_NAME'], $query);
-
-
-
-                                            foreach ($cursor as $document) {
-                                                if($document->_id== strtoupper($sample_name.'_'.$_POST['measurements'][1])){
-                                                  
-                                                    $error   = 'Sample name already in database';
-                                                  
-                                                }
-                                            }
-                                            
-                                        }
-                                        catch (MongoDB\Driver\Exception\BulkWriteException  $e) {
-                                           
-                                           $error   = 'Sample name already in database';
-                                          
-                                       }
-
-
-                              break;
-                              case "original_sample_name":
-                              break;
-                              case "csrf_value":
-                              break;
-                              case "csrf_name":
-                              break;
-                              case "file_already_uploaded":
-                              break;
-
-                              default:
-                              if (in_array(strtoupper($key), $SUPPLEMENTARY_FIELDS)) {  
-                                $key=strtoupper($key);
-                                if ($key=='LITHOLOGY1') {
-                                                $key='LITHOLOGY';
-                                            }
-                                            elseif ($key=='LITHOLOGY2') {
-                                                $key='LITHOLOGY_2';
-                                            } 
-                                            elseif ($key=='LITHOLOGY3') {
-                                                $key='LITHOLOGY_3';
-                                            }     
-                                            elseif ($key=='ORETYPE1') {
-                                                $key='ORE_TYPE_1';
-                                            }   
-                                            elseif ($key=='ORETYPE2') {
-                                                $key='ORE_TYPE_2';
-                                            }   
-                                            elseif ($key=='ORETYPE3') {
-                                                $key='ORE_TYPE_3';
-                                            }   
-                                            elseif ($key=='TEXTURE1') {
-                                                $key='TEXTURE_STRUCTURE_1';
-                                            }   
-                                            elseif ($key=='TEXTURE2') {
-                                                $key='TEXTURE_STRUCTURE_2';
-                                            }   
-                                            elseif ($key=='TEXTURE3') {
-                                                $key='TEXTURE_STRUCTURE_3';
-                                            } 
-                                $arrKey['SUPPLEMENTARY_FIELDS'][strtoupper($key)] = htmlspecialchars($value, ENT_QUOTES);
-                                $arrcsv[strtoupper($key)] = htmlspecialchars($value, ENT_QUOTES);
-
-                            }else{
-
-                                $arrKey[strtoupper($key)] = htmlspecialchars($value, ENT_QUOTES);
-                                $arrcsv[strtoupper($key)] = htmlspecialchars($value, ENT_QUOTES);
-
+                            } catch (Exception $e) {
+                                echo $e->getMessage();
+                                $this->logger->error($e->getMessage());
                             }
+                            try{
+                                $bulk = new MongoDB\Driver\BulkWrite;
+                                $filter=array();
+                                $filter = ['_id' => strtoupper($sample_name.'_'.$_POST['measurements'][1])];
+
+
+                                $query = new MongoDB\Driver\Query($filter);
+                                $cursor = $this->db->executeQuery($config['dbname'].'.'.$config['COLLECTION_NAME'], $query);
 
 
 
+                                foreach ($cursor as $document) {
+                                    if($document->_id== strtoupper($sample_name.'_'.$_POST['measurements'][1])){
+                                      
+                                        $error   = 'Sample name already in database';
+                                        
+                                    }
+                                }
+                                
+                            }
+                            catch (MongoDB\Driver\Exception\BulkWriteException  $e) {
+                             
+                             $error   = 'Sample name already in database';
+                             
+                         }
+
+
+                         break;
+                         case "original_sample_name":
+                         break;
+                         case "csrf_value":
+                         break;
+                         case "csrf_name":
+                         break;
+                         case "file_already_uploaded":
+                         break;
+
+                         default:
+                         if (in_array(strtoupper($key), $SUPPLEMENTARY_FIELDS)) {  
+                            $key=strtoupper($key);
+                            if ($key=='LITHOLOGY1') {
+                                $key='LITHOLOGY';
+                            }
+                            elseif ($key=='LITHOLOGY2') {
+                                $key='LITHOLOGY_2';
+                            } 
+                            elseif ($key=='LITHOLOGY3') {
+                                $key='LITHOLOGY_3';
+                            }     
+                            elseif ($key=='ORETYPE1') {
+                                $key='ORE_TYPE_1';
+                            }   
+                            elseif ($key=='ORETYPE2') {
+                                $key='ORE_TYPE_2';
+                            }   
+                            elseif ($key=='ORETYPE3') {
+                                $key='ORE_TYPE_3';
+                            }   
+                            elseif ($key=='TEXTURE1') {
+                                $key='TEXTURE_STRUCTURE_1';
+                            }   
+                            elseif ($key=='TEXTURE2') {
+                                $key='TEXTURE_STRUCTURE_2';
+                            }   
+                            elseif ($key=='TEXTURE3') {
+                                $key='TEXTURE_STRUCTURE_3';
+                            } 
+                            $arrKey['SUPPLEMENTARY_FIELDS'][strtoupper($key)] = htmlspecialchars($value, ENT_QUOTES);
+                            $arrcsv[strtoupper($key)] = htmlspecialchars($value, ENT_QUOTES);
+
+                        }else{
+
+                            $arrKey[strtoupper($key)] = htmlspecialchars($value, ENT_QUOTES);
+                            $arrcsv[strtoupper($key)] = htmlspecialchars($value, ENT_QUOTES);
 
                         }
 
 
 
+
                     }
-                        $arrcsv[]=$csv;
 
 
-                    $user= New User();
-                    $referents=$user->getProjectReferent($config['COLLECTION_NAME']);
 
-                    foreach ($referents as $key => $value) {
-
-                       $arrKey['SUPPLEMENTARY_FIELDS']['REFERENT'][$key]['NAME_REFERENT'] = $value->name;
-                       $arrcsv['NAME_REFERENT'][] = htmlspecialchars($value->name, ENT_QUOTES);
-
-                       $arrKey['SUPPLEMENTARY_FIELDS']['REFERENT'][$key]['FIRST_NAME_REFERENT'] = $value->firstname;
-                      $arrcsv['FIRST_NAME_REFERENT'][] = htmlspecialchars($value->firstname, ENT_QUOTES);
-
-                       $arrKey['SUPPLEMENTARY_FIELDS']['REFERENT'][$key]['MAIL_REFERENT'] = $value->mail;
-                        $arrcsv['MAIL_REFERENT'][] = htmlspecialchars($value->mail, ENT_QUOTES);
+                }
+                $arrcsv[]=$csv;
 
 
-                       $arrKey['FILE_CREATOR'][$key]['NAME'] = $value->name;
-                       $arrKey['FILE_CREATOR'][$key]['FIRST_NAME'] = $value->firstname;
-                       $arrKey['FILE_CREATOR'][$key]['MAIL'] = $value->mail;
-                       $arrKey['FILE_CREATOR'][$key]['DISPLAY_NAME'] = $value->name." ".$value->firstname;
-                   }
+                $user= New User();
+                $referents=$user->getProjectReferent($config['COLLECTION_NAME']);
+
+                foreach ($referents as $key => $value) {
+
+                 $arrKey['SUPPLEMENTARY_FIELDS']['REFERENT'][$key]['NAME_REFERENT'] = $value->name;
+                 $arrcsv['NAME_REFERENT'][] = htmlspecialchars($value->name, ENT_QUOTES);
+
+                 $arrKey['SUPPLEMENTARY_FIELDS']['REFERENT'][$key]['FIRST_NAME_REFERENT'] = $value->firstname;
+                 $arrcsv['FIRST_NAME_REFERENT'][] = htmlspecialchars($value->firstname, ENT_QUOTES);
+
+                 $arrKey['SUPPLEMENTARY_FIELDS']['REFERENT'][$key]['MAIL_REFERENT'] = $value->mail;
+                 $arrcsv['MAIL_REFERENT'][] = htmlspecialchars($value->mail, ENT_QUOTES);
 
 
-                   $item=count($referents);     
-                   $item++;
+                 $arrKey['FILE_CREATOR'][$key]['NAME'] = $value->name;
+                 $arrKey['FILE_CREATOR'][$key]['FIRST_NAME'] = $value->firstname;
+                 $arrKey['FILE_CREATOR'][$key]['MAIL'] = $value->mail;
+                 $arrKey['FILE_CREATOR'][$key]['DISPLAY_NAME'] = $value->name." ".$value->firstname;
+             }
 
-                   if ($route!='modify') {
 
-                      
+             $item=count($referents);     
+             $item++;
 
-                   
+             if ($route!='modify') {
+
+              
+
                  
+               
 
-                       $filecreator[0]['NAME'] = $_SESSION['name'];
+                 $filecreator[0]['NAME'] = $_SESSION['name'];
 
-                       $filecreator[0]['FIRST_NAME'] = $_SESSION['firstname'];
+                 $filecreator[0]['FIRST_NAME'] = $_SESSION['firstname'];
 
-                       $filecreator[0]['MAIL'] = $_SESSION['mail'];
+                 $filecreator[0]['MAIL'] = $_SESSION['mail'];
 
-                       $filecreator[0]['DISPLAY_NAME'] = $_SESSION['name']." ".$_SESSION['firstname'];
+                 $filecreator[0]['DISPLAY_NAME'] = $_SESSION['name']." ".$_SESSION['firstname'];
 
-                       $arrKey['FILE_CREATOR']=array_merge($filecreator,$arrKey['FILE_CREATOR']);
+                 $arrKey['FILE_CREATOR']=array_merge($filecreator,$arrKey['FILE_CREATOR']);
 
-                   }
+             }
 
 
 
        // foreach ($POST['measurements'] as $key => $value) {
-                   $sample_name=$sample_name_old;
-                   $arrKey["ACCESS_RIGHT"] = "Awaiting";
-                   $arrKey["UPLOAD_DATE"]  = date('Y-m-d');
-                   $arrKey["CREATION_DATE"]  = date('Y-m-d');
-                   $arrcsv["CREATION_DATE"]  = date('Y-m-d');
-                   $arrKey["METADATA_DATE"]  = date('Y-m-d');
+             $sample_name=$sample_name_old;
+             $arrKey["ACCESS_RIGHT"] = "Awaiting";
+             $arrKey["UPLOAD_DATE"]  = date('Y-m-d');
+             $arrKey["CREATION_DATE"]  = date('Y-m-d');
+             $arrcsv["CREATION_DATE"]  = date('Y-m-d');
+             $arrKey["METADATA_DATE"]  = date('Y-m-d');
                    //$arrKey["STATUS"]  = "Awaiting";
             // $sample_name=$sample_name.'_'.$value[1];
-                   $sample_name = $sample_name.'_'.$_POST['measurements'][1];
+             $sample_name = $sample_name.'_'.$_POST['measurements'][1];
 
-                   
+             
         //echo   json_encode($arrKey);
-                   if (!$error == null) {
+             if (!$error == null) {
          //si on rencontre une erreur on retourne le tableau et on l'affiche
-                    $array['dataform'] = $arrKey;
-                    $array['error']    = $error;
-                    return $array;
-                }else{
-                       if ($_FILES['data']['error'][0] != '0') {
+                $array['dataform'] = $arrKey;
+                $array['error']    = $error;
+                return $array;
+            }else{
+             if ($_FILES['data']['error'][0] != '0') {
 
-        }
-        else{
-          for ($i = 0; $i < count($_FILES['data']['name']); $i++) {
+             }
+             else{
+              for ($i = 0; $i < count($_FILES['data']['name']); $i++) {
                         // on parcourt les fichiers uploader
-            $size = $_FILES["data"]["size"][$i];
-            $repertoireDestination         = $UPLOAD_FOLDER;
-            $nomDestination                = str_replace(' ', '_', $_FILES["data"]["name"][$i]);
-            $data["FILES"][$i]["DATA_URL"] = $nomDestination;
+                $size = $_FILES["data"]["size"][$i];
+                $repertoireDestination         = $UPLOAD_FOLDER;
+                $nomDestination                = str_replace(' ', '_', $_FILES["data"]["name"][$i]);
+                $data["FILES"][$i]["DATA_URL"] = $nomDestination;
 
-            if (file_exists($repertoireDestination . $_FILES["data"]["name"][$i])) {
-                $returnarray[] = "false";
-                $returnarray[] = $array['dataform'];
-                return $returnarray;
-            } else {
-                if (is_uploaded_file($_FILES["data"]["tmp_name"][$i])) {
-                    if (is_dir($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]) == false) {
-                        mkdir($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]);
-                    }
-                    if (!file_exists($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1])) {
-                        mkdir($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]);
-                    }
-                    if (copy($_FILES["data"]["tmp_name"][$i], $repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]. "/" . $nomDestination)) {
-                        chmod($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]. "/" . $nomDestination, 0640);
-                        $extension = new \SplFileInfo($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1] ."/" . $nomDestination);
-                        $filetypes = $extension->getExtension();
-                        $file=$repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1] ."/" . $nomDestination;
-                        if ($filetypes == 'csv' or $filetypes == 'xlsx') {
-                            if ($filetypes == 'csv') {
+                if (file_exists($repertoireDestination . $_FILES["data"]["name"][$i])) {
+                    $returnarray[] = "false";
+                    $returnarray[] = $array['dataform'];
+                    return $returnarray;
+                } else {
+                    if (is_uploaded_file($_FILES["data"]["tmp_name"][$i])) {
+                        if (is_dir($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]) == false) {
+                            mkdir($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]);
+                        }
+                        if (!file_exists($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1])) {
+                            mkdir($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]);
+                        }
+                        if (copy($_FILES["data"]["tmp_name"][$i], $repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]. "/" . $nomDestination)) {
+                            chmod($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1]. "/" . $nomDestination, 0640);
+                            $extension = new \SplFileInfo($repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1] ."/" . $nomDestination);
+                            $filetypes = $extension->getExtension();
+                            $file=$repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1] ."/" . $nomDestination;
+                            if ($filetypes == 'csv' or $filetypes == 'xlsx') {
+                                if ($filetypes == 'csv') {
 
-                             $type = \PHPExcel_IOFactory::identify($file);
-                             $objReader = \PHPExcel_IOFactory::createReader($type);
+                                   $type = \PHPExcel_IOFactory::identify($file);
+                                   $objReader = \PHPExcel_IOFactory::createReader($type);
 
-                             $objPHPExcel = $objReader->load($file);
-                             $sheet         = $objPHPExcel->getActiveSheet();
-                             $highestColumn = \PHPExcel_Cell::columnIndexFromString($sheet->getHighestColumn());
+                                   $objPHPExcel = $objReader->load($file);
+                                   $sheet         = $objPHPExcel->getActiveSheet();
+                                   $highestColumn = \PHPExcel_Cell::columnIndexFromString($sheet->getHighestColumn());
 
-                             $rowIterator   = $sheet->getRowIterator();
-                             $units         = array();
-                             $keys          = array();
-                             $obj           = array();
+                                   $rowIterator   = $sheet->getRowIterator();
+                                   $units         = array();
+                                   $keys          = array();
+                                   $obj           = array();
 
 
-                             $startFields = 2;
+                                   $startFields = 2;
 
-                             foreach ($rowIterator as $ligne => $row) {
+                                   foreach ($rowIterator as $ligne => $row) {
+                                    $cellIterator = $row->getCellIterator();
+                                    $cellIterator->setIterateOnlyExistingCells(false);
+                                    foreach ($cellIterator as $cell) {
+                                        $indice = \PHPExcel_Cell::columnIndexFromString($cell->getColumn());
+                                        if ($ligne == 1) {
+                                            $key = trim($cell->getCalculatedValue());
+                                            if (strpos($key, ".") !== false) {
+                                                $msg = "\t Caractere '.' detecte dans la clef [$key] : suppression";
+                                                echo PHP_EOL . $msg . PHP_EOL;
+                                                $this->logger->warning($msg);
+                                                $key = preg_replace('/./', '', $key);
+                                            }
+                                            $units[$key] = $sheet->getCellByColumnAndRow($indice - 1, $ligne + 1)->getCalculatedValue();
+
+                                            if ($indice == $highestColumn) {
+                                                $keys = array_keys($units);
+                                            }
+                                        } else if ($ligne > $startFields) {
+                                            $value = (string)$cell->getCalculatedValue();
+                                            if (!empty($keys[$indice - 1])) {
+
+                                                $obj[$keys[$indice - 1]] = $value;
+                                            }
+
+                                            if ($indice == $highestColumn) {
+
+                                                               // $arrKey["SAMPLES"][] = $obj;
+                                                $obj=array_map('strval', $obj);
+                                                $data_samples["SAMPLES"][]=$obj;
+                                            }
+                                        }
+                                    }
+
+                                }
+
+                            }
+                            if ($filetypes == 'xlsx') {
+
+
+
+                               $type = \PHPExcel_IOFactory::identify($file);
+                               $objReader = \PHPExcel_IOFactory::createReader($type);
+                               $objPHPExcel = $objReader->load($file);
+                               $sheet         = $objPHPExcel->getActiveSheet();
+                               $highestColumn = \PHPExcel_Cell::columnIndexFromString($sheet->getHighestColumn());
+
+
+                               $rowIterator   = $sheet->getRowIterator();
+                               $units         = array();
+                               $keys          = array();
+                               $obj           = array();
+                               $data_samples  = array();
+
+
+                               $startFields = 2;
+                               foreach ($rowIterator as $ligne => $row) {
                                 $cellIterator = $row->getCellIterator();
                                 $cellIterator->setIterateOnlyExistingCells(false);
                                 foreach ($cellIterator as $cell) {
@@ -1267,16 +1325,17 @@ if ($_POST['original_sample_name']) {
                                             $keys = array_keys($units);
                                         }
                                     } else if ($ligne > $startFields) {
-                                        $value = (string)$cell->getCalculatedValue();
+                                        $value = $cell->getCalculatedValue();
                                         if (!empty($keys[$indice - 1])) {
-
-                                            $obj[$keys[$indice - 1]] = $value;
+                                            if ($value!=null) {
+                                                $obj[$keys[$indice - 1]] = $value;
+                                            }
                                         }
 
                                         if ($indice == $highestColumn) {
 
-                                                               // $arrKey["SAMPLES"][] = $obj;
                                             $obj=array_map('strval', $obj);
+                                                               // $arrKey["SAMPLES"][] = $obj;
                                             $data_samples["SAMPLES"][]=$obj;
                                         }
                                     }
@@ -1284,68 +1343,11 @@ if ($_POST['original_sample_name']) {
 
                             }
 
-                        }
-                        if ($filetypes == 'xlsx') {
 
 
 
-                         $type = \PHPExcel_IOFactory::identify($file);
-                         $objReader = \PHPExcel_IOFactory::createReader($type);
-                         $objPHPExcel = $objReader->load($file);
-                         $sheet         = $objPHPExcel->getActiveSheet();
-                         $highestColumn = \PHPExcel_Cell::columnIndexFromString($sheet->getHighestColumn());
-
-
-                         $rowIterator   = $sheet->getRowIterator();
-                         $units         = array();
-                         $keys          = array();
-                         $obj           = array();
-                         $data_samples  = array();
-
-
-                         $startFields = 2;
-                         foreach ($rowIterator as $ligne => $row) {
-                            $cellIterator = $row->getCellIterator();
-                            $cellIterator->setIterateOnlyExistingCells(false);
-                            foreach ($cellIterator as $cell) {
-                                $indice = \PHPExcel_Cell::columnIndexFromString($cell->getColumn());
-                                if ($ligne == 1) {
-                                    $key = trim($cell->getCalculatedValue());
-                                    if (strpos($key, ".") !== false) {
-                                        $msg = "\t Caractere '.' detecte dans la clef [$key] : suppression";
-                                        echo PHP_EOL . $msg . PHP_EOL;
-                                        $this->logger->warning($msg);
-                                        $key = preg_replace('/./', '', $key);
-                                    }
-                                    $units[$key] = $sheet->getCellByColumnAndRow($indice - 1, $ligne + 1)->getCalculatedValue();
-
-                                    if ($indice == $highestColumn) {
-                                        $keys = array_keys($units);
-                                    }
-                                } else if ($ligne > $startFields) {
-                                    $value = $cell->getCalculatedValue();
-                                    if (!empty($keys[$indice - 1])) {
-                                        if ($value!=null) {
-                                        $obj[$keys[$indice - 1]] = $value;
-                                        }
-                                    }
-
-                                    if ($indice == $highestColumn) {
-
-                                        $obj=array_map('strval', $obj);
-                                                               // $arrKey["SAMPLES"][] = $obj;
-                                        $data_samples["SAMPLES"][]=$obj;
-                                    }
-                                }
-                            }
 
                         }
-
-
-
-
-
-                    }
                     //var_dump($data_samples);
 
 
@@ -1353,30 +1355,30 @@ if ($_POST['original_sample_name']) {
 
 
 
-                }
-                else{
-                    $error='Bad extension';
-                }
-                $data["FILES"][$i]["FILETYPE"] = $filetypes;
-                $data["FILES"][$i]["TYPE_DATA"] = 'Data';
-                $data["FILES"][$i]["ORIGINAL_DATA_URL"] = $repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1] ."/" . $nomDestination;
+                    }
+                    else{
+                        $error='Bad extension';
+                    }
+                    $data["FILES"][$i]["FILETYPE"] = $filetypes;
+                    $data["FILES"][$i]["TYPE_DATA"] = 'Data';
+                    $data["FILES"][$i]["ORIGINAL_DATA_URL"] = $repertoireDestination ."/". $_POST['sample_name'].'_'.$_POST['measurements'][1] ."/" . $nomDestination;
                                         //var_dump($data);
                                         //$collection                    = "Manual_Depot";
                                        // $collectionObject              = $this->db->selectCollection($config["authSource"], $collection);
-            } else {
-                $returnarray[] = "false";
-                $returnarray[] = $array['dataform'];
-                return $returnarray;
+                } else {
+                    $returnarray[] = "false";
+                    $returnarray[] = $array['dataform'];
+                    return $returnarray;
+                }
             }
         }
-    }
 
-}
+    }
 }
 if ($_FILES['pictures']['error'][0] != '0') {
 }
 else{
-   for ($i = 0; $i < count($_FILES['pictures']['name']); $i++) {
+ for ($i = 0; $i < count($_FILES['pictures']['name']); $i++) {
                         // on parcourt les fichiers uploader
     $size = $_FILES["pictures"]["size"][$i];
     $repertoireDestination         = $UPLOAD_FOLDER;
@@ -1479,24 +1481,24 @@ else{
                         }
                     }
 
-                   try {
-                    if(empty($config['authSource']) && empty($config['username']) && empty($config['password'])) {
-                        $this->db = new MongoDB\Driver\Manager("mongodb://" . $config['MDBHOST'] . ':' . $config['MDBPORT'], array('journal' => false));
-                    } else {
-                        $this->db= new MongoDB\Driver\Manager("mongodb://" . $config['MDBHOST'] . ':' . $config['MDBPORT'], array('journal' => false, 'authSource' => $config['authSource'], 'username' => $config['username'], 'password' => $config['password']));
+                    try {
+                        if(empty($config['authSource']) && empty($config['username']) && empty($config['password'])) {
+                            $this->db = new MongoDB\Driver\Manager("mongodb://" . $config['MDBHOST'] . ':' . $config['MDBPORT'], array('journal' => false));
+                        } else {
+                            $this->db= new MongoDB\Driver\Manager("mongodb://" . $config['MDBHOST'] . ':' . $config['MDBPORT'], array('journal' => false, 'authSource' => $config['authSource'], 'username' => $config['username'], 'password' => $config['password']));
+                        }
+                    } catch (Exception $e) {
+                        echo $e->getMessage();
+                        $this->logger->error($e->getMessage());
                     }
-                } catch (Exception $e) {
-                    echo $e->getMessage();
-                    $this->logger->error($e->getMessage());
-                }
-                if ($route=='modify') {
-                                  if ($_POST['original_sample_name']) {
+                    if ($route=='modify') {
+                      if ($_POST['original_sample_name']) {
                                     //var_dump($_POST['original_sample_name']);
                                     //var_dump($_POST['sample_name'].'_'.strtoupper($_POST['measurements'][1]));
-                                    if ($_POST['sample_name'].'_'.strtoupper($_POST['measurements'][1])!=$_POST['original_sample_name']) {
+                        if ($_POST['sample_name'].'_'.strtoupper($_POST['measurements'][1])!=$_POST['original_sample_name']) {
                                         //$sample_name=$_POST['sample_name'];
-                                        $original_sample_name=$_POST['sample_name'].'_'.$_POST['measurements'][1];
-                                           $sample_search=$_POST['original_sample_name'];
+                            $original_sample_name=$_POST['sample_name'].'_'.$_POST['measurements'][1];
+                            $sample_search=$_POST['original_sample_name'];
                                        /* if (strpos($_POST['original_sample_name'], '_RAW') !== false) {
                                            $original_sample_name=$_POST['sample_name'].'_'.$_POST['measurements'][1].'_RAW';
                                        }*/
@@ -1517,55 +1519,55 @@ else{
                             $cursor = $this->db->executeQuery($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $query);
                             foreach ($cursor as $document) {
                                 //var_dump(($document->INTRO->FILE_CREATOR[0]->DISPLAY_NAME));
-                               $filecreator[0]['NAME'] = $document->INTRO->FILE_CREATOR[0]->NAME;
-                               $arrcsv['NAME'][] = htmlspecialchars($document->INTRO->FILE_CREATOR[0]->NAME, ENT_QUOTES);
-                               $filecreator[0]['FIRST_NAME'] = $document->INTRO->FILE_CREATOR[0]->FIRST_NAME;
-                               $arrcsv['FIRST_NAME'][] = htmlspecialchars($document->INTRO->FILE_CREATOR[0]->FIRST_NAME, ENT_QUOTES);
-                               $filecreator[0]['MAIL'] = $document->INTRO->FILE_CREATOR[0]->MAIL;
-                               $arrcsv['MAIL'][] = htmlspecialchars($document->INTRO->FILE_CREATOR[0]->MAIL, ENT_QUOTES);
-                               $filecreator[0]['DISPLAY_NAME'] = $document->INTRO->FILE_CREATOR[0]->DISPLAY_NAME;
-                               $arrcsv['FILE_CREATOR'][] = htmlspecialchars($document->INTRO->FILE_CREATOR[0]->DISPLAY_NAME, ENT_QUOTES);
+                             $filecreator[0]['NAME'] = $document->INTRO->FILE_CREATOR[0]->NAME;
+                             $arrcsv['NAME'][] = htmlspecialchars($document->INTRO->FILE_CREATOR[0]->NAME, ENT_QUOTES);
+                             $filecreator[0]['FIRST_NAME'] = $document->INTRO->FILE_CREATOR[0]->FIRST_NAME;
+                             $arrcsv['FIRST_NAME'][] = htmlspecialchars($document->INTRO->FILE_CREATOR[0]->FIRST_NAME, ENT_QUOTES);
+                             $filecreator[0]['MAIL'] = $document->INTRO->FILE_CREATOR[0]->MAIL;
+                             $arrcsv['MAIL'][] = htmlspecialchars($document->INTRO->FILE_CREATOR[0]->MAIL, ENT_QUOTES);
+                             $filecreator[0]['DISPLAY_NAME'] = $document->INTRO->FILE_CREATOR[0]->DISPLAY_NAME;
+                             $arrcsv['FILE_CREATOR'][] = htmlspecialchars($document->INTRO->FILE_CREATOR[0]->DISPLAY_NAME, ENT_QUOTES);
                                //var_dump($filecreator);
-                               $arrKey['FILE_CREATOR']=array_merge($filecreator,$arrKey['FILE_CREATOR']);
+                             $arrKey['FILE_CREATOR']=array_merge($filecreator,$arrKey['FILE_CREATOR']);
 
 
                                 //($document);
-                                $tmp_array=$document->DATA;
+                             $tmp_array=$document->DATA;
                               // var_dump($data);
-                            }
-                            foreach ($POST['file_already_uploaded'] as $key => $value) {
-                                $file_already_uploaded[$key]['DATA_URL'] = $value;
-                            }
+                         }
+                         foreach ($POST['file_already_uploaded'] as $key => $value) {
+                            $file_already_uploaded[$key]['DATA_URL'] = $value;
+                        }
 
-                            $intersect = array();
-                            $intersect_raw = array();
+                        $intersect = array();
+                        $intersect_raw = array();
 
-                           
+                        
 
-                            
+                        
 
-                            
+                        
 
-                                        if (isset($tmp_array)) {
-                                            foreach ($tmp_array->FILES as $key => $value) {
+                        if (isset($tmp_array)) {
+                            foreach ($tmp_array->FILES as $key => $value) {
 
-                                                foreach ($file_already_uploaded as $key => $value2) {
+                                foreach ($file_already_uploaded as $key => $value2) {
                                               // var_dump($value->DATA_URL);
-                                                    if($value->DATA_URL==$value2['DATA_URL']){
+                                    if($value->DATA_URL==$value2['DATA_URL']){
                                                         /*if ($value->TYPE_DATA=='Rawdata') {
                                                             $intersect_raw['FILES'][]=(array)$value;
                                                         }
                                                         else{*/
 
-                                                        $intersect['FILES'][]=(array)$value;
+                                                            $intersect['FILES'][]=(array)$value;
                                                        // }
                                                     //unset($data[$key]);
+                                                        }
+
+
                                                     }
-
-
                                                 }
                                             }
-                                        }
                                         //echo "string";
                                        // var_dump($intersect);
                                         //var_dump($tmp_array);
@@ -1579,7 +1581,7 @@ else{
                                         //print_r($intersect);
                                                        // var_dump($data);
                                             if (count($data) != 0) {
-                                            foreach ($intersect['FILES'] as $key => $value) {
+                                                foreach ($intersect['FILES'] as $key => $value) {
                                                     if ($value['TYPE_DATA']=='Data') {
                                                         unlink($value->ORIGINAL_DATA_URL);
                                                         unset($intersect['FILES'][$key]);
@@ -1588,66 +1590,66 @@ else{
                                                 }
                                                 //var_dump($rawdata);
                                                 $intersect = array_merge_recursive($data, $intersect); // on merge les tableaux
-                                                }
-                                                if (count($pictures) != 0) {
+                                            }
+                                            if (count($pictures) != 0) {
                                                 $intersect = array_merge_recursive($intersect, $pictures); // on merge les tableaux
-                                                }
-                                                if (count($rawdata) != 0 && $route=='upload') {
+                                            }
+                                            if (count($rawdata) != 0 && $route=='upload') {
                                                 $intersect = array_merge_recursive($intersect, $rawdata); // on merge les tableaux
-                                                }else if((count($rawdata) == 0) || (count($rawdata)!=0) and $route=='modify'){
-                                                    $is_raw_data=false;
-                                                    $intersect_raw=$intersect;
-                                                      foreach ($intersect_raw['FILES'] as $key => $value) {
-                                                        if ($value['TYPE_DATA']=='Rawdata') {
+                                            }else if((count($rawdata) == 0) || (count($rawdata)!=0) and $route=='modify'){
+                                                $is_raw_data=false;
+                                                $intersect_raw=$intersect;
+                                                foreach ($intersect_raw['FILES'] as $key => $value) {
+                                                    if ($value['TYPE_DATA']=='Rawdata') {
                                                         unlink($value->ORIGINAL_DATA_URL);
                                                         unset($intersect['FILES'][$key]);
                                                         //$data_samples['SAMPLES']=$data['SAMPLES'];
                                                     }
-                                                        if ($value['TYPE_DATA']=='Data') {
-                                                            unset($intersect_raw['FILES'][$key]);
+                                                    if ($value['TYPE_DATA']=='Data') {
+                                                        unset($intersect_raw['FILES'][$key]);
                                                             //$data_samples['SAMPLES']=$data['SAMPLES'];
-                                                        }
-                                                        if ($value['TYPE_DATA']=='Rawdata' || ((count($rawdata)!=0) and $route=='modify')) {
-                                                            $is_raw_data=true;
-                                                        }
+                                                    }
+                                                    if ($value['TYPE_DATA']=='Rawdata' || ((count($rawdata)!=0) and $route=='modify')) {
+                                                        $is_raw_data=true;
+                                                    }
                                                 }
                                                 if ($is_raw_data) {
                                                      $rawdata = array_merge_recursive($intersect_raw, $rawdata); // on merge les tableaux
-                                                        $i=1;
+                                                     $i=1;
                                                      foreach ($rawdata['FILES'] as $key => $value) {
                                                         if ($value['TYPE_DATA']=='Rawdata') {
                                                             $rawdata2['FILES'][0]=$value;
                                                         }else{
 
-                                                         $rawdata2['FILES'][$i]=$value;
-                                                        $i++;
-                                                        }
-                                                    }
+                                                           $rawdata2['FILES'][$i]=$value;
+                                                           $i++;
+                                                       }
+                                                   }
 
-                                                     
-                                                     $rawdata=$rawdata2;
-                                                
+                                                   
+                                                   $rawdata=$rawdata2;
+                                                   
 
-                                                }
-                                                if (count($data)==0) {
-                                                    $data_samples['SAMPLES']=$tmp_array->SAMPLES;
-                                                }
-                                               // var_dump($merge);
+                                               }
+                                               if (count($data)==0) {
+                                                $data_samples['SAMPLES']=$tmp_array->SAMPLES;
                                             }
+                                               // var_dump($merge);
+                                        }
 
-                                            } 
+                                    } 
 
-                                            else if (count($intersect) != 0) {
+                                    else if (count($intersect) != 0) {
                                                 //echo "TEREE";
 
                                             // si il y a eu seulement des suppressions
-                                                $data_samples['SAMPLES']=$tmp_array->SAMPLES;
-                                                
-                                            }else {
+                                        $data_samples['SAMPLES']=$tmp_array->SAMPLES;
+                                        
+                                    }else {
                                                 //si il y a eu seuelement des ajouts
-                                                $data_samples['SAMPLES']=$tmp_array->SAMPLES;
-                                                $intersect = $data;
-                                            }
+                                        $data_samples['SAMPLES']=$tmp_array->SAMPLES;
+                                        $intersect = $data;
+                                    }
 
                                            /* if (count($pictures)!=0) {
                                                 $merge =array_merge_recursive($merge,$pictures);
@@ -1656,7 +1658,7 @@ else{
                                                 $pictures=array();
                                                 //$merge =array_merge_recursive($merge,$pictures);
                                             }*/
-                                          
+                                            
                                            /* if (count($rawdata)!=0) {
                                                 $merge_raw=$merge;
                                                  foreach ($merge['FILES'] as $key => $value) {
@@ -1678,7 +1680,7 @@ else{
                                             //var_dump($intersect_raw);
                                                 //$rawdata =array_merge_recursive($pictures,$intersect_raw);
                                             //var_dump($rawdata);
-                                            }*/
+                                                }*/
 
                                            /* if ($intersect_raw){
                                                 $merge_raw=$merge;
@@ -1691,24 +1693,24 @@ else{
                                         $rawdata =array_merge_recursive($pictures,$merge_raw,$intersect_raw);
 
                                                 
-                                            }*/
+                                    }*/
 
-                                        foreach ($intersect['FILES'] as $key => $value) {
+                                    foreach ($intersect['FILES'] as $key => $value) {
 
-                                            if ($value['TYPE_DATA']=='Rawdata') {
-                                                unset($intersect['FILES'][$key]);
-                                            }
+                                        if ($value['TYPE_DATA']=='Rawdata') {
+                                            unset($intersect['FILES'][$key]);
                                         }
+                                    }
 
-                                         foreach ($intersect['FILES'] as $key => $value) {
+                                    foreach ($intersect['FILES'] as $key => $value) {
 
-                                           $intersect2['FILES'][]=$value;
-                                        }
-                                        $intersect=$intersect2;
-                                            if ($data_samples) {
-                                                
-                                            $intersect=array_merge($intersect,$data_samples);
-                                            }
+                                     $intersect2['FILES'][]=$value;
+                                 }
+                                 $intersect=$intersect2;
+                                 if ($data_samples) {
+                                    
+                                    $intersect=array_merge($intersect,$data_samples);
+                                }
                                 foreach ($tmp_array->FILES as $key => $value) {
                                     $array[]=(array)$value;
                                 }
@@ -1717,17 +1719,17 @@ else{
                                 //var_dump($intersect['FILES']);
                                 //var_dump($rawdata);
                                 $intersect3=array_merge($intersect['FILES'],$rawdata['FILES']);
-                             
+                                
 
 
-                                    $diff = array_map('unserialize',
-                                                        array_diff(array_map('serialize', $array), array_map('serialize', $intersect3)));
+                                $diff = array_map('unserialize',
+                                    array_diff(array_map('serialize', $array), array_map('serialize', $intersect3)));
 
-                                 foreach ($diff as $key => $value) {
+                                foreach ($diff as $key => $value) {
                                     unlink($value["ORIGINAL_DATA_URL"]);
-                                 }
+                                }
 
-                                 foreach ($intersect['FILES'] as $key => $value) {
+                                foreach ($intersect['FILES'] as $key => $value) {
                                     //var_dump($value);
                                     $sample=explode('_', $sample_search);
                                     $sample2=explode('_', $original_sample_name);
@@ -1742,8 +1744,8 @@ else{
                                     rmdir(dirname($value['ORIGINAL_DATA_URL']));
                                     $intersect['FILES'][$key]['ORIGINAL_DATA_URL']=$newurl;
 
-                                 }
-                                 foreach ($rawdata['FILES'] as $key => $value) {
+                                }
+                                foreach ($rawdata['FILES'] as $key => $value) {
                                     //var_dump($value);
                                     $sample=explode('_', $sample_search);
                                     $sample2=explode('_', $original_sample_name);
@@ -1759,230 +1761,230 @@ else{
                                     rmdir(dirname($value['ORIGINAL_DATA_URL']));
                                     $rawdata['FILES'][$key]['ORIGINAL_DATA_URL']=$newurl;
 
-                                 }
+                                }
                                 
 
                             //var_dump($intersect);
                                 $bulk = new MongoDB\Driver\BulkWrite;
                                 try{
                                    //unset($arrKey["STATUS"]);
-                                   
-                                        $arrKey["ACCESS_RIGHT"] = "Unpublished";
-                                   
-                                   $insert=array('_id' => strtoupper($original_sample_name),"INTRO"=>$arrKey,'DATA'=>$intersect);
-                                   $bulk->insert($insert);
+                                 
+                                    $arrKey["ACCESS_RIGHT"] = "Unpublished";
+                                    
+                                    $insert=array('_id' => strtoupper($original_sample_name),"INTRO"=>$arrKey,'DATA'=>$intersect);
+                                    $bulk->insert($insert);
                                     if (count($rawdata)!=0) {
-                                       
+                                     
 
                                           //unset($arrKey["STATUS"]);
                                          // var_dump($rawdata);
-                                          $arrKey["MEASUREMENT"][0]["ABBREVIATION"]=$arrKey["MEASUREMENT"][0]["ABBREVIATION"].'_RAW';
-                                           $insert=array('_id' => strtoupper($original_sample_name).'_RAW',"INTRO"=>$arrKey,'DATA'=>$rawdata);
-                                           $bulk->insert($insert);
+                                      $arrKey["MEASUREMENT"][0]["ABBREVIATION"]=$arrKey["MEASUREMENT"][0]["ABBREVIATION"].'_RAW';
+                                      $insert=array('_id' => strtoupper($original_sample_name).'_RAW',"INTRO"=>$arrKey,'DATA'=>$rawdata);
+                                      $bulk->insert($insert);
 
-                                     }
-                                   $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'], $bulk);
-                                   $bulk = new MongoDB\Driver\BulkWrite;
-                                   $bulk->delete(['_id' => strtoupper($_POST['original_sample_name'])]);
-                                   $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $bulk);
-                                    $repertoireDestination         = $UPLOAD_FOLDER;
-                                    mkdir($repertoireDestination  ."/". $_POST['sample_name']."_META");
-                                    $fp = fopen($repertoireDestination  ."/". $_POST['sample_name'] . "_META/" . $_POST['sample_name'].'_META.csv', 'w');
+                                  }
+                                  $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'], $bulk);
+                                  $bulk = new MongoDB\Driver\BulkWrite;
+                                  $bulk->delete(['_id' => strtoupper($_POST['original_sample_name'])]);
+                                  $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $bulk);
+                                  $repertoireDestination         = $UPLOAD_FOLDER;
+                                  mkdir($repertoireDestination  ."/". $_POST['sample_name']."_META");
+                                  $fp = fopen($repertoireDestination  ."/". $_POST['sample_name'] . "_META/" . $_POST['sample_name'].'_META.csv', 'w');
                                     //var_dump($intersect['FILES']);
-                                   $picture_csv=[];
-                                    $connection = \ssh2_connect($config['SSH_HOST'], 22);
-                                    \ssh2_auth_password($connection, $config['SSH_UNIXUSER'], $config['SSH_UNIXPASSWD']);
-                                    $measurement_csv= str_replace('_RAW', '', $arrKey["MEASUREMENT"][0]["ABBREVIATION"]);
-                                   foreach ($intersect['FILES'] as $key => $value) {
+                                  $picture_csv=[];
+                                  $connection = \ssh2_connect($config['SSH_HOST'], 22);
+                                  \ssh2_auth_password($connection, $config['SSH_UNIXUSER'], $config['SSH_UNIXPASSWD']);
+                                  $measurement_csv= str_replace('_RAW', '', $arrKey["MEASUREMENT"][0]["ABBREVIATION"]);
+                                  foreach ($intersect['FILES'] as $key => $value) {
                                     if ($value['TYPE_DATA']=='Data') {
-                                         $stream = \ssh2_exec($connection, 'sudo -u ' . $config["DATAFILE_UNIXUSER"] . ' cp ' . $value['ORIGINAL_DATA_URL'].' '.$config['OWNCLOUD_FOLDER'].'/data/'.$measurement_csv.'/'.$value['DATA_URL'], false);
-                                        stream_set_timeout($stream, 3);
-                                        stream_set_blocking($stream, true);
+                                       $stream = \ssh2_exec($connection, 'sudo -u ' . $config["DATAFILE_UNIXUSER"] . ' cp ' . $value['ORIGINAL_DATA_URL'].' '.$config['OWNCLOUD_FOLDER'].'/data/'.$measurement_csv.'/'.$value['DATA_URL'], false);
+                                       stream_set_timeout($stream, 3);
+                                       stream_set_blocking($stream, true);
                                         // read the output into a variable
-                                        $data = '';
-                                        while ($buffer = fread($stream, 4096)) {
-                                            $data .= $buffer;
-                                        }
+                                       $data = '';
+                                       while ($buffer = fread($stream, 4096)) {
+                                        $data .= $buffer;
+                                    }
                                         // close the stream
-                                        fclose($stream);
+                                    fclose($stream);
 
                                         //$sftp = \ssh2_sftp($connection);
                                         //\ssh2_sftp_mkdir($sftp, $config['OWNCLOUD_FOLDER'].'/data/'.$measurement_csv);
                                        // \ssh2_scp_send($connection, $value['ORIGINAL_DATA_URL'], $config['OWNCLOUD_FOLDER'].'/data/'.$measurement_csv.'/'.$value['DATA_URL'], 0644);
-                                           
-                                       }
-                                       if ($value['TYPE_DATA']=='Pictures') {
-                                        $picture_csv[]='/Metadata/Pictures/'.$value['DATA_URL'];
+                                    
+                                }
+                                if ($value['TYPE_DATA']=='Pictures') {
+                                    $picture_csv[]='/Metadata/Pictures/'.$value['DATA_URL'];
                                         //\ssh2_scp_send($connection, $value['ORIGINAL_DATA_URL'], $config['OWNCLOUD_FOLDER'].'/Metadata/Pictures/'.$value['DATA_URL'], 0644);
-                                        $stream = \ssh2_exec($connection, 'sudo -u ' . $config["DATAFILE_UNIXUSER"] . ' cp ' . $value['ORIGINAL_DATA_URL'].' '.$config['OWNCLOUD_FOLDER'].'/Metadata/Pictures/'.$value['DATA_URL'], false);
-                                        stream_set_timeout($stream, 3);
-                                        stream_set_blocking($stream, true);
+                                    $stream = \ssh2_exec($connection, 'sudo -u ' . $config["DATAFILE_UNIXUSER"] . ' cp ' . $value['ORIGINAL_DATA_URL'].' '.$config['OWNCLOUD_FOLDER'].'/Metadata/Pictures/'.$value['DATA_URL'], false);
+                                    stream_set_timeout($stream, 3);
+                                    stream_set_blocking($stream, true);
                                         // read the output into a variable
-                                        $data = '';
-                                        while ($buffer = fread($stream, 4096)) {
-                                            $data .= $buffer;
-                                        }
+                                    $data = '';
+                                    while ($buffer = fread($stream, 4096)) {
+                                        $data .= $buffer;
+                                    }
                                         // close the stream
-                                        fclose($stream);
+                                    fclose($stream);
 
-                                           
-                                       }
-                                   }
-                                    foreach ($rawdata['FILES'] as $key => $value) {
-                                        if ($value['TYPE_DATA']=='Rawdata') {
+                                    
+                                }
+                            }
+                            foreach ($rawdata['FILES'] as $key => $value) {
+                                if ($value['TYPE_DATA']=='Rawdata') {
                                         //$sftp = \ssh2_sftp($connection);
                                         //\ssh2_sftp_mkdir($sftp, $config['OWNCLOUD_FOLDER'].'/Raw-data-measurement/'.$measurement_csv);
                                         //\ssh2_scp_send($connection, $value['ORIGINAL_DATA_URL'], $config['OWNCLOUD_FOLDER'].'/Raw-data-measurement/'.$measurement_csv.'/'.$value['DATA_URL'], 0644);
-                                        $stream = \ssh2_exec($connection, 'sudo -u ' . $config["DATAFILE_UNIXUSER"] . ' cp ' . $value['ORIGINAL_DATA_URL'].' '.$config['OWNCLOUD_FOLDER'].'/Raw-data-measurement/'.$measurement_csv.'/'.$value['DATA_URL'], false);
-                                        stream_set_timeout($stream, 3);
-                                        stream_set_blocking($stream, true);
+                                    $stream = \ssh2_exec($connection, 'sudo -u ' . $config["DATAFILE_UNIXUSER"] . ' cp ' . $value['ORIGINAL_DATA_URL'].' '.$config['OWNCLOUD_FOLDER'].'/Raw-data-measurement/'.$measurement_csv.'/'.$value['DATA_URL'], false);
+                                    stream_set_timeout($stream, 3);
+                                    stream_set_blocking($stream, true);
                                         // read the output into a variable
-                                        $data = '';
-                                        while ($buffer = fread($stream, 4096)) {
-                                            $data .= $buffer;
-                                        }
+                                    $data = '';
+                                    while ($buffer = fread($stream, 4096)) {
+                                        $data .= $buffer;
+                                    }
                                         // close the stream
-                                        fclose($stream);
+                                    fclose($stream);
 
-                                           
-                                       }
-                                   }
-                                    $arrcsv['PICTURE']=$picture_csv;
+                                    
+                                }
+                            }
+                            $arrcsv['PICTURE']=$picture_csv;
 
-                                          foreach ($arrcsv as $key=>$line) {
-                                            $csv=[];
-                                           
-                                            if (is_array($line)) {
+                            foreach ($arrcsv as $key=>$line) {
+                                $csv=[];
+                                
+                                if (is_array($line)) {
 
-                                               foreach ($line as $key2 => $value) {
-                                                if (is_array($value)) {
-                                                    $csv2=[];
-                                                    foreach ($value as $key3 => $value2) {
-                                                        $csv2[$key3]=$value2;
-                                                    }
-                                                    $csv[]=$csv2;
-                                                     fputcsv($fp, $csv2);
-                                                }else{
-
-                                                   if ($key=='SCIENTIFIC_FIELDS') {
-                                                       $key='SCIENTIFIC_FIELD';
-                                                   }
-                                                   elseif ($key=='KEYWORDS') {
-                                                      $key='KEYWORD';
-                                                   }
-
-                                                $csv=array($key,$value);
-                                                    
-                                                fputcsv($fp, $csv);
-                                                }
-                                               
-
-                                                
-
-                                               }
-                                            }else{
-
-                                            if ($key=='LITHOLOGY1') {
-                                                $key='LITHOLOGY';
-                                            }
-                                            elseif ($key=='LITHOLOGY2') {
-                                                $key='LITHOLOGY_2';
-                                            } 
-                                            elseif ($key=='LITHOLOGY3') {
-                                                $key='LITHOLOGY_3';
-                                            }     
-                                            elseif ($key=='ORETYPE1') {
-                                                $key='ORE_TYPE_1';
-                                            }   
-                                            elseif ($key=='ORETYPE2') {
-                                                $key='ORE_TYPE_2';
-                                            }   
-                                            elseif ($key=='ORETYPE3') {
-                                                $key='ORE_TYPE_3';
-                                            }   
-                                            elseif ($key=='TEXTURE1') {
-                                                $key='TEXTURE_STRUCTURE_1';
-                                            }   
-                                            elseif ($key=='TEXTURE2') {
-                                                $key='TEXTURE_STRUCTURE_2';
-                                            }   
-                                            elseif ($key=='TEXTURE3') {
-                                                $key='TEXTURE_STRUCTURE_3';
-                                            }   
-                                            $csv=array($key,$line);
-                                            fputcsv($fp, $csv);
-                                            }
-                                          
-                                            }
-
-
-                                        fclose($fp);
-                                        chmod($repertoireDestination  ."/". $_POST['sample_name'] . "_META/" . $_POST['sample_name'].'_META.csv', 0640);
-                                        
-                                         //\ssh2_scp_send($connection, $repertoireDestination  ."/". $_POST['sample_name'] . "_META/" . $_POST['sample_name'].'_META.csv', $config['OWNCLOUD_FOLDER'].'/Metadata/'.$_POST['sample_name'].'_META.csv', 0644);
-                                         $stream = \ssh2_exec($connection, 'sudo -u ' . $config["DATAFILE_UNIXUSER"] . ' cp ' . $repertoireDestination  ."/". $_POST['sample_name'] . "_META/" . $_POST['sample_name'].'_META.csv'.' '.$config['OWNCLOUD_FOLDER'].'/Metadata/'.$_POST['sample_name'].'_META.csv', false);
-                                        stream_set_timeout($stream, 3);
-                                        stream_set_blocking($stream, true);
-                                        // read the output into a variable
-                                        $data = '';
-                                        while ($buffer = fread($stream, 4096)) {
-                                            $data .= $buffer;
+                                 foreach ($line as $key2 => $value) {
+                                    if (is_array($value)) {
+                                        $csv2=[];
+                                        foreach ($value as $key3 => $value2) {
+                                            $csv2[$key3]=$value2;
                                         }
-                                        // close the stream
-                                        fclose($stream);
+                                        $csv[]=$csv2;
+                                        fputcsv($fp, $csv2);
+                                    }else{
 
-                                        $mail = new Mailer();
-                                        $user = new User();
-                                        $referents=$user->getProjectReferent($config['COLLECTION_NAME']);
-                                        foreach ($referents as $key => $value) {
-                                                $mail->Send_mail_data_validate($sample_name,$config['COLLECTION_NAME'],$value->mail);
-                                        }
+                                     if ($key=='SCIENTIFIC_FIELDS') {
+                                         $key='SCIENTIFIC_FIELD';
+                                     }
+                                     elseif ($key=='KEYWORDS') {
+                                      $key='KEYWORD';
+                                  }
 
-                                   return true;
-                               }
-                               catch (MongoDB\Driver\Exception\BulkWriteException  $e) {
-                                   $array['dataform'] = $arrKey;
-                                   $array['error']    = 'Sample name already in database';
-                                   return $array;
-                               }
-                           
-            }
-           elseif($route=='upload') {
+                                  $csv=array($key,$value);
+                                  
+                                  fputcsv($fp, $csv);
+                              }
+                              
 
-             try{
-                $bulk = new MongoDB\Driver\BulkWrite;
-                $filter=array();
-                $filter = ['_id' => strtoupper($sample_name)];
+                              
 
+                          }
+                      }else{
 
-                $query = new MongoDB\Driver\Query($filter);
-                $cursor = $this->db->executeQuery($config['dbname'].'.'.$config['COLLECTION_NAME'], $query);
-
-
-
-                foreach ($cursor as $document) {
-                    if($document->_id== strtoupper($sample_name)){
-                        $array['dataform'] = $arrKey;
-                        $array['error']    = 'Sample name already in database';
-                        return $array;
+                        if ($key=='LITHOLOGY1') {
+                            $key='LITHOLOGY';
+                        }
+                        elseif ($key=='LITHOLOGY2') {
+                            $key='LITHOLOGY_2';
+                        } 
+                        elseif ($key=='LITHOLOGY3') {
+                            $key='LITHOLOGY_3';
+                        }     
+                        elseif ($key=='ORETYPE1') {
+                            $key='ORE_TYPE_1';
+                        }   
+                        elseif ($key=='ORETYPE2') {
+                            $key='ORE_TYPE_2';
+                        }   
+                        elseif ($key=='ORETYPE3') {
+                            $key='ORE_TYPE_3';
+                        }   
+                        elseif ($key=='TEXTURE1') {
+                            $key='TEXTURE_STRUCTURE_1';
+                        }   
+                        elseif ($key=='TEXTURE2') {
+                            $key='TEXTURE_STRUCTURE_2';
+                        }   
+                        elseif ($key=='TEXTURE3') {
+                            $key='TEXTURE_STRUCTURE_3';
+                        }   
+                        $csv=array($key,$line);
+                        fputcsv($fp, $csv);
                     }
+                    
                 }
-                $data =array_merge_recursive($data,$pictures,$rawdata,$data_samples);
-                $insert=array('_id' => strtoupper($sample_name),"INTRO"=>$arrKey,'DATA'=>$data);
-                $bulk->insert($insert);
-                $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $bulk);
+
+
+                fclose($fp);
+                chmod($repertoireDestination  ."/". $_POST['sample_name'] . "_META/" . $_POST['sample_name'].'_META.csv', 0640);
+                
+                                         //\ssh2_scp_send($connection, $repertoireDestination  ."/". $_POST['sample_name'] . "_META/" . $_POST['sample_name'].'_META.csv', $config['OWNCLOUD_FOLDER'].'/Metadata/'.$_POST['sample_name'].'_META.csv', 0644);
+                $stream = \ssh2_exec($connection, 'sudo -u ' . $config["DATAFILE_UNIXUSER"] . ' cp ' . $repertoireDestination  ."/". $_POST['sample_name'] . "_META/" . $_POST['sample_name'].'_META.csv'.' '.$config['OWNCLOUD_FOLDER'].'/Metadata/'.$_POST['sample_name'].'_META.csv', false);
+                stream_set_timeout($stream, 3);
+                stream_set_blocking($stream, true);
+                                        // read the output into a variable
+                $data = '';
+                while ($buffer = fread($stream, 4096)) {
+                    $data .= $buffer;
+                }
+                                        // close the stream
+                fclose($stream);
+
                 $mail = new Mailer();
+                $user = new User();
                 $referents=$user->getProjectReferent($config['COLLECTION_NAME']);
                 foreach ($referents as $key => $value) {
-                    $mail->Send_mail_new_data_to_approve($value->mail,$config['COLLECTION_NAME'],$_SESSION['mail']);
+                    $mail->Send_mail_data_validate($sample_name,$config['COLLECTION_NAME'],$value->mail);
                 }
+
                 return true;
             }
             catch (MongoDB\Driver\Exception\BulkWriteException  $e) {
-               $array['dataform'] = $arrKey;
-               $array['error']    = 'Sample name already in database';
-               return $array;
-           }
+             $array['dataform'] = $arrKey;
+             $array['error']    = 'Sample name already in database';
+             return $array;
+         }
+         
+     }
+     elseif($route=='upload') {
+
+       try{
+        $bulk = new MongoDB\Driver\BulkWrite;
+        $filter=array();
+        $filter = ['_id' => strtoupper($sample_name)];
+
+
+        $query = new MongoDB\Driver\Query($filter);
+        $cursor = $this->db->executeQuery($config['dbname'].'.'.$config['COLLECTION_NAME'], $query);
+
+
+
+        foreach ($cursor as $document) {
+            if($document->_id== strtoupper($sample_name)){
+                $array['dataform'] = $arrKey;
+                $array['error']    = 'Sample name already in database';
+                return $array;
+            }
+        }
+        $data =array_merge_recursive($data,$pictures,$rawdata,$data_samples);
+        $insert=array('_id' => strtoupper($sample_name),"INTRO"=>$arrKey,'DATA'=>$data);
+        $bulk->insert($insert);
+        $this->db->executeBulkWrite($config['dbname'].'.'.$config['COLLECTION_NAME'].'_sandbox', $bulk);
+        $mail = new Mailer();
+        $referents=$user->getProjectReferent($config['COLLECTION_NAME']);
+        foreach ($referents as $key => $value) {
+            $mail->Send_mail_new_data_to_approve($value->mail,$config['COLLECTION_NAME'],$_SESSION['mail']);
+        }
+        return true;
+    }
+    catch (MongoDB\Driver\Exception\BulkWriteException  $e) {
+     $array['dataform'] = $arrKey;
+     $array['error']    = 'Sample name already in database';
+     return $array;
+ }
 
           /* if ($rawdata) {
             try{
@@ -2057,7 +2059,7 @@ function delete_data($id)
     $user = new User();
     $referents=$user->getProjectReferent($config['COLLECTION_NAME']);
     foreach ($referents as $key => $value) {
-            $mail->Send_mail_data_refused($id,$config['COLLECTION_NAME'],$value->mail);
+        $mail->Send_mail_data_refused($id,$config['COLLECTION_NAME'],$value->mail);
     }
     $bulk = new MongoDB\Driver\BulkWrite;
     $bulk->delete(['_id' => strtoupper($id)]);
