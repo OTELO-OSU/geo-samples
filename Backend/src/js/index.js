@@ -123,11 +123,13 @@ var APP = (function() {
                 });
              }
              else if (v3=='CORE_DETAILS') {
+                if (k3!=null) {
                  k3.forEach(function(ref, val) {
                     $.map(ref, function(k4, v4) {  
                        supplementary_field += v4+': '+k4+'<br>'
                    });
                 });
+                }
              }
              else{
 
@@ -144,7 +146,7 @@ var APP = (function() {
             if (supplementary_fields != '') {
                 supplementary_fields = '<div class="ui middle aligned selection list">' + supplementary_fields + '</div>'
             }
-            
+
         }
         if (supplementary_fields != '') {
             supplementary_fields = '<div class="title"> <i class="dropdown icon"></i> Supplementary fields </div> <div class="content">' + supplementary_fields + ' </div>'
@@ -273,7 +275,7 @@ $('.item.pictures').on('click', function(e) {
                     iconSize: [25, 41], // size of the icon
                     iconAnchor: [12, 40]
                 });
-                
+
                 var lithology = [];
                 var lithology3 = [];
                 var creationdate = [];
@@ -284,7 +286,7 @@ $('.item.pictures').on('click', function(e) {
                 
                 $.map(data, function(k2, v2) {
                     console.log(k2)
-                    
+
                     marker=null;
                     if (k2.COORDINATES) {
 
@@ -335,7 +337,7 @@ $('.item.pictures').on('click', function(e) {
                                                 return parseFloat(a.date) - parseFloat(b.date);
                                             });
                                             orientation='vertical';
-                                            
+
                                         }
                                         else if (k.SUPPLEMENTARY_FIELDS.BLOCK.toUpperCase() == 'YES' && (k.SAMPLING_POINT[0].SAMPLING != null && k.SAMPLING_POINT[0].SAMPLING.length != 0)){
                                             console.log(k.SAMPLING_POINT[0].SAMPLING.length)
@@ -381,7 +383,7 @@ $('.item.pictures').on('click', function(e) {
                                     }
 
                                 }
-                                
+
                                 $(".actions a").remove();
                                 $(".actions .download").remove();
                                 if (Object.keys(k2).length>2) {
@@ -425,7 +427,7 @@ $('.ui.longer.modal.preview').modal({
         $(".ui.longer.modal.preview").modal("refresh");
     },
     onHide: function(){
-        
+
      $('.ui.sidebar.right').css("z-index","0");
             //$('.ui.dimmer.modals').css( "background-color", "rgba(0,0,0,0.85)" );
 
@@ -445,17 +447,17 @@ markers.addLayer(marker);
 console.log(marker)
 }
 $.map(k2, function(k, v) {                    
-    
+
     console.log(k)
     console.log(marker);
-    
+
                        // console.log(k)
 
                        if (k.SUPPLEMENTARY_FIELDS) {
                            if (Object.keys(k2).length<2) {
                                marker.bindPopup(k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME);
                            }
-                           
+
                      /*if (k.SUPPLEMENTARY_FIELDS.LITHOLOGY!=null)  {
                     lithology[k.SUPPLEMENTARY_FIELDS.LITHOLOGY] = (k.SUPPLEMENTARY_FIELDS.LITHOLOGY);
                 }*/
@@ -484,14 +486,14 @@ $.map(k2, function(k, v) {
                     //var long = k.SAMPLING_POINT[0].LONGITUDE.replace(/\s+/g, '');
                     //var lat = k.SAMPLING_POINT[0].LATITUDE.replace(/\s+/g, '');
 
-                    
+
                     //var latlng = proj4(firstProj, secondProj, [k.LONGITUDE, k.LATITUDE]);
                     //var marker = L.marker([lat, long]);
 
-                    
+
 
                     
-                    
+
                     
                 }
 
@@ -538,7 +540,7 @@ if (updatelithology == true) {
 
                // console.log(lithology3)
                if (updatelithology3 == true) {
-                   
+
                  $('.control .lithology3').remove();
                  for (key in lithology3) {
                     item = '<div class="item">' + key + '</div>';
@@ -882,7 +884,7 @@ APP.modules.account = (function() {
         /*$.post("get_user_projects",{ mail_user: mail} ,function(data, status){
             alert("Data: " + data + "\nStatus: " + status);
         });*/
-        
+
         $(".modal.user .header").empty();
         $(".modal.user .content").empty();
         $(".modal.user .header").append('Modify informations: ' + mail);
@@ -895,7 +897,7 @@ APP.modules.account = (function() {
         /*$.post("get_user_projects",{ mail_user: mail} ,function(data, status){
             alert("Data: " + data + "\nStatus: " + status);
         });*/
-        
+
         $(".modal.user .header").empty();
         $(".modal.user .content").empty();
         $(".modal.user .header").append('Modify informations: ' + mail);
@@ -908,7 +910,7 @@ APP.modules.account = (function() {
         /*$.post("get_user_projects",{ mail_user: mail} ,function(data, status){
             alert("Data: " + data + "\nStatus: " + status);
         });*/
-        
+
         $(".modal.user .header").empty();
         $(".modal.user .content").empty();
         $(".modal.user .header").append('Modify informations: ' + mail);
@@ -957,7 +959,7 @@ delete_user_from_project: function(mail_user,project_name) {
             APP.modules.account.display_project(project_name);
         });*/
     }
-    
+
 });
 }
 }
