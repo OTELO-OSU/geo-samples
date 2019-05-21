@@ -279,6 +279,7 @@ $('.item.pictures').on('click', function(e) {
                 var lithology = [];
                 var lithology3 = [];
                 var creationdate = [];
+                var station_name=null;
                 lithology['all'] = 'all';
                 lithology3['all'] = 'all';
                 var measurement_abbreviation = [];
@@ -298,7 +299,18 @@ $('.item.pictures').on('click', function(e) {
                         var secondProj = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ';
                         console.log(lat)
                         console.log(long)
+                         $.map(k2, function(k, v) {  
+                            if (k.SUPPLEMENTARY_FIELDS) {
 
+
+                           if (k.SUPPLEMENTARY_FIELDS.STATION){
+                         station_name=k.SAMPLING_POINT[0].NAME;
+                         console.log(station_name)
+                         marker.bindPopup(station_name);
+
+                           }
+                       }
+                            });
                         var latlng = proj4(firstProj, secondProj, [lat,long]);
                         marker.on('click', function(e) {
                             var orientation=null;
@@ -309,6 +321,8 @@ $('.item.pictures').on('click', function(e) {
                             var picture_localisation = null;
                             var name_localisation = null;
                             $.map(k2, function(k, v) {  
+
+                                       
                                 if (k.PICTURES) {
                                     for (key in k.PICTURES) {
                                         picture = k.PICTURES[key].DATA_URL;
@@ -322,7 +336,9 @@ $('.item.pictures').on('click', function(e) {
                                     }
                                 }
 
+                               
                                 if (k.SUPPLEMENTARY_FIELDS) {
+                           
 
                                     if (k.SUPPLEMENTARY_FIELDS.CORE_DETAILS || k.SUPPLEMENTARY_FIELDS.BLOCK ) {
                                         if (k.SUPPLEMENTARY_FIELDS.CORE_DETAILS[0].CORE.toUpperCase() == 'YES' && k.SUPPLEMENTARY_FIELDS.CORE_DETAILS[0].DEPTH != null) {
@@ -369,6 +385,7 @@ $('.item.pictures').on('click', function(e) {
                                     }
                                     if (k.SUPPLEMENTARY_FIELDS.STATION) {
                                        if (k.SUPPLEMENTARY_FIELDS.STATION.toUpperCase() == 'YES' && k.SAMPLING_DATE[0] != null){
+                                       
                                         $('.preview .header').empty();
                                         $('.preview .header').append('Samples by sampling date');
                                         $('#preview').append('<div id="line"></div>');
@@ -377,7 +394,7 @@ $('.item.pictures').on('click', function(e) {
                                         object.content='<a onclick=\"APP.modules.map.affichageinfo(\''+k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME+'\');\">'+k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME+'</a>';
                                         samples.push(object);
                                         samples.sort(function(a, b) {
-                                            return parseFloat(a.date) - parseFloat(b.date);
+                                            return new Date(a.date) - new Date(b.date);
                                         });
                                         orientation='horizontal';
                                     }
@@ -437,12 +454,14 @@ $('.ui.longer.modal.preview').modal({
 }
 
 });
+
 marker.on('mouseover', function(e) {
     this.openPopup();
 });
 marker.on('mouseout', function(e) {
     this.closePopup();
 });
+
 markers.addLayer(marker);
 console.log(marker)
 }
@@ -452,6 +471,7 @@ $.map(k2, function(k, v) {
     console.log(marker);
 
                        // console.log(k)
+
 
                        if (k.SUPPLEMENTARY_FIELDS) {
                            if (Object.keys(k2).length<2) {
