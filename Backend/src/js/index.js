@@ -497,6 +497,16 @@ $.map(k2, function(k, v) {
                      /*if (k.SUPPLEMENTARY_FIELDS.LITHOLOGY!=null)  {
                     lithology[k.SUPPLEMENTARY_FIELDS.LITHOLOGY] = (k.SUPPLEMENTARY_FIELDS.LITHOLOGY);
                 }*/
+                //ACEV
+                /*if (k.SUPPLEMENTARY_FIELDS.LITHOLOGY!=null && k.SUPPLEMENTARY_FIELDS.LITHOLOGY!='' )  {
+                    lithology[k.SUPPLEMENTARY_FIELDS.LITHOLOGY] = (k.SUPPLEMENTARY_FIELDS.LITHOLOGY);
+                }
+
+                if (k.SAMPLING_POINT[0].NAME!=null && k.SAMPLING_POINT[0].NAME!='')  {
+                    lithology3[k.SAMPLING_POINT[0].NAME] = (k.SAMPLING_POINT[0].NAME);
+                }*/
+
+                //Geologie
                 if (k.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH!=null && k.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH!='' )  {
                     lithology[k.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH] = (k.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH);
                 }
@@ -643,10 +653,10 @@ if (updatelithology == true) {
             $('input[name=mindate]').unbind('change');
             $('input[name=maxdate]').unbind('change');
             $('input[name=mindate]').on('change', function(e) {
-                APP.modules.service.searchlithologyanddate($('input[name=lithology]')[0].value, $('input[name=mindate]')[0].value, $('input[name=maxdate]')[0].value);
+                APP.modules.service.searchlithologyanddate($('input[name=lithology]')[0].value, $('input[name=mindate]')[0].value, $('input[name=maxdate]')[0].value,$('input[name=lithology3]')[0].value);
             })
             $('input[name=maxdate]').on('change', function(e) {
-                APP.modules.service.searchlithologyanddate($('input[name=lithology]')[0].value, $('input[name=mindate]')[0].value, $('input[name=maxdate]')[0].value);
+                APP.modules.service.searchlithologyanddate($('input[name=lithology]')[0].value, $('input[name=mindate]')[0].value, $('input[name=maxdate]')[0].value,$('input[name=lithology3]')[0].value);
             })
                 APP.group = markers; // on met le groupe de markers dans une layer
                 map.addLayer(markers);
@@ -755,7 +765,7 @@ APP.modules.service = (function() {
                 "maxdate": maxdate
             };
             json = JSON.stringify(obj);
-            APP.modules.service.getpoisorted(json, false, true,true,true);
+            APP.modules.service.getpoisorted(json, false, false,false,false);
         },
     }
 })();

@@ -8,6 +8,13 @@ use MongoDuplicateKeyException;
 
 class RequestController
 {
+    private $filter1;
+    private $filter2;
+
+    public function __construct(){
+        $this->filter1   = "INTRO.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH";
+        $this->filter2   = "INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY_3";
+    }
 
     function ConfigFile()
     {
@@ -185,15 +192,15 @@ class RequestController
        }*/
         if ($sort['lithology'])  // HOST LITOHLOGY SCANDIUM
         {
-            $host_litho = 'INTRO.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH:"' . urlencode($sort['lithology']) . '"%20AND%20';
+            $lithology = $this->filter1.':"' . urlencode($sort['lithology']) . '"%20AND%20';
         }
-        if ($sort['lithology3'])
-        {
-         $lithology = 'INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY_3:"' . urlencode($sort['lithology3']) . '"%20AND%20';
-     }
-     if ($sort['host_litho'])
-     {
-        $lithology = 'INTRO.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH:"' . urlencode($sort['host_litho']) . '"%20AND%20';
+       if ($sort['lithology3'])
+    {
+        $lithology3 = $this->filter2.':"' . urlencode($sort['lithology3']) . '"%20AND%20';
+    }
+    if ($sort['host_litho'])
+    {
+        $lithology = $this->filter1.':"' . urlencode($sort['host_litho']) . '"%20AND%20';
     }
     if ($sort['mindate'] and $sort['maxdate'])
     {
@@ -209,7 +216,8 @@ class RequestController
     }
 
     $config = self::ConfigFile();
-    $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology . $mesure . $date . $geo . "type=" . $config['COLLECTION_NAME'] ."&size=10000";
+    $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology .$lithology3. $mesure . $date . $geo . "type=" . $config['COLLECTION_NAME'] ."&size=10000";
+  
 
     $postcontent = '{ "_source": { 
         "includes": [ "DATA","INTRO.MEASUREMENT.ABBREVIATION" ] 
@@ -255,6 +263,19 @@ class RequestController
                 }
                 $csv = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
                 $finalcsv[] = $csv;
+                //ACEV
+               /* foreach ($csv as $key => $value)
+                {
+                    $value = str_getcsv($value);
+                    echo "<tr>";
+                    foreach ($value as $cell)
+                    {
+                        echo "<td>" . htmlspecialchars($cell) . "</td>";
+                    }
+                    echo "</tr>\n";
+
+                }*/
+                
             }
         }
     }
@@ -293,15 +314,15 @@ function Download_data_with_sort($sort)
    }*/
     if ($sort['lithology'])  // HOST LITOHLOGY SCANDIUM
     {
-        $host_litho = 'INTRO.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH:"' . urlencode($sort['lithology']) . '"%20AND%20';
+        $lithology = $this->filter1.':"' . urlencode($sort['lithology']) . '"%20AND%20';
     }
     if ($sort['lithology3'])
     {
-        $lithology3 = 'INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY_3:"' . urlencode($sort['lithology3']) . '"%20AND%20';
+        $lithology3 = $this->filter2.':"' . urlencode($sort['lithology3']) . '"%20AND%20';
     }
     if ($sort['host_litho'])
     {
-        $lithology = 'INTRO.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH:"' . urlencode($sort['host_litho']) . '"%20AND%20';
+        $lithology = $this->filter1.':"' . urlencode($sort['host_litho']) . '"%20AND%20';
     }
     if ($sort['mindate'] and $sort['maxdate'])
     {
@@ -312,7 +333,7 @@ function Download_data_with_sort($sort)
         $mesure = 'INTRO.MEASUREMENT.ABBREVIATION:"' . urlencode($sort['mesure']) . '"%20AND%20';
     }
     $config = self::ConfigFile();
-    $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology . $mesure . $date . "type=" . $config['COLLECTION_NAME'] ."&size=10000";
+    $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology .$lithology3. $mesure . $date . "type=" . $config['COLLECTION_NAME'] ."&size=10000";
 
     $postcontent = '{ "_source": { 
         "includes": [ "DATA","INTRO.MEASUREMENT.ABBREVIATION" ] 
@@ -352,9 +373,16 @@ function Download_data_with_sort($sort)
             }
             $csv = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
             $finalcsv[] = $csv;
+            // ACEV 
+            /*foreach ($csv as $key => $value) {
+            $generatedfile .= $value . "\n";
+               
+            }
+            $generatedfile.="\n";*/
         }
     }
 }
+
 foreach ($finalcsv as $key => $value)
 {
     foreach ($value as $key => $value)
@@ -362,11 +390,14 @@ foreach ($finalcsv as $key => $value)
         $finalcsvuniq[] = $value;
     }
 }
+
 $finalcsvuniq = array_unique($finalcsvuniq);
 $generatedfile = "";
 foreach ($finalcsvuniq as $key => $value)
 {
     $generatedfile .= $value . "\n";
+
+
 }
 echo $generatedfile;
 
@@ -387,13 +418,13 @@ echo $generatedfile;
         {
             $lithology = 'INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY:"' . urlencode($sort['lithology']) . '"%20AND%20';
         }*/
-        if ($sort['lithology3'])
+           if ($sort['lithology3'])
         {
-            $lithology3 = 'INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY_3:"' . urlencode($sort['lithology3']) . '"%20AND%20';
+            $lithology3 = $this->filter2.':"' . urlencode($sort['lithology3']) . '"%20AND%20';
         }
-        if ($sort['lithology'])  // HOST LITOHLOGY SCANDIUM
+        if ($sort['lithology'])
         {
-            $lithology = 'INTRO.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH:"' . urlencode($sort['lithology']) . '"%20AND%20';
+            $lithology = $this->filter1.':"' . urlencode($sort['lithology']) . '"%20AND%20';
         }
         if ($sort['mindate'] and $sort['maxdate'])
         {
