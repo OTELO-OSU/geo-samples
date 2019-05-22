@@ -1869,6 +1869,26 @@
                    }
                }
                document.getElementById('metadatafile').addEventListener('change', handleFileSelect, false);
+
+   $("input[name='sampling_points[].LONGITUDE']").bind({
+	    keydown: function(e) {
+	        if (e.which == 188) {
+	            return false;
+	        }
+	      
+	    
+	    }
+});
+
+      $("input[name='sampling_points[].LATITUDE']").bind({
+	    keydown: function(e) {
+	        if (e.which == 188) {
+	            return false;
+	        }
+	      
+	    
+	    }
+});
    
    
    
