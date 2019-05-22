@@ -106,21 +106,27 @@ var APP = (function() {
         }
 
         if (k.SUPPLEMENTARY_FIELDS) {
+            COLLABORATOR='';
+            OPERATOR='';
             supplementary_fields_array=[];
+             supplementary_fields_array2=[];
             $.map(k.SUPPLEMENTARY_FIELDS, function(k3, v3) {  
                 supplementary_field='';
-                if (v3=='REFERENT') {
+              if (v3=='ANALYST') {
                  k3.forEach(function(ref, val) {
                     $.map(ref, function(k4, v4) {  
                        supplementary_field += v4+': '+k4+'<br>'
                    });
                 });
-             }else if (v3=='ANALYST') {
+                 supplementary_fields_array.push(supplementary_field);
+             }
+              else  if (v3=='REFERENT') {
                  k3.forEach(function(ref, val) {
                     $.map(ref, function(k4, v4) {  
                        supplementary_field += v4+': '+k4+'<br>'
                    });
                 });
+                 supplementary_fields_array.push(supplementary_field);
              }
              else if (v3=='CORE_DETAILS') {
                 if (k3!=null) {
@@ -130,15 +136,25 @@ var APP = (function() {
                    });
                 });
                 }
+                supplementary_fields_array.push(supplementary_field);
+             }
+             else if(v3.indexOf('COLLABORATOR')!=-1){
+                COLLABORATOR += v3+': '+k3+'<br>'
+             }
+               else if(v3.indexOf('OPERATOR')!=-1){
+                OPERATOR += v3+': '+k3+'<br>'
              }
              else{
 
                 supplementary_field = v3+': '+k3
+            supplementary_fields_array2.push(supplementary_field);
             }
 
-            supplementary_fields_array.push(supplementary_field);
         });
+
             supplementary_fields_array=supplementary_fields_array.sort()
+            supplementary_fields_array=supplementary_fields_array.concat(supplementary_fields_array2.sort())
+            console.log(supplementary_fields_array)
 
             supplementary_fields_array.forEach(function(ref, val) {
                 supplementary_fields+='<br>'+ref;
@@ -149,7 +165,7 @@ var APP = (function() {
 
         }
         if (supplementary_fields != '') {
-            supplementary_fields = '<div class="title"> <i class="dropdown icon"></i> Supplementary fields </div> <div class="content">' + supplementary_fields + ' </div>'
+            supplementary_fields = '<div class="title"> <i class="dropdown icon"></i> Supplementary fields </div> <div class="content">' + supplementary_fields + COLLABORATOR + OPERATOR+' </div>'
         }
 
 
@@ -216,7 +232,7 @@ var APP = (function() {
    else{
     elevation="";
 }
-$('.ui.sidebar.right').append('<div class="ui styled accordion"> <div class="active title"> <i class="dropdown icon"></i> ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + ' </div> <div class="active content"> <h3>' + k.TITLE.substr(0, k.TITLE.lastIndexOf("_")) + '</h3><p> Description: ' + k.DATA_DESCRIPTION + '<br> Sample Name: ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME +alteration_degrees + referent + lithology+institution+'<br> Latitude: ' + k.SAMPLING_POINT[0].LATITUDE + ' Longitude: ' + k.SAMPLING_POINT[0].LONGITUDE + '<br>'+elevation+'</p>' + picturemetas + '</div>' + measurements + pictures + rawdatas+supplementary_fields)
+$('.ui.sidebar.right').append('<div class="ui styled accordion"> <div class="active title"> <i class="dropdown icon"></i> ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + ' </div> <div class="active content"> <h3>' + k.TITLE.substr(0, k.TITLE.lastIndexOf("_")) + '</h3><p> Description: ' + k.DATA_DESCRIPTION + '<br> Sample Name: ' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME +alteration_degrees  + lithology+'<br> Latitude: ' + k.SAMPLING_POINT[0].LATITUDE + ' Longitude: ' + k.SAMPLING_POINT[0].LONGITUDE + elevation+'<br>'+referent+institution+'</p>' + picturemetas + '</div>' + measurements + pictures + rawdatas+supplementary_fields)
 $('.ui.accordion').accordion();
 $('.item.measurement_abbreviation').on('click', function(e) {
     mesure = $(this).children()[0].value;
@@ -258,7 +274,7 @@ $('.item.pictures').on('click', function(e) {
                 APP.group=null;
             }
             if (data == null || data.length == 0) {
-                $('.message').append('<div class="ui container"><div class="column"><div class="ui negative message">  <div class="header"> No data found </div> <p>Please try again later or with others filters</p></div></div></div>');
+                $('.message').append('<div class="ui"><div class="column"><div class="ui negative message">  <div class="header"> No data found </div> <p>Please try again later or with others filters</p></div></div></div>');
             } else {
                 var same_location=[]; 
                 var array2=[];

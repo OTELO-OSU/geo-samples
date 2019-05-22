@@ -1558,6 +1558,9 @@
                                institutions=0;
                                $.each(data, function(index, values) {
                                    $.each(values, function(index, value) {
+                                   	value=value.trim(value);
+                                   	value=value.replace(' ', '_');
+                                   	console.log(value)
                                        if (value != "") {
                                            if (value == "TITLE") {
                                                $("input[name='title']").val(values[1]);
@@ -1839,7 +1842,7 @@
                                            }
    
                                            if (value == "DATA_DESCRIPTION" || value=="DESCRIPTION") {
-                                           	if ($("textarea[name='description']").val()=='') {
+                                           	if (($("textarea[name='description']").val()=='')&&(values[1]!='SAMPLING_POINTS')) {
    
                                                $("textarea[name='description']").val(values[1]);
                                            	}
@@ -1860,6 +1863,7 @@
                            }
                        }
                        $('#inputs').append('<div class="text" id="filenamemetadata">' + file['name'] + ' successfully loaded!</div>')
+                       $('#metadatafile').prop("disabled", true);
                    } else {
                        alert("Only CSV file are supported!")
                    }
