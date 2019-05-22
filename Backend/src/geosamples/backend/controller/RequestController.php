@@ -616,6 +616,7 @@ echo $generatedfile;
 
             if(@!is_array(getimagesize($filepath))){
                 header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+                header('Content-Type: text/csv; charset=utf-8');
                 header("Content-Disposition: attachment; filename=" . basename($filepath));
                 $readfile = file_get_contents($filepath);
                 print $readfile;
