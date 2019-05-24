@@ -182,11 +182,12 @@ $app->get('/test', function (Request $req, Response $responseSlim) {
 
 $app->get('/validation', function (Request $req, Response $responseSlim) {
 		if (($_SESSION['access']==1) OR $_SESSION['admin']==1) {
+			$config = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . '/../config.ini');
 			$request = new RequestApi();
 			$response=$request->Request_all_data_awaiting();
 			$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
 			$twig   = new Twig_Environment($loader);
-			echo $twig->render('validation.html.twig', ['title' => "Approve",'data' => $response,'mail'=>$_SESSION['mail'],'access'=>$_SESSION['access']]);
+			echo $twig->render('validation.html.twig', ['title' => "Approve",'data' => $response,'mail'=>$_SESSION['mail'],'access'=>$_SESSION['access'],'project_name'=>$config['PROJECT_NAME']]);
 		}else{
 					return $responseSlim->withRedirect('/');
 
@@ -292,6 +293,7 @@ $app->post('/signup', function (Request $req, Response $responseSlim) {
 
 $app->get('/myaccount', function (Request $req, Response $responseSlim) {
 	if (@$_SESSION['name']) {
+		$config = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . '/../config.ini');
 		$loader  = new Twig_Loader_Filesystem('geosamples/frontend/templates');
 		$twig    = new Twig_Environment($loader);
 		$nameKey = $this
@@ -305,7 +307,7 @@ $app->get('/myaccount', function (Request $req, Response $responseSlim) {
 		$user      = new User();
 		$user      = $user->getUserInfo($_SESSION['mail']);
 
-		echo $twig->render('myaccount.html.twig', ['title' => "My account",'name' => $user[0]->name, 'firstname' => $user[0]->firstname, 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'], 'admin' => $_SESSION['admin'],'access'=>$_SESSION['access']]);
+		echo $twig->render('myaccount.html.twig', ['title' => "My account",'name' => $user[0]->name, 'firstname' => $user[0]->firstname, 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'], 'admin' => $_SESSION['admin'],'access'=>$_SESSION['access'],'project_name'=>$config['PROJECT_NAME']]);
 	} else {
 		return $responseSlim->withRedirect('accueil');
 	}
@@ -396,7 +398,7 @@ $app->get('/upload', function (Request $req, Response $responseSlim) {
 			$access=1;
 		}
 		if (($feeder===true )OR ($referent===true) OR $_SESSION['admin']==1) {
-		echo $twig->render('upload.html.twig',['title' => "Upload",'collection_name'=>$config['COLLECTION_NAME'],'route'=>'upload', 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'], 'admin' => $_SESSION['admin'],'access'=>$access]);
+		echo $twig->render('upload.html.twig',['title' => "Upload",'collection_name'=>$config['COLLECTION_NAME'],'route'=>'upload', 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'], 'admin' => $_SESSION['admin'],'access'=>$access,'project_name'=>$config['PROJECT_NAME']]);
 		}else{
 			return $responseSlim->withRedirect('accueil');
 		}
@@ -738,6 +740,7 @@ $app->post('/change_password', function (Request $req, Response $responseSlim) {
 
 $app->get('/listusers', function (Request $req, Response $responseSlim) {
 	if (@$_SESSION['admin'] == 1 ) {
+		$config = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . '/../config.ini');
 		$loader  = new Twig_Loader_Filesystem('geosamples/frontend/templates');
 		$twig    = new Twig_Environment($loader);
 		$nameKey = $this
@@ -755,7 +758,7 @@ $app->get('/listusers', function (Request $req, Response $responseSlim) {
 		$Allprojects  = $user->getAllProject();
 		$usersawaitingvalidation = $user->getUserAwaitingValidationFromReferent($Allprojects);
 		$allusers=json_encode($user->getAllUsersApprovedAutocomplete());
-		echo $twig->render('listusers.html.twig', ['title'=> "Administration panel",'usersapproved' => $usersapproved, 'userswaiting' => $userswaiting, 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'],'allprojects'=>$Allprojects,'UsersAwaitingValidation' => $usersawaitingvalidation,'usersreferentsadmin' => $usersreferents,'admin'=> '1','alluser' => $allusers,'access'=>$_SESSION['admin']]);
+		echo $twig->render('listusers.html.twig', ['title'=> "Administration panel",'usersapproved' => $usersapproved, 'userswaiting' => $userswaiting, 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'],'allprojects'=>$Allprojects,'UsersAwaitingValidation' => $usersawaitingvalidation,'usersreferentsadmin' => $usersreferents,'admin'=> '1','alluser' => $allusers,'access'=>$_SESSION['admin'],'project_name'=>$config['PROJECT_NAME']]);
 	} else{
 		$loader  = new Twig_Loader_Filesystem('geosamples/frontend/templates');
 		$twig    = new Twig_Environment($loader);

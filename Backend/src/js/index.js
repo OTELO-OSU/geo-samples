@@ -737,9 +737,16 @@ APP.modules.service = (function() {
             }
             APP.modules.service.getdata(json);
             $('.control .button').remove();
-            $('.control').append('<div class="ui button">Preview CSV for ' + mesure.toUpperCase() + '</div>')
-            $('.control .button').on('click', function(e) {
+            $('.control').append('<div class="ui button preview">Preview CSV for ' + mesure.toUpperCase() + '</div>')
+            $('.control').append('<br><div class="ui button download">Download CSV for ' + mesure.toUpperCase() + '</div>')
+            $(".control .button.download").css("margin-top", "5%");
+
+
+            $('.control .button.preview').on('click', function(e) {
                 $('.ui.modal.preview').modal('show');
+            });
+             $('.control .button.download').on('click', function(e) {
+                    APP.modules.service.downloaddata(json);
             });
         },
         searchlithology: function(lithology) {

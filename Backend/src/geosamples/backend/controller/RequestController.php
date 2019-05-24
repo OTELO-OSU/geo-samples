@@ -333,7 +333,7 @@ function Download_data_with_sort($sort)
         $mesure = 'INTRO.MEASUREMENT.ABBREVIATION:"' . urlencode($sort['mesure']) . '"%20AND%20';
     }
     $config = self::ConfigFile();
-    $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology .$lithology3. $mesure . $date . "type=" . $config['COLLECTION_NAME'] ."&size=10000";
+    $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology .$lithology3. $mesure . $date . "type=" . $config['COLLECTION_NAME'] ."&sort=INTRO.SAMPLING_DATE&size=10000";
 
     $postcontent = '{ "_source": { 
         "includes": [ "DATA","INTRO.MEASUREMENT.ABBREVIATION" ] 
@@ -439,7 +439,7 @@ echo $generatedfile;
         }*/
 
         $config = self::ConfigFile();
-        $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology .$lithology3 . $mesure . $date . "type=" . $config['COLLECTION_NAME'] ."&size=10000";
+        $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology .$lithology3 . $mesure . $date . "type=" . $config['COLLECTION_NAME'] ."&sort=INTRO.SAMPLING_DATE&size=10000";
 
         $postcontent = '{ "_source": { 
             "includes": [ "INTRO.SAMPLING_DATE","INTRO.TITLE","INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY","INTRO.DATA_DESCRIPTION","INTRO.SUPPLEMENTARY_FIELDS.SAMPLE_NAME","INTRO.SUPPLEMENTARY_FIELDS.ALTERATION_DEGREE","INTRO.SUPPLEMENTARY_FIELDS.NAME_REFERENT","INTRO.SUPPLEMENTARY_FIELDS.FIRST_NAME_REFERENT",
