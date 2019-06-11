@@ -216,7 +216,7 @@ class RequestController
     }
 
     $config = self::ConfigFile();
-    $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology .$lithology3. $mesure . $date . $geo . "type=" . $config['COLLECTION_NAME'] ."&size=10000";
+    $url = $config['ESHOST'] . '/' . $config['INDEX_NAME'] . "/_search?q=" . $lithology .$lithology3. $mesure . $date . $geo . "type=" . $config['COLLECTION_NAME'] ."&sort=INTRO.SAMPLING_DATE&size=10000";
   
 
     $postcontent = '{ "_source": { 
