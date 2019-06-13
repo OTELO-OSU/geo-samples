@@ -10,6 +10,7 @@ Sommaire:
 * [Utilisation](/Docs/Utilisation.md)
 * [Organisation (code et Bdd)](/Docs/Organisation.md)
 * [Modification du formulaire de saisie](/Docs/Modification.md)
+* [Modification des filtres de recherche](/Docs/Modification.md#modif_recherche)
 
 
 
