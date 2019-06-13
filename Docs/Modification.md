@@ -114,7 +114,7 @@ Exemple:
 		{%endif%}
 
 
-# Modification des filtres de recherche
+# Modification des filtres de recherche <a name="modif_recherche"></a>
 
 Les champs des filtres de recherches peuvent etre modifiés, pour cela, il faut modifier le constructeur de la Classe PHP RequestController tels que :
 
