@@ -749,7 +749,10 @@ echo $generatedfile;
         {
             $CSV_FOLDER = $config["CSV_FOLDER"];
             $file = $CSV_FOLDER . $folder . "/" . $name;
-        }
+             echo "<h1>Cannot preview file</h1> <p>Sorry, we are unfortunately not able to preview this file.<p>";
+            $readfile = false;
+            header('Content-Type:  text/html');
+        }else{
         if (file_exists($file))
         {
          if(@!is_array(getimagesize($file))){
@@ -816,6 +819,7 @@ echo $generatedfile;
         $readfile = false;
         header('Content-Type:  text/html');
     }
+}
 
     if ($readfile == false)
     {
