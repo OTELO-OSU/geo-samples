@@ -114,6 +114,29 @@ Exemple:
 		{%endif%}
 
 
+# Modification des filtres de recherche
+
+Les champs des filtres de recherches peuvent etre modifiés, pour cela, il faut modifier le constructeur de la Classe PHP RequestController tels que :
+
+	   $this->filter1   = "INTRO.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH";
+	   $this->filter2   = "INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY_3";
+   
+ Il ne faut pas oublier d'appliquer ces changements dans le JS, index.js ligne 510:
+   
+	   if (k.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH != null && k.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH != '') {
+	   lithology[k.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH] = (k.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH);
+	}
+
+
+
+	if (k.SUPPLEMENTARY_FIELDS.LITHOLOGY_3 != null && k.SUPPLEMENTARY_FIELDS.LITHOLOGY_3 != '') {
+	lithology3[k.SUPPLEMENTARY_FIELDS.LITHOLOGY_3] = (k.SUPPLEMENTARY_FIELDS.LITHOLOGY_3);
+	}
+  
+  Pensez à effacer votre cache pour tester.
+
+
+
 
 
 
