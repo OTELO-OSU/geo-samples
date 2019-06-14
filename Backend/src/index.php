@@ -66,14 +66,21 @@ $mw = function ($request, $response, $next) {
 
 
 $check_access_right_file = function ($request, $response, $next) {
-	if (($_SESSION['mail']) or ($_SESSION['admin']==1) )  {
+	$config = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . '/../config.ini');
+	if ((($_SESSION['mail']) and in_array($config['COLLECTION_NAME'], $_SESSION['projects_access_right_name'])) or ($_SESSION['admin']==1) )  {
 		$response = $next($request, $response);
 		return $response;
 	}
 	else{
+		$user= New User();
+        $referents=$user->getProjectReferent($config['COLLECTION_NAME']);
 		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
 		$twig   = new Twig_Environment($loader);
-		$render = $twig->render('notfound.html.twig');
+		$referentsA=[];
+		foreach ($referents as $key => $value) {
+		$referentsA[]=$value->mail;
+		}
+		$render = $twig->render('forbidden.html.twig',['referents'=>$referentsA]);
 		$response->write($render);
 		//return $responseSlim->withStatus(403);
 		return $response;

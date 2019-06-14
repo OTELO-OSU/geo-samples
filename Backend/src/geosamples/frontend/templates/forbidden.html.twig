@@ -14,6 +14,11 @@
 				<div class="container">
 					<h1 class="ui dividing centered header"><i class="minus circle icon"></i>Forbidden</h1>
 					<p>You dont have permission to access to this ressource.</p>
+					{%if referents%}
+					{%for referent in referents%}
+					<p>Contact {{referent}} to have access to this ressource</p>
+					{%endfor%}
+					{%endif%}
 				</div>
 			</div>
 		</div>
