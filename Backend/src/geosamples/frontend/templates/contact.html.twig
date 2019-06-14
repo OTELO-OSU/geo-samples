@@ -1,0 +1,56 @@
+<div class="ui modal contactus">
+    <i class="close icon">
+    </i>
+    <div class="header">
+    </div>
+    <div class="content">
+        <div class="ui grid">
+            <div class="ui eight wide centered column">
+                {%if error%}
+            {% if error == "true" %}
+                <div class="ui message red" style="display: block;">
+                    An error is occured!
+                </div>
+                {% elseif error == "false" %}
+                <div class="ui message green" style="display: block;">
+                    Message sent
+                </div>
+                {% endif %}
+            {% endif %}
+                <form action="contact" class="ui form contact " method="post">
+                    <div class="ui error message">
+                    </div>
+                    <div class="required field">
+                        <label>
+                            Your email
+                        </label>
+                        <input name="User-email" placeholder="Your email" type="email">
+                        </input>
+                    </div>
+                    <div class="required field">
+                        <label>
+                            Subject
+                        </label>
+                        <input name="User-object" placeholder="Subject" type="text">
+                        </input>
+                    </div>
+                    <div class="required field">
+                        <label>
+                            Message
+                        </label>
+                        <textarea name="User-message">
+                        </textarea>
+                    </div>
+                    <div class="actions">
+                        <div class="ui black deny button">
+                            Cancel
+                        </div>
+                        <button class="ui submit button">
+                            Send
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -28,3 +28,14 @@
  <script src="/js/index.js"></script>
  <script src="/js/proj4.js"></script>
 <script src="/js/leaflet.markercluster-src.js"></script>
+
+{% include 'contact.html.twig' %}
+
+<div id="footer" class="ui inverted vertical footer segment">
+   <div class="ui center aligned container">
+      <div class="ui horizontal inverted small divided link list">
+         <a onclick="APP.modules.send_email.contact()" class="item">Contact</a>
+         <a href="terms" class="item">Terms of use</a>
+      </div>
+   </div>
+</div>

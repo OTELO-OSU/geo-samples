@@ -1,0 +1,21 @@
+{% include 'header.html.twig' %}
+<div class="ui grid">
+   <div class="ui eight wide centered column">
+         <div class="row"></div>
+      {%if error%}
+      {% if error == "true" %}
+      <div class="ui message red"  style="display: block;">An error is occured!</div>
+      {% elseif error == "false" %}
+      <div class="ui message green"  style="display: block;">Message sent</div>
+      {% endif %}
+      {% endif %}
+      <h1> You will be redirected in 3 seconds</h1>
+   </div>
+</div>
+{% include 'footer.html.twig' %}
+<script type="text/javascript">
+   setTimeout(function(){
+   window.location.href=document.referrer;
+   }, 3000);	
+   
+</script>

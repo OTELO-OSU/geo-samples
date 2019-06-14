@@ -2,6 +2,7 @@
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \geosamples\backend\controller\RequestController as RequestApi;
+use \geosamples\backend\controller\MailerController as Mailer;
 use \geosamples\backend\controller\UserController as User;
 use \geosamples\backend\controller\FileController as File;
 require '../vendor/autoload.php';
@@ -407,6 +408,13 @@ $app->get('/upload', function (Request $req, Response $responseSlim) {
 	
 })->add($container->get('csrf'));
 
+//Route permettant d'acceder a la page terms of use
+$app->get('/terms', function (Request $req, Response $responseSlim) {
+    $loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
+    $twig   = new Twig_Environment($loader);
+    echo $twig->render('terms.html.twig');
+});
+
 
 $app->post('/upload', function (Request $req, Response $responseSlim) {
 	$nameKey = $this
@@ -699,6 +707,24 @@ $app->post('/recover', function (Request $req, Response $responseSlim) {
 	echo $twig->render('recover.html.twig', ['error' => $error, 'post' => 'true']);
 
 })->add($mw);
+
+
+
+$app->post('/contact', function (Request $req, Response $responseSlim) {
+    if ($_SERVER['HTTP_REFERER'] != null) {
+        $loader     = new Twig_Loader_Filesystem('geosamples/frontend/templates');
+        $twig       = new Twig_Environment($loader);
+        $sendermail = $req->getparam('User-email');
+        $message    = $req->getparam('User-message');
+        $object     = $req->getparam('User-object');
+        $request    = new RequestApi();
+        $Mail       = new Mailer();
+        $error      = $Mail->Send_Contact_Mail($object, $message, $sendermail);
+        echo $twig->render('contact_request.html.twig', [ 'error' => $error]);
+    } else {
+        return $responseSlim->withStatus(403);
+    }
+});
 
 
 $app->post('/delete_data', function (Request $req, Response $responseSlim) {

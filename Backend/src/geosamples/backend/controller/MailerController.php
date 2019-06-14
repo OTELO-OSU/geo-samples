@@ -356,6 +356,55 @@ class MailerController {
       }
       return $error;
     }
+
+   public function Send_Contact_Mail($object, $message, $sendermail)
+    {
+        $connected = self::CheckSMTPstatus();
+        if ($connected === true) {
+
+            $file   = new File();
+            $config = $file->ConfigFile();
+            if (!empty($object) && !empty($message) && filter_var($sendermail, FILTER_VALIDATE_EMAIL)) {
+                $headers = "From:<" . $config['NO_REPLY_MAIL'] . ">\r\n";
+                $headers .= "MIME-Version: 1.0\r\n";
+                $headers .= "Content-Type: text/html; charset=utf-8\r\n";
+                $mail = mail("<otelo-si@univ-lorraine.fr>", 'Contact from ' . $config['COLLECTION_NAME'] . ': ' . $object, '<html>
+		    <head>
+		    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		    </head>
+		    <body>
+		         <h2>Contact from : '.$config['COLLECTION_NAME'].' </h2>
+		        <table cellspacing="0" style="border: 2px solid black; width: 400px; height: 200px;">
+		            <tr>
+		                <th>From:</th><td>' . $sendermail . '</td>
+		            </tr>
+		            <tr style="background-color: #e0e0e0;">
+		                <th>Subject:</th><td>' . $object . '</td>
+		            </tr>
+		            <tr>
+		                <th valign="bottom">Message:</th><td>' . $message . '</td>
+		            </tr>
+		        </table>
+		    </body>
+		    </html> ', $headers);
+            } else {
+                return $error = "true";
+            }
+
+            if ($mail == true) {
+                $error = "false";
+            } else {
+                $error = "true";
+            }
+            return $error;
+        } else {
+            return $error = "true";
+        }
+    }
+
+
+
+
     /**
      * Send a mail to user to notify account activation
      */

@@ -662,6 +662,22 @@ APP.modules.map = (function() {
         },
     }
 })();
+// Module send_email , Affichage d'un modal permettant d'envoyer un message a un auteur ou au administrateur
+  APP.modules.send_email = (function() {
+      return {
+          send_email: function(doi, name, firstname) {
+              $(".ui.modal .header").empty();
+              $(".ui.modal .header").append('Contact ' + name + " " + firstname);
+              $(".form").append("<input type='hidden' name='doi' value='" + doi + "'><input type='hidden' name='author_name' value='" + name + "'><input type='hidden' name='author_first_name' value='" + firstname + "'>");
+              $('.ui.modal.contactauthor').modal('show');
+          },
+          contact: function() {
+              $(".ui.modal .header").empty();
+              $(".ui.modal .header").append('Contact us');
+              $('.ui.modal.contactus').modal('show');
+          }
+      }
+  })();
 APP.modules.service = (function() {
     return {
         getallpoi: function() {
