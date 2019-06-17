@@ -75,7 +75,10 @@ APP.modules.map = (function() {
             //$('.ui.modal.preview').modal('hide');
 
             // $('.ui.dimmer.modals').css( "background-color", "rgba(0,0,0,0)" );
-            $('.ui.sidebar.right').css("z-index", "2000");
+            if (($(window).height()>=745)&&($(window).width()>=1640)) {
+
+                $('.ui.sidebar.right').css("z-index", "2000");
+            }
 
             k = k.toUpperCase();
             //console.log(APP.data_raw);
