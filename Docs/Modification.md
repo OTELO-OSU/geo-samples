@@ -63,7 +63,7 @@ On peut aussi effectuer un chargement à la volée en JS pour une templates de d
 																	radios.filter('[value=Yes]').prop('checked', true);
 																	$('.form-group.jsonform-error-core_depth').removeClass("hidden field");
 
-$('.form-group.jsonform-error-core_azimut').removeClass("hidden field");
+	$('.form-group.jsonform-error-core_azimut').removeClass("hidden field");
 																	$('.form-group.jsonform-error-core_dip').removeClass("hidden field");
 																	$("input[name='core_depth']").val(values[2]);
 																         $("input[name='core_azimut']").val(values[3]);
