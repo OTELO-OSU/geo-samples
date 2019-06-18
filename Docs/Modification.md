@@ -116,12 +116,12 @@ Exemple:
 
 # Modification des filtres de recherche <a name="modif_recherche"></a>
 
-Les champs des filtres de recherches peuvent etre modifiés, pour cela, il faut modifier le constructeur de la Classe PHP RequestController tels que :
+Les champs des filtres de recherches peuvent etre modifiés, pour cela, il faut modifier le constructeur de la Classe PHP Backend/src/geosamples/backend/controller/RequestController tels que :
 
 	   $this->filter1   = "INTRO.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH";
 	   $this->filter2   = "INTRO.SUPPLEMENTARY_FIELDS.LITHOLOGY_3";
    
- Il ne faut pas oublier d'appliquer ces changements dans le JS, index.js ligne 510:
+ Il ne faut pas oublier d'appliquer ces changements dans le JS, Backend/src/js/index.js ligne 510:
    
 	   if (k.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH != null && k.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH != '') {
 	   lithology[k.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH] = (k.SUPPLEMENTARY_FIELDS.HOST_LITHOLOGY_OR_PROTOLITH);
