@@ -2,7 +2,7 @@
 <html>
    <head>
       <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no, maximum-scale=1.0, user-scalable=no">
-      <meta name="keywords" content="gitology,petrophysics,geologie,geology,nancy,lorraine,vandoeuvre-lès-nancy,ensg,otelo,CNRS,Université de lorraine,Grand-est">
+ 	<meta name="keywords" content="gitology,petrophysics,geologie,geology,nancy,lorraine,vandoeuvre-lès-nancy,ensg,otelo,CNRS,Université de lorraine,Grand-est">
       <meta name="description" content="Geosciences database and geographical cartography" />
       <title>{{title}}</title>
       <link rel="stylesheet" type="text/css" href="/css/semantic/dist/semantic.min.css">
@@ -34,19 +34,6 @@
             <div class="message"></div>
          </div>
          <div class="item right floated">
-         {% if mail %} 
-            <a class="right item" href="/logout" id="logout">Logout</a> 
-	    {% if access == 1  %} 	
-            	<a class="item" href="/upload" id="upload">Upload</a> 
-               <a class="item" href="/validation" id="approve">Approve</a> 
-       {% elseif access == 2  %}   
-               <a class="item" href="/upload" id="upload">Upload</a> 
-	    {% endif %}
-             <a class="item" href="/myaccount" id="upload">My account</a> 
-         {% else %} 
-            <a class="right item" href="/login" id="login">Login</a> 
-            <a class="item" href="/signup" id="login">Sign up</a>
-         {% endif %}
          {%if map %}
             <button class="ui button blue filter">Filter</button>
          {% endif %}

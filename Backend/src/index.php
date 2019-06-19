@@ -64,6 +64,10 @@ $mw = function ($request, $response, $next) {
 };
 
 
+$disabled = function ($request, $response, $next) {
+	return $response->withStatus(403);
+};
+
 
 $check_access_right_file = function ($request, $response, $next) {
 	$config = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . '/../config.ini');
@@ -148,7 +152,7 @@ $app->get('/login', function (Request $req, Response $responseSlim) {
 
 	session_regenerate_id();
 
-});
+})->add($disabled);
 
 $app->post('/login', function (Request $req, Response $responseSlim) {
 	$loader   = new Twig_Loader_Filesystem('geosamples/frontend/templates');
@@ -163,7 +167,7 @@ $app->post('/login', function (Request $req, Response $responseSlim) {
 		echo $twig->render('login.html.twig', ['error' => $error]);
 	}
 
-});
+})->add($disabled);
 
 $app->get('/test', function (Request $req, Response $responseSlim) {
 	//var_dump($_SESSION);
@@ -201,7 +205,7 @@ $app->get('/validation', function (Request $req, Response $responseSlim) {
 
 		}
 
-});
+})->add($disabled);
 
 
 
@@ -235,7 +239,7 @@ $app->get('/loginCAS', function (Request $req, Response $responseSlim) {
 		$error  = "No account linked to this email! Please register";
 		echo $twig->render('login.html.twig', ['error' => $error]);
 	}
-});
+})->add($disabled);
 
 
 $app->get('/signup', function (Request $req, Response $responseSlim) {
@@ -263,7 +267,7 @@ $app->get('/signup', function (Request $req, Response $responseSlim) {
 
 	}
 
-})->add($mw)->add($container->get('csrf'));
+})->add($mw)->add($container->get('csrf'))->add($disabled);
 
 $app->post('/signup', function (Request $req, Response $responseSlim) {
 	$nameKey = $this
@@ -297,7 +301,7 @@ $app->post('/signup', function (Request $req, Response $responseSlim) {
 		echo $twig->render('signup.html.twig', ['error' => $error, 'name_CSRF' => $nameKey, 'value_CSRF' => $valueKey,'data'=>json_encode($response)]);
 	}
 
-})->add($container->get('csrf'));
+})->add($container->get('csrf'))->add($disabled);
 
 $app->get('/myaccount', function (Request $req, Response $responseSlim) {
 	if (@$_SESSION['name']) {
@@ -341,7 +345,7 @@ $app->post('/myaccount', function (Request $req, Response $responseSlim) {
 		echo $twig->render('myaccount.html.twig', ['message'=> "Account updated successfully",'name' => $user[0]->name, 'firstname' => $user[0]->firstname, 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'], 'admin' => $_SESSION['admin']]);
 
 	}
-})->add($mw)->add($container->get('csrf'));
+})->add($mw)->add($container->get('csrf'))->add($disabled);
 
 
 $app->get('/logout', function (Request $req, Response $responseSlim) {
@@ -352,7 +356,7 @@ $app->get('/logout', function (Request $req, Response $responseSlim) {
 	$config = $file->ConfigFile();
     return $responseSlim->withRedirect($config['REPOSITORY_URL'] . '/Shibboleth.sso/Logout?return=' . $config['REPOSITORY_URL']);
 
-})->add($mw);
+})->add($mw)->add($disabled);
 
 $app->get('/activate_account', function (Request $req, Response $responseSlim) {
 	if (!@$_SESSION['name']) {
@@ -377,7 +381,7 @@ $app->get('/activate_account', function (Request $req, Response $responseSlim) {
 		return $responseSlim->withRedirect('accueil');
 
 	}
-})->add($mw);
+})->add($mw)->add($disabled);
 
 
 $app->get('/upload', function (Request $req, Response $responseSlim) {
@@ -413,7 +417,7 @@ $app->get('/upload', function (Request $req, Response $responseSlim) {
 
 
 	
-})->add($container->get('csrf'));
+})->add($container->get('csrf'))->add($disabled);
 
 //Route permettant d'acceder a la page terms of use
 $app->get('/terms', function (Request $req, Response $responseSlim) {
@@ -505,7 +509,7 @@ $app->post('/upload', function (Request $req, Response $responseSlim) {
 		}else{
 			return $responseSlim->withRedirect('accueil');
 		}
-})->add($container->get('csrf'));
+})->add($container->get('csrf'))->add($disabled);
 
 
 $app->get('/modify/{id}', function (Request $req, Response $responseSlim,$args) {
@@ -595,7 +599,7 @@ $app->get('/modify/{id}', function (Request $req, Response $responseSlim,$args) 
 
 
 	
-})->add($container->get('csrf'));
+})->add($container->get('csrf'))->add($disabled);
 
 $app->post('/modify', function (Request $req, Response $responseSlim) {
 	
@@ -678,7 +682,7 @@ $app->post('/modify', function (Request $req, Response $responseSlim) {
 		}else{
 			return $responseSlim->withRedirect('accueil');
 		}
-})->add($container->get('csrf'));
+})->add($container->get('csrf'))->add($disabled);
 
 
 
@@ -703,7 +707,7 @@ $app->get('/recover', function (Request $req, Response $responseSlim) {
 		return $responseSlim->withRedirect('accueil');
 
 	}
-})->add($mw);
+})->add($mw)->add($disabled);
 
 $app->post('/recover', function (Request $req, Response $responseSlim) {
 	$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
@@ -713,7 +717,7 @@ $app->post('/recover', function (Request $req, Response $responseSlim) {
 	$error  = $user->recover_send_mail($mail);
 	echo $twig->render('recover.html.twig', ['error' => $error, 'post' => 'true']);
 
-})->add($mw);
+})->add($mw)->add($disabled);
 
 
 
@@ -768,7 +772,7 @@ $app->post('/change_password', function (Request $req, Response $responseSlim) {
 	$user            = new User();
 	$error           = $user->change_password($token, $password, $passwordconfirm);
 	echo $twig->render('change_password.html.twig', ['error' => $error, 'token' => $token, 'post' => 'true']);
-})->add($mw);
+})->add($mw)->add($disabled);
 
 
 $app->get('/listusers', function (Request $req, Response $responseSlim) {
@@ -941,7 +945,7 @@ $app->post('/get_user_projects', function (Request $req, Response $responseSlim)
 		return json_encode($response);
 	}
 
-});
+})->add($disabled);
 
 
 $app->post('/get_valid_user', function (Request $req, Response $responseSlim) {
@@ -951,7 +955,7 @@ $app->post('/get_valid_user', function (Request $req, Response $responseSlim) {
 		$response = $user->getAllUsersApprovedAutocomplete();
 		return json_encode($response);
 
-});
+})->add($disabled);
 
 
 
@@ -966,7 +970,7 @@ $app->post('/get_user_in_projects', function (Request $req, Response $responseSl
 		return json_encode($response);
 	
 
-});
+})->add($disabled);
 
 $app->post('/add_user_projects', function (Request $req, Response $responseSlim) {
 		$project_name      = $req->getparam('project_name');
@@ -989,7 +993,7 @@ $app->post('/add_user_projects', function (Request $req, Response $responseSlim)
 	}
 		}
 
-});
+})->add($disabled);
 
 $app->post('/delete_user_projects', function (Request $req, Response $responseSlim) {
 		$project_name      = $req->getparam('project_name');
@@ -1014,7 +1018,7 @@ $app->post('/delete_user_projects', function (Request $req, Response $responseSl
 	}
 		}
 
-});
+})->add($disabled);
 
 
 
