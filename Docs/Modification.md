@@ -136,6 +136,17 @@ Les champs des filtres de recherches peuvent etre modifiés, pour cela, il faut 
   Pensez à effacer votre cache pour tester.
 
 
+#Modification spécifique projet ACEV
+
+Le projet ACEV a besoin de section de code spécifique pour fonctionner, ces sections de code sont identifié par un commentaire "//ACEV". 
+Pour les activer, il suffit de les décommenter, et commenter l'ancien code.
+Voici où elles se trouvent:	
+
+		Backend/src/js/index js ligne 500
+		Backend/src/geosamples/backend/controller/RequestController.php ligne 266 et 376
+
+
+
 
 
 
