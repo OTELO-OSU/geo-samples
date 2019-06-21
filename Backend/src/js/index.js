@@ -388,6 +388,7 @@ APP.modules.map = (function() {
                                             $('.preview .header').empty();
                                             $('.preview .header').append('OUTCROP');
                                             $('#preview').append('<div id="line"></div>');
+                                            $('#preview').append('<div id="line"></div><style>.event{top:-30px!important;}</style>');
                                             object = new Object();
                                             object.date = k.SAMPLING_POINT[0].ELEVATION;
                                             object.content = '<a onclick=\"APP.modules.map.affichageinfo(\'' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + '\');\">' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + '</a>';
