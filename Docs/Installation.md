@@ -106,8 +106,8 @@ Rendez vous dans Backend/config.ini :
 	MDBHOST=Host de la base mongo
 	MDBPORT=Port de la base mongo
 	authSource= Le nom de votre BDD qui contiendra les jeux de données
-	username = Le username de votre BDD qui contiendra les jeux de données
-	password = Le mot de passe de votre BDD qui contiendra les jeux de données
+	username= Le username de votre BDD qui contiendra les jeux de données
+	password= Le mot de passe de votre BDD qui contiendra les jeux de données
 	dbname=Le nom de votre BDD qui contiendra les jeux de données
 	SSH_HOST=Host ssh où sont presentes les données OTELO-CLOUD (espace collaboratif de stockage)
 	SSH_UNIXUSER=USER ssh
