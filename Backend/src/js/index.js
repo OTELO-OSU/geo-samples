@@ -394,7 +394,7 @@ APP.modules.map = (function() {
                                             object.content = '<a onclick=\"APP.modules.map.affichageinfo(\'' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + '\');\">' + k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + '</a>';
                                             samples.push(object);
                                             samples.sort(function(a, b) {
-                                                return parseFloat(a.date) - parseFloat(b.date);
+                                                return parseFloat(b.date) - parseFloat(a.date);
                                             });
                                             orientation = 'vertical';
                                         }
