@@ -562,13 +562,13 @@ APP.modules.map = (function() {
                         lithology += item;
                     }
                     lithology = '<div class="ui one column"><div class="ui selection dropdown lithology"><input type="hidden" name="lithology"> <i class="dropdown icon"></i><div class="default text">All</div><div class="menu">' + lithology + ' </div></div></div>';
-                    append += lithology;
+                    //append += lithology;
                     for (key in lithology3) {
                         item = '<div class="item">' + key + '</div>';
                         lithology3 += item;
                     }
                     lithology3 = '<div class="ui one column"><div class="ui selection dropdown lithology3"><input type="hidden" name="lithology3"> <i class="dropdown icon"></i><div class="default text">All</div><div class="menu">' + lithology3 + ' </div></div></div>';
-                    append += lithology3;
+                   // append += lithology3;
                 }
                 if (updatelithology == true) {
                     $('.control .lithology').remove();
@@ -577,7 +577,7 @@ APP.modules.map = (function() {
                         lithology += item;
                     }
                     lithology = '<div class="ui one column"><div class="ui selection dropdown lithology"><input type="hidden" name="lithology"> <i class="dropdown icon"></i><div class="default text">All</div><div class="menu">' + lithology + ' </div></div></div>';
-                    append += lithology;
+                    //append += lithology;
                 }
 
 
@@ -590,7 +590,7 @@ APP.modules.map = (function() {
                         lithology3 += item;
                     }
                     lithology3 = '<div class="ui one column"><div class="ui selection dropdown lithology3"><input type="hidden" name="lithology3"> <i class="dropdown icon"></i><div class="default text">All</div><div class="menu">' + lithology3 + ' </div></div></div>';
-                    append += lithology3;
+                    //append += lithology3;
                 }
 
                 if (updatedate == true) {
