@@ -227,7 +227,7 @@ APP.modules.map = (function() {
                 alteration_degrees = "";
             }
             if (k.SAMPLING_POINT[0].ELEVATION != '') {
-                elevation = 'Elevation: ' + k.SAMPLING_POINT[0].ELEVATION;
+                elevation = '<br>Elevation: ' + k.SAMPLING_POINT[0].ELEVATION;
             } else {
                 elevation = "";
             }
