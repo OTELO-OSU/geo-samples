@@ -239,6 +239,8 @@ APP.modules.map = (function() {
                 name = k.SUPPLEMENTARY_FIELDS.SAMPLE_NAME + "_" + mesure;
                 name = name.replace("/ /g", "");
                 $("#preview").empty();
+                $('.preview .header').empty();
+                $('.preview .header').append('Download '+name);
                 $("#preview").append('<iframe src="/preview_poi_data/' + name + '" style="width:100%; height:550px;" frameborder="0"></iframe>');
                 $(".actions a").remove();
                 $(".actions .download").remove();
@@ -443,7 +445,7 @@ APP.modules.map = (function() {
 
                             $('#line').roadmap(samples, {
                                 orientation: orientation,
-                                eventsPerSlide: 5,
+                                eventsPerSlide: 4,
                                 slide: 1,
                                 prevArrow: prevArrow,
                                 nextArrow: nextArrow
@@ -460,8 +462,9 @@ APP.modules.map = (function() {
                                         $(".ui.longer.modal.preview").modal("refresh");
                                     },
                                     onHide: function() {
-
+                                        if (($(window).height()>=745)&&($(window).width()>=1640)) {
                                         $('.ui.sidebar.right').css("z-index", "0");
+                                    }
                                         //$('.ui.dimmer.modals').css( "background-color", "rgba(0,0,0,0.85)" );
 
                                     },
@@ -702,6 +705,7 @@ APP.modules.service = (function() {
             }, function(data) {
                 $("#preview").empty();
                 $("#preview").append(data);
+               
                 $(".actions a").remove();
                 $(".actions .download").remove();
                 $(".actions").append('<div class="ui green button download">Download</div>')
