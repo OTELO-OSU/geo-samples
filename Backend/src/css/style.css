@@ -69,6 +69,11 @@
     content: '*';
     color: #DB2828;
 }
+.supplementary_fields .title label:after{
+    margin: -.2em 0 0 .2em;
+    content: '*';
+    color: #DB2828;
+}
 
 .jsonform-error-sampling_date label:after{
     margin: -.2em 0 0 .2em;
