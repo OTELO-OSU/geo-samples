@@ -837,13 +837,15 @@ echo $generatedfile;
 
 function Post_Processing($POST,$route)
 {
-
+    //var_dump("<BR>===== post_Processing =====<BR>");
+    //var_dump($_POST);
     $config = self::ConfigFile();
     $rawdata=array();
     $data=array();
     $pictures=array();
     $data_samples  = array();
     $_POST['sample_name']=strtoupper($_POST['sample_name']);
+    $fields=array();
 
     if ($_POST['original_sample_name']) {
         if ($_POST['sample_name'].'_'.strtoupper($_POST['measurements'][1])!=$_POST['original_sample_name']) {
@@ -882,6 +884,7 @@ function Post_Processing($POST,$route)
                                     $fields[] = $field;
                                 }
                             }
+
                             if (count($fields) != 0) {
         //Affichage des champs manquants
                                 $txt = null;
