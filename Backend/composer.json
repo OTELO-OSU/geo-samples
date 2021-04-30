@@ -2,7 +2,7 @@
     "require": {
 	"container-interop/container-interop": "1.2.0",
 	"danielstjules/stringy": "1.10.0",
-	"illuminate/database": "6.20.12",
+	"illuminate/database": "6.20.26",
 	"paragonie/random_compat":"2.0.18",
         "slim/slim": "^3.12",
 	"slim/csrf": "0.8.3",
