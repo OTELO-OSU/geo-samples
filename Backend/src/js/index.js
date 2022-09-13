@@ -219,7 +219,7 @@ APP.modules.map = (function() {
             } else if (k.SUPPLEMENTARY_FIELDS.LITHOLOGY1) {
                 lithology = '<br> Lithology: ' + k.SUPPLEMENTARY_FIELDS.LITHOLOGY1;
             } else {
-                lithology = '<br> Lithology: Inconnu';
+                lithology = '';
             }
             if (k.SUPPLEMENTARY_FIELDS.ALTERATION_DEGREE) {
                 alteration_degrees = '<br>Alteration degree: ' + k.SUPPLEMENTARY_FIELDS.ALTERATION_DEGREE;
