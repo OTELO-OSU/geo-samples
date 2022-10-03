@@ -27,11 +27,11 @@ class ArrayConverter
 {
     /**
      * Converts linear messages array to tree-like array.
-     * For example this rray('foo.bar' => 'value') will be converted to ['foo' => ['bar' => 'value']].
+     * For example this array('foo.bar' => 'value') will be converted to ['foo' => ['bar' => 'value']].
      *
      * @param array $messages Linear messages array
      *
-     * @return array Tree-like messages array
+     * @return array
      */
     public static function expandToTree(array $messages)
     {
@@ -84,7 +84,7 @@ class ArrayConverter
         return $elem;
     }
 
-    private static function cancelExpand(array &$tree, $prefix, array $node)
+    private static function cancelExpand(array &$tree, string $prefix, array $node)
     {
         $prefix .= '.';
 
