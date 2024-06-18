@@ -14,8 +14,8 @@ $container['csrf'] = function ($c) {
 	$guard = new \Slim\Csrf\Guard;
 	$guard->setFailureCallable(function ($request, $response, $next) {
 		$request = $request->withAttribute("csrf_status", false);
-		$loader  = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig    = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 		$response->write($twig->render('forbidden.html.twig'));
 		return $response;
 	});
@@ -24,16 +24,16 @@ $container['csrf'] = function ($c) {
 
 $c['notFoundHandler'] = function ($c) {
 	return function ($request, $response) use ($c) {
-		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig   = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 		echo $twig->render('notfound.html.twig');
 	};
 };
 
 $c['notAllowedHandler'] = function ($c) {
 	return function ($request, $response, $methods) use ($c) {
-		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig   = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 		echo $twig->render('forbidden.html.twig');
 	};
 };
@@ -41,8 +41,8 @@ $c['notAllowedHandler'] = function ($c) {
 $mw = function ($request, $response, $next) {
 	$file = file_exists($_SERVER['DOCUMENT_ROOT'] . '/../config.ini');
 	if ($file == false) {
-		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig   = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 		$render = $twig->render('notfound.html.twig');
 	} else {
        /* $file   = new File();
@@ -74,8 +74,8 @@ $check_access_right_file = function ($request, $response, $next) {
 	else{
 		$user= New User();
         $referents=$user->getProjectReferent($config['COLLECTION_NAME']);
-		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig   = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 		$referentsA=[];
 		foreach ($referents as $key => $value) {
 		$referentsA[]=$value->mail;
@@ -104,8 +104,8 @@ $check_current_user = function ($request, $response, $next) {
 
 	} else {
 		session_destroy();
-		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig   = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 		$render = $twig->render('notfound.html.twig');
 		$response->write($render);
 		return $response;
@@ -123,8 +123,8 @@ session_start();
 //Declaration des différentes routes 
 
 $app->get('/', function (Request $req,Response $responseSlim) {
-	$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-	$twig = new Twig_Environment($loader);
+	$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+	$twig    = new Twig\Environment($loader);
 	$config = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . '/../config.ini');
 
 
@@ -142,8 +142,8 @@ $app->get('/accueil', function (Request $req,Response $responseSlim) {
 //Route permettant la connexion d'un utilisateur
 $app->get('/login', function (Request $req, Response $responseSlim) {
 
-	$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-	$twig   = new Twig_Environment($loader);
+	$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+	$twig    = new Twig\Environment($loader);
 	echo $twig->render('login.html.twig',['title' => "Login"]);
 
 	session_regenerate_id();
@@ -151,8 +151,8 @@ $app->get('/login', function (Request $req, Response $responseSlim) {
 });
 
 $app->post('/login', function (Request $req, Response $responseSlim) {
-	$loader   = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-	$twig     = new Twig_Environment($loader);
+	$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+	$twig    = new Twig\Environment($loader);
 	$mail     = $req->getparam('email');
 	$password = $req->getparam('password');
 	$user     = new User();
@@ -193,8 +193,8 @@ $app->get('/validation', function (Request $req, Response $responseSlim) {
 			$config = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . '/../config.ini');
 			$request = new RequestApi();
 			$response=$request->Request_all_data_awaiting();
-			$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-			$twig   = new Twig_Environment($loader);
+			$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+			$twig    = new Twig\Environment($loader);
 			echo $twig->render('validation.html.twig', ['title' => "Approve",'data' => $response,'mail'=>$_SESSION['mail'],'access'=>$_SESSION['access'],'project_name'=>$config['PROJECT_NAME']]);
 		}else{
 					return $responseSlim->withRedirect('/');
@@ -230,8 +230,8 @@ $app->get('/loginCAS', function (Request $req, Response $responseSlim) {
 		$user->giveRight($checkuser);
 		return $responseSlim->withRedirect('accueil');
 	} else {
-		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig   = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 		$error  = "No account linked to this email! Please register";
 		echo $twig->render('login.html.twig', ['error' => $error]);
 	}
@@ -255,8 +255,8 @@ $app->get('/signup', function (Request $req, Response $responseSlim) {
 			$array['title']=$value;
 			$response[]=$array;
 		}
-		$loader    = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig      = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 		echo $twig->render('signup.html.twig', ['title' => "Sign up",'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf,'data'=>json_encode($response)]);
 	} else {
 		return $responseSlim->withRedirect('/');
@@ -274,8 +274,8 @@ $app->post('/signup', function (Request $req, Response $responseSlim) {
 	->getTokenValueKey();
 	$namecsrf        = $req->getAttribute($nameKey);
 	$valuecsrf       = $req->getAttribute($valueKey);
-	$loader          = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-	$twig            = new Twig_Environment($loader);
+	$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+	$twig    = new Twig\Environment($loader);
 	$name            = $req->getparam('name');
 	$firstname       = $req->getparam('firstname');
 	$mail            = $req->getparam('email');
@@ -302,8 +302,8 @@ $app->post('/signup', function (Request $req, Response $responseSlim) {
 $app->get('/myaccount', function (Request $req, Response $responseSlim) {
 	if (@$_SESSION['name']) {
 		$config = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . '/../config.ini');
-		$loader  = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig    = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 		$nameKey = $this
 		->csrf
 		->getTokenNameKey();
@@ -323,8 +323,8 @@ $app->get('/myaccount', function (Request $req, Response $responseSlim) {
 
 $app->post('/myaccount', function (Request $req, Response $responseSlim) {
 	if (@$_SESSION['name']) {
-		$loader  = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig    = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 		$nameKey = $this
 		->csrf
 		->getTokenNameKey();
@@ -345,8 +345,8 @@ $app->post('/myaccount', function (Request $req, Response $responseSlim) {
 
 
 $app->get('/logout', function (Request $req, Response $responseSlim) {
-	$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-	$twig   = new Twig_Environment($loader);
+	$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+	$twig    = new Twig\Environment($loader);
 	session_destroy();
 	$file   = new File();
 	$config = $file->ConfigFile();
@@ -356,8 +356,8 @@ $app->get('/logout', function (Request $req, Response $responseSlim) {
 
 $app->get('/activate_account', function (Request $req, Response $responseSlim) {
 	if (!@$_SESSION['name']) {
-		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig   = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 		$token  = $req->getparam('token');
 		if ($token) {
 			$user  = new User();
@@ -389,8 +389,8 @@ $app->get('/upload', function (Request $req, Response $responseSlim) {
 		->getTokenValueKey();
 		$namecsrf  = $req->getAttribute($nameKey);
 		$valuecsrf = $req->getAttribute($valueKey);
-		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig   = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 		$user      = new User();
 		$file   = new File();
         $config = $file->ConfigFile();
@@ -417,8 +417,8 @@ $app->get('/upload', function (Request $req, Response $responseSlim) {
 
 //Route permettant d'acceder a la page terms of use
 $app->get('/terms', function (Request $req, Response $responseSlim) {
-    $loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-    $twig   = new Twig_Environment($loader);
+    $loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+    $twig    = new Twig\Environment($loader);
     echo $twig->render('terms.html.twig');
 });
 
@@ -441,8 +441,8 @@ $app->post('/upload', function (Request $req, Response $responseSlim) {
 		if (($feeder===true )OR ($referent===true) OR $_SESSION['admin']==1) {
 		$request      = new RequestApi();
 		$response=$request->Post_Processing($_POST,'upload');
-		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig   = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 
 		if ($response === true) {
 					echo $twig->render('display_actions.html.twig',['message'=>'Data submitted to referents','mail' => $_SESSION['mail'], 'admin' => $_SESSION['admin'],'access'=>$_SESSION['admin']]);
@@ -517,8 +517,8 @@ $app->get('/modify/{id}', function (Request $req, Response $responseSlim,$args) 
 		->getTokenValueKey();
 		$namecsrf  = $req->getAttribute($nameKey);
 		$valuecsrf = $req->getAttribute($valueKey);
-		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig   = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 		$user      = new User();
 		$file   = new File();
         $config = $file->ConfigFile();
@@ -614,8 +614,8 @@ $app->post('/modify', function (Request $req, Response $responseSlim) {
 		if (($referent===true) OR $_SESSION['admin']==1) {
 		$request      = new RequestApi();
 		$response=$request->Post_Processing($_POST,'modify');
-		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig   = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 
 		if ($response === true) {
 					echo $twig->render('display_actions.html.twig',['message'=>'Data approved','mail' => $_SESSION['mail'], 'admin' => $_SESSION['admin'],'access'=>$_SESSION['admin']]);
@@ -685,8 +685,8 @@ $app->post('/modify', function (Request $req, Response $responseSlim) {
 
 $app->get('/recover', function (Request $req, Response $responseSlim) {
 	if (!@$_SESSION['name']) {
-		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig   = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 		$token  = $req->getparam('token');
 		if ($token) {
 			$user   = new User();
@@ -706,8 +706,8 @@ $app->get('/recover', function (Request $req, Response $responseSlim) {
 })->add($mw);
 
 $app->post('/recover', function (Request $req, Response $responseSlim) {
-	$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-	$twig   = new Twig_Environment($loader);
+	$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+	$twig    = new Twig\Environment($loader);
 	$mail   = $req->getparam('email');
 	$user   = new User();
 	$error  = $user->recover_send_mail($mail);
@@ -719,8 +719,8 @@ $app->post('/recover', function (Request $req, Response $responseSlim) {
 
 $app->post('/contact', function (Request $req, Response $responseSlim) {
     if ($_SERVER['HTTP_REFERER'] != null) {
-        $loader     = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-        $twig       = new Twig_Environment($loader);
+	$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+	$twig    = new Twig\Environment($loader);
         $sendermail = $req->getparam('User-email');
         $message    = $req->getparam('User-message');
         $object     = $req->getparam('User-object');
@@ -736,8 +736,8 @@ $app->post('/contact', function (Request $req, Response $responseSlim) {
 
 $app->post('/delete_data', function (Request $req, Response $responseSlim) {
 
-		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig   = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 		$id  = $req->getparam('id');
 		$req   = new RequestApi();
 		$error  = $req->delete_data($id);
@@ -749,8 +749,8 @@ $app->post('/delete_data', function (Request $req, Response $responseSlim) {
 
 
 $app->post('/resetpassword', function (Request $req, Response $responseSlim) {
-	$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-	$twig   = new Twig_Environment($loader);
+	$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+	$twig    = new Twig\Environment($loader);
 	$mail   = $_SESSION['mail'];
 	$user   = new User();
 	$error  = $user->recover_send_mail($mail);
@@ -760,8 +760,8 @@ $app->post('/resetpassword', function (Request $req, Response $responseSlim) {
 })->add($mw)->add($container->get('csrf'));
 
 $app->post('/change_password', function (Request $req, Response $responseSlim) {
-	$loader          = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-	$twig            = new Twig_Environment($loader);
+	$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+	$twig    = new Twig\Environment($loader);
 	$token           = $req->getparam('token');
 	$password        = $req->getparam('password');
 	$passwordconfirm = $req->getparam('password_confirm');
@@ -774,8 +774,8 @@ $app->post('/change_password', function (Request $req, Response $responseSlim) {
 $app->get('/listusers', function (Request $req, Response $responseSlim) {
 	if (@$_SESSION['admin'] == 1 ) {
 		$config = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . '/../config.ini');
-		$loader  = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig    = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 		$nameKey = $this
 		->csrf
 		->getTokenNameKey();
@@ -793,8 +793,8 @@ $app->get('/listusers', function (Request $req, Response $responseSlim) {
 		$allusers=json_encode($user->getAllUsersApprovedAutocomplete());
 		echo $twig->render('listusers.html.twig', ['title'=> "Administration panel",'usersapproved' => $usersapproved, 'userswaiting' => $userswaiting, 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'],'allprojects'=>$Allprojects,'UsersAwaitingValidation' => $usersawaitingvalidation,'usersreferentsadmin' => $usersreferents,'admin'=> '1','alluser' => $allusers,'access'=>$_SESSION['admin'],'project_name'=>$config['PROJECT_NAME']]);
 	} else{
-		$loader  = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig    = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 		$nameKey = $this
 		->csrf
 		->getTokenNameKey();
@@ -826,8 +826,8 @@ $app->get('/listusers', function (Request $req, Response $responseSlim) {
 
 $app->post('/approveuser', function (Request $req, Response $responseSlim) {
 	if (@$_SESSION['admin'] == 1) {
-		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig   = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 		$email  = $req->getparam('email');
 		$user   = new User();
 		$error  = $user->approveUser($email);
@@ -838,8 +838,8 @@ $app->post('/approveuser', function (Request $req, Response $responseSlim) {
 
 $app->post('/disableuser', function (Request $req, Response $responseSlim) {
 	if (@$_SESSION['admin'] == 1) {
-		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig   = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 		$email  = $req->getparam('email');
 		$user   = new User();
 		$error  = $user->disableUser($email);
@@ -850,8 +850,8 @@ $app->post('/disableuser', function (Request $req, Response $responseSlim) {
 
 $app->post('/removeuser', function (Request $req, Response $responseSlim) {
 	if (@$_SESSION['admin'] == 1) {
-		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig   = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 		$email  = $req->getparam('email');
 		$user   = new User();
 		$error  = $user->deleteUser($email);
@@ -862,8 +862,8 @@ $app->post('/removeuser', function (Request $req, Response $responseSlim) {
 
 $app->post('/modifyuser', function (Request $req, Response $responseSlim) {
 	if (@$_SESSION['admin'] == 1) {
-		$loader    = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig      = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 		$email     = $req->getparam('email');
 		$name      = $req->getparam('name');
 		$firstname = $req->getparam('firstname');
@@ -889,8 +889,8 @@ $app->post('/modifyuser', function (Request $req, Response $responseSlim) {
 		}
 		return $responseSlim->withRedirect('listusers');
 	}else {
-		$loader    = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig      = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 		$email     = $req->getparam('email');
 		$type      = $req->getparam('type');
 		$project_name      = $req->getparam('project_name_modify');
@@ -916,8 +916,8 @@ $app->post('/modifyuser', function (Request $req, Response $responseSlim) {
 
 $app->post('/create_project', function (Request $req, Response $responseSlim) {
 	if (@$_SESSION['admin'] == 1) {
-		$loader    = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig      = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 		$name      = $req->getparam('project_name');
 		$user  = new User();
 		$error = $user->Create_project($name);
@@ -934,8 +934,8 @@ $app->post('/create_project', function (Request $req, Response $responseSlim) {
 
 $app->post('/get_user_projects', function (Request $req, Response $responseSlim) {
 	if (@$_SESSION['admin'] == 1) {
-		$loader    = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig      = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 		$user  = new User();
 		$response = $user->getReferentProject();
 		return json_encode($response);
@@ -945,8 +945,8 @@ $app->post('/get_user_projects', function (Request $req, Response $responseSlim)
 
 
 $app->post('/get_valid_user', function (Request $req, Response $responseSlim) {
-		$loader    = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig      = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 		$user  = new User();
 		$response = $user->getAllUsersApprovedAutocomplete();
 		return json_encode($response);
@@ -958,8 +958,8 @@ $app->post('/get_valid_user', function (Request $req, Response $responseSlim) {
 
 $app->post('/get_user_in_projects', function (Request $req, Response $responseSlim) {
 	
-		$loader    = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig      = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 		$project_name      = $req->getparam('project_name');
 		$user  = new User();
 		$response = $user->getUserInProject($project_name);
@@ -970,8 +970,8 @@ $app->post('/get_user_in_projects', function (Request $req, Response $responseSl
 
 $app->post('/add_user_projects', function (Request $req, Response $responseSlim) {
 		$project_name      = $req->getparam('project_name');
-		$loader    = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig      = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 		$mail      = $req->getparam('mail_user');
 		if ($_SESSION['admin']==1) {
 			$user  = new User();
@@ -993,8 +993,8 @@ $app->post('/add_user_projects', function (Request $req, Response $responseSlim)
 
 $app->post('/delete_user_projects', function (Request $req, Response $responseSlim) {
 		$project_name      = $req->getparam('project_name');
-		$loader    = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-		$twig      = new Twig_Environment($loader);
+		$loader  = new Twig\Loader\FilesystemLoader('geosamples/frontend/templates');
+		$twig    = new Twig\Environment($loader);
 		$mail      = $req->getparam('mail_user');
 		if ($_SESSION['admin']==1) {
 		$user  = new User();

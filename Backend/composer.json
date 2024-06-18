@@ -6,7 +6,7 @@
 	"paragonie/random_compat":"2.0.18",
         "slim/slim": "^3.12",
 	"slim/csrf": "0.8.3",
-	"twig/twig": "~1.0",
+	"twig/twig": "^3",
     "phpoffice/phpexcel" : ">=1.8.1"
     },
   "autoload": {
