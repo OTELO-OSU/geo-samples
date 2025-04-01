@@ -1,0 +1,51 @@
+@startuml GET
+actor Actor as a
+control Slim as s
+Control UserController as uc
+database MySQL as db
+
+a -> s : /signup
+activate s
+s -> uc : getAllProject()
+activate uc
+uc -> db :select * from projects
+activate db
+db --> uc :projets
+deactivate db
+uc --> s :projets
+deactivate uc
+s --> a : signup.html.twig (projets)
+deactivate s
+
+@enduml
+
+@startuml POST
+actor Actor as a
+control Slim as s
+Control UserController as uc
+Control MailerController as mc
+database MySQL as db
+
+a -> s : /signup (name, firstname, email, project_name, password, password_confirm)
+activate s
+s -> uc : signup(name, firstname, email, project_name, password, password_confirm)
+activate uc
+alt #FFAAAA mauvaises infos
+uc --> s :error
+s --> a : signup.html.twig (error)
+else #ccffaa bonnes infos
+uc -> db :insert into users
+activate db
+db --> uc
+deactivate db
+uc -> mc :Send_Validation_Mail(email, token)
+activate mc
+mc --> uc
+deactivate mc
+uc --> s :void
+deactivate uc
+s --> a : Redirection /
+deactivate s
+end
+
+@enduml

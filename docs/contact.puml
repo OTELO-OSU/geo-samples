@@ -1,0 +1,15 @@
+@startuml POST
+actor Actor as a
+control Slim as s
+control MailController as mc
+
+
+a -> s : /contact (User-email, User-message, User-object)
+activate s
+s -> mc : Send_Contact_Mail (User-email, User-message, User-object)
+activate mc
+mc --> s : boolean
+deactivate mc
+s --> a : contact_request.html.twig (boolean)
+deactivate s
+@enduml

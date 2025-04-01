@@ -1,0 +1,48 @@
+@startuml GET
+actor Actor as a
+control Slim as s
+control UserConstroller as uc
+database MySQL as db
+
+a -> s : /listusers
+alt  #ccffaa session admin
+
+s -> uc :getReferentProjectsUSERS()
+activate uc
+uc -> uc :getAllProject()
+activate uc
+uc -> db :select * from project
+activate db
+db --> uc :projects
+deactivate db
+deactivate uc
+
+
+
+s <-- uc
+s -> uc :getAllUsersApproved()
+s <-- uc
+s -> uc :getAllUsersWaiting()
+s <-- uc
+s -> uc :getAllProject()
+s <-- uc
+
+else #ffaaaa session admin
+end
+activate s
+s -> uc : activateAccount
+activate uc
+uc -> db : Update user mail_validation à 1
+activate db
+db --> uc :data
+deactivate db
+uc --> s :boolean (erreur)
+deactivate uc
+alt  #ccffaa erreur
+s --> a : Redirection /
+else #ffaaaa sans erreur
+s --> a : validation_mail.html.twig
+deactivate s
+end
+
+@enduml

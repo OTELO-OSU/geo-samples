@@ -1,0 +1,28 @@
+@startuml POST
+actor Actor as a
+control Slim as s
+control UserConstroller as uc
+database MySQL as db
+
+a -> s :/modifyuser (email, name, firstname, type)
+activate s
+alt  #ccffaa session admin
+s -> uc :modifyUser(email, name, firstname, type)
+activate uc
+uc -> db :update user set type where email
+activate db
+db --> uc
+deactivate db
+
+uc --> s :true | false
+deactivate uc
+s --> a :Redirection /listusers
+else  #ffaaaa session !admin
+s -->x a
+note right
+aucun retour
+end note
+deactivate s
+end
+
+@enduml

@@ -1,0 +1,26 @@
+@startuml POST
+actor Actor as a
+control Slim as s
+control RequestController as rc
+entity ElasticSearch as es
+
+a -> s :/get_all_poi (project_name, mail)
+activate s
+alt #88ff88 admin
+s -> rc :Request_all_poi()
+activate rc
+
+rc -> es :curl
+rc <-- es :(data)
+
+rc -> rc :création d'un tableau avec les infos des data de ES
+activate rc
+
+rc --> s :(json)
+deactivate rc
+deactivate rc
+s --> a :(json)
+deactivate s
+
+
+@enduml

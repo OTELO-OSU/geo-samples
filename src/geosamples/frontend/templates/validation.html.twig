@@ -1,0 +1,40 @@
+{% include 'header.html.twig' %}
+<body>
+{%if error%}
+{{error}}
+{%endif%}
+
+  <div class="ui grid container">
+    <div class="row"></div>
+    <div class="row">
+      <h1 class="ui dividing header">Approve</h1>
+    </div>
+    <div class="ui twelve wide column centered">
+      <h2>Data waiting for approvement</h2>
+      {%if data%} 
+      <div class="ui relaxed divided list waitinglist">
+        {%for user in data%}
+        <div class="item">
+        
+          <div class="content">
+            
+
+            <a href='modify/{{user}}' class="header"><i class="large file alternate middle aligned icon"></i>{{user}}  
+            </a>
+            <div class="description"> </div>
+          </div>
+        </div>
+        {%endfor%}
+
+      </div> 
+      {%else%}
+      <p>Nothing to approve</p>
+      {%endif%}
+    
+
+
+ </body>
+
+
+{% include 'footer.html.twig' %}
+

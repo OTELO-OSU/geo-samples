@@ -1,0 +1,411 @@
+
+
+{
+	schema: {
+
+		title: {
+			type: 'string',
+			title: 'Title',
+			'required':true
+
+		},
+		original_sample_name: {
+			type: 'hidden'
+		},
+		csrf_name: {
+			type: 'hidden'
+		},
+		csrf_value: {
+			type: 'hidden',
+		},
+
+
+		data: {
+			type: 'file',
+			title: 'Data'
+
+		},
+
+		file_data_already_uploaded:{
+			type:'string'
+		},
+
+		
+
+
+		pictures: {
+			type: 'files',
+			title: 'Pictures'
+
+		},
+
+		sample_name: {
+			type: 'string',
+			title: 'Sample name',
+			'required':true
+			
+		},
+		description: {
+			type: 'textarea',
+			title: 'Description',
+			'required':true
+		},
+		language: {
+			type: 'string',
+			title: 'Language',
+			"enum": [ "ENGLISH","FRENCH" ],
+			'required':true
+		},
+		"keywords": {
+
+			"type": "array",
+			"minItems":1,
+			
+			"items": {
+				"properties": {
+					"keyword": {
+						"type": "string",
+						"title": "Keyword",
+						'required':true
+
+
+					}
+				}
+			}
+		},
+		
+
+"measurements": {
+			"type": "array",
+			"maxItems":1,
+			"items": {
+				"properties": {
+					"nature": {
+						"type": "hidden",
+						"title": "Nature",
+
+
+					},
+					"abbreviation": {
+
+
+						"type": "string",
+						"title": "Abbreviation",
+						"enum":{{list_measurements}},
+									'required':true
+
+
+
+					},
+					"unit": {
+						"type": "hidden",
+						"title": "Unit",
+
+					}
+				}
+			}
+		},
+		sampling_date: {
+type: 'string',
+title: 'Sampling date'
+},
+		
+
+
+		"institution": {
+
+			"type": "array",
+			"minItems":1,
+		
+			"items": {
+				"properties": {
+					"institution": {
+						"type": "string",
+						"title": "Institution",
+						'required':true,
+
+						enum:["","ADIT Agency for the dissemination of technological information",
+							"ANDRA National Agency for Radioactive Waste Management",
+							"B.R.G.M. THE FRENCH GEOLOGICAL SURVEY",
+							"C.E.A. The French Alternative Energies and Atomic Energy Commission",
+							"C.E.E. Center for Employment Studies",
+							"CEPH Human plymorphism Study Center",
+							"CIRAD Agricultural Research for development",
+							"Cité des sciences et Palais de la découverte",
+							"National Museum of the History of Immigration",
+							"CNES National Center for Space Studies",
+							"CNRS National Center for Scientific Research",
+							"ENSG",
+							"GENOPOLE France’s leading biocluster for biotechnologies and research in genomics and genetics",
+							"IFE French Institute of Education",
+							"IFREMER French Research Institute for Exploitation of the Sea",
+							"IFPEN Research and training player in the ﬁelds of energy, transport and the environment",
+							"IFSTTAR French Institute of science and technology for transport, development and networks",
+							"INCA National Institute of cancer",
+							"INED National Institute for Demographic Studies",
+							"INERIS National Institute for the Industrial Environment and Risks",
+							"INRA National Institute of Agronomic Research",
+							"INRIA National Institute for Research in Computer Science and Automation",
+							"INSERM National Institute of Health and Medical Research",
+							"Curie Institute",
+							"Pasteur Institute",
+							"IPEV French Polar Institute Paul Emile Victor",
+							"I.R.D. Research Institute for Development",
+							"I.R.S.N. Institute for Radiation Protection and Nuclear Safety",
+							"IRSTEA National Science and Technology Research Institute for Environment and Agriculture",
+							"M.N.H.N National Museum of Natural History",
+							"Quai Branly Museum",
+							"ONERA National Office for Aeronautical Studies and Research",
+							"OSEO",
+							"O.S.T. Science and Technology Observatory",
+							"RENATER National Telecommunication Network for Technology, Education and Research",
+							"University of Lorraine"
+							]
+
+
+					}
+				}
+			}
+		},
+
+
+		"scientific_fields": {
+
+			"type": "array",
+			"minItems":1,
+			"items": {
+				"properties": {
+					"scientific_field": {
+						"type": "string",
+						"title": "Scientific field",
+						'required':true,
+						enum:["", "Addresses",	"Administrative units",	"Agricultural and aquaculture facilities",	"Area management/restriction/regulation zones and reporting units",	"Atmospheric conditions",	"Bio-geographical regions",	"Buildings",	"Cadastral parcels",	"Coordinate reference systems",	"Elevation",	"Energy resources",	"Environmental monitoring facilities",	"Geographical grid systems",	"Geographical names",	"Geology",	"Habitats and biotopes",	"Human health and safety",	"Hydrography",	"Land cover",	"Land use",	"Meteorological geographical features",	"Mineral resources",	"Natural risk zones",	"Oceanographic geographical features",	"Orthoimagery",	"Population distribution — demography",	"Production and industrial facilities",	"Protected sites",	"Sea regions",	"Soil",	"Species distribution",	"Statistical units",	"Transport networks",	"Utility and governmental services" ]
+
+
+					}
+				}
+			}
+		},
+		{{supplementary_fields_schema}}
+
+	},
+	{%if edit%}
+	"value": {
+    "keywords": [
+    {%for keyword in keywords%}
+      { "keyword": "{{keyword.NAME}}"},
+    {%endfor%}
+    ],
+
+     "institution": [
+    {%for institution in institutions%}
+      { "institution": ""},
+    {%endfor%}
+    ],
+
+      "scientific_fields": [
+    {%for scientific_field in scientific_fields%}
+      { "scientific_field": ""},
+    {%endfor%}
+    ],
+ 
+    "title": "{{title|raw}}",
+     "description": "{{description|raw}}",
+     "sample_name": "{{sample_name|raw}}",
+     "language": "{{language}}",
+
+       "measurements": [
+
+      { "abbreviation": "{{measurement_abbv|raw}}"
+
+      },
+
+
+    ],
+		"sampling_date": "{{sampling_date|raw}}",
+		
+		{{supplementary_fields_value}}
+
+
+
+
+
+    
+
+
+    
+  },
+  
+    {%endif%}
+    
+    
+
+	"form": [
+
+		 {
+	      "type": "fieldset",
+	      "title":"<i class=\"database icon\"></i>Basic informations",
+	      "items": [
+	        "title","sample_name","description","language",
+	         /*{
+	      "type": "fieldset",
+	      "title":"File creators",
+	      "items": [
+	        {
+			"type": "array",
+			"items": {
+				"type": "section",
+				"items": [
+
+					"file-creator[].name",
+					"file-creator[].first_name",
+					"file-creator[].mail"
+
+
+
+				]
+			}
+		},]}*/
+
+	      ]
+	    },
+		
+		{
+			"key": "data",
+			"htmlClass":"data",
+			
+			
+		},
+
+		{
+			"key": "pictures",
+			"htmlClass":"pictures",
+
+			
+			
+		},
+		{
+			"type":"file_data_already_uploaded",
+			"value":"<div class='files'>{%if files%}{%for file in files%}{%if file.TYPE_DATA=='Data'%}<h4>Data</h4>{%elseif file.TYPE_DATA=='Rawdata'%}<h4>Rawdata</h4>{%elseif file.TYPE_DATA=='Pictures'%}<h4>Pictures</h4>{%endif%}<div class=\"file\"><a href='/download_poi_data_awaiting/{{original_sample_name}}/{{file.DATA_URL}}'> {{file.DATA_URL}}</a> <input id=\"text\" type=\"text\" name=\"file_already_uploaded[]\" value={{file.DATA_URL}} readonly hidden><div class=\"ui icon delete\"><i class=\"remove icon\"></i></div></div>{%endfor%}{%endif%}</div>"
+		},
+		{
+			"key": "original_sample_name",
+			value:"{{original_sample_name}}"			
+		},
+
+
+		{
+			"key": "csrf_value",
+			value:"{{value_CSRF}}"
+			
+			
+		},
+		{
+			"key": "csrf_name",
+			value:"{{name_CSRF}}"
+			
+			
+		},
+
+
+
+
+		
+		{
+				"key": "sampling_date",
+				"htmlClass": "ui-input",
+				"value":""
+				},
+		{
+	      "type": "fieldset",
+	      "title":"Measurement",
+	      "htmlClass":"measurements",
+
+	      "items": [
+			{
+			"type": "section",
+			"maxItems":1,
+	      
+			"items": {
+				"type": "section",
+				"items": [
+					"measurements[].nature",
+					"measurements[].abbreviation",
+					"measurements[].unit"
+
+
+				]
+			}
+		}]
+		},
+
+		{
+	      "type": "advancedfieldset",
+	      "title":"Keywords",
+	      "htmlClass":"keywords",
+	      "items": [
+			{
+				"type": "array",
+				"items": {
+					"type": "section",
+					"items": [
+						"keywords[].keyword"
+
+					]
+				}
+			}
+		]
+	  },
+		{
+	      "type": "advancedfieldset",
+	      "title":"Institutions",
+	      "htmlClass":"institutions",
+	      "items": [
+			{
+		
+			"type": "array",
+			"items": {
+				"type": "section",
+				"items": [
+					"institution[].institution"
+
+				]
+			}
+		}]
+	  
+
+		},
+		{
+	      "type": "advancedfieldset",
+	      "title":"Scientific fields",
+	      	"htmlClass":"scientific_fields",
+	      "items": [
+			{
+		
+		
+			"type": "array",
+			"items": {
+				"type": "section",
+
+				"items": [
+					"scientific_fields[].scientific_field"
+
+
+				]
+			}
+		}]
+		},
+		
+		
+		{{supplementary_fields_form}}				    
+
+
+		,
+
+
+	],
+	"validate": false
+	
+}
+
+

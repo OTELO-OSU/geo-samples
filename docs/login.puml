@@ -1,0 +1,35 @@
+@startuml GET
+actor Actor as a
+control Slim as s
+
+a -> s : /login
+s --> a : login.html.twig
+
+@enduml
+
+@startuml POST
+
+actor Actor as a
+control Slim as s
+control UserController as uc
+database Database as db
+
+a -> s : /login (mail, password)
+activate s
+s -> uc : login(mail, password)
+activate uc
+uc -> db : Récupère le user à l'email
+activate db
+db --> uc : user
+deactivate db
+uc --> s : void | error
+deactivate uc
+alt #ccffaa void
+s --> a : redirection /
+
+else #ffaaaa error
+s --> a : login.html.twig (error)
+deactivate s
+end
+
+@enduml

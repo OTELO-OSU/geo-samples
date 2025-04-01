@@ -1,0 +1,11 @@
+@startuml GET
+actor Actor as a
+control Slim as s
+
+a -> s : /logout
+activate s
+s -> s : session_destroy()
+s --> a : Redirection Shibboleth
+deactivate s
+
+@enduml

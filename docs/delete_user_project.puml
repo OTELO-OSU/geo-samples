@@ -1,0 +1,63 @@
+@startuml POST
+actor Actor as a
+control Slim as s
+control UserConstroller as uc
+database MySQL as db
+control MailerConstroller as mc
+
+a -> s :/delete_user_projects (project_name, mail)
+activate s
+alt #88ff88 admin
+s -> uc :DeleteUserFromProject(mail, project_name)
+activate uc
+
+uc -> db :select id_user from user where mail
+activate db
+uc <-- db :id_user
+deactivate db
+
+uc -> db :select id from project where project_name
+activate db
+uc <-- db :id_project
+deactivate db
+
+uc -> db :delete from projectRequest where id_project and id_user
+activate db
+uc <-- db
+deactivate db
+
+uc -> db :select id from ProjectAccessRight where id_user and id_project
+activate db
+uc <-- db :id_par
+deactivate db
+
+alt #99ff99 :user_id != 0 && id_project != 0
+uc -> db :delete from project_access_right where values id_user and id_project_
+db --> uc
+
+uc -> mc :Send_mail_user_denyaccess_project(mail, project_name, session mail)
+activate mc
+note right
+Envoie d'un
+mail d'information
+end note
+uc <-- mc
+deactivate mc
+
+s <-- uc :true
+
+else #ff9999
+s <-- uc :false
+deactivate uc
+
+a <-- s:Redirection /listusers
+end
+else #ff8888 !admin
+s -->x a
+note right
+aucun retour
+end note
+deactivate s
+end
+
+@enduml

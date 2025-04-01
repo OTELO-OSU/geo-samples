@@ -1,0 +1,118 @@
+
+{% include 'header.html.twig' %}
+<body>
+
+<div class="ui middle aligned center aligned grid">
+  <div class="column" id="signup">
+    <div class="row"></div>
+
+    <h2 class="ui  image header">
+      <div class="content">
+       Sign up 
+      </div>
+    </h2>
+    {%if error%}
+    <div class="ui negative message">
+      <div class="header">
+       {{error}}
+      </div>
+</p></div>
+{%endif%}
+    <form class="ui large form signup" id="signup" method="post" action="/signup">
+      <div class="ui error message"></div>
+      <div class="ui stacked segment">
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="user icon"></i>
+            <input type="text" name="email" placeholder="E-mail address">
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="user icon"></i>
+            <input type="text" name="name" placeholder="Name">
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="user icon"></i>
+            <input type="text" name="firstname" placeholder="Firstname">
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui search"><div class="ui icon input"><input class="prompt" name="project_name[]" type="text" placeholder="Select project to add"><i class="search icon"></i></div><div class="results"></div>
+        </div>
+      </div>
+        <div id="project">
+          
+        </div>
+        <br>
+        <div class="field">
+        <div class="ui primary right floated button" id="addproject">
+                <i class="plus icon"></i> Add Project
+            </div>
+        </div>
+        <br>
+        <br>
+        <br>
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="lock icon"></i>
+            <input type="password" name="password" placeholder="Password">
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="lock icon"></i>
+            <input type="password" name="password_confirm" placeholder="Confirm password">
+          </div>
+        </div>
+
+
+        <input type="hidden" name="csrf_name" value="{{name_CSRF}}">
+        <input type="hidden" name="csrf_value" value="{{value_CSRF}}">
+        <button type="submit" class="ui fluid large blue submit button">Sign Up</button>
+      </div>
+
+
+    </form>
+
+    <div class="ui message">
+      Already registered ? <a href="/login">Login</a>
+    </div>
+  </div>
+</div>
+
+
+</body>
+
+{% include 'footer.html.twig' %}
+<script type="text/javascript">
+     
+    //var users=data;
+$('.ui.search')
+  .search({
+   type: 'standard',
+    source: {{data|raw}},
+    searchFields: ['title'],
+    minCharacters : 1,
+  });
+
+    
+
+
+    $("#addproject").click(function(e) {
+                  $("#project").append('   <div class="field"><div class="ui search"><div class="ui icon input"><input class="prompt" name="project_name[]" type="text" placeholder="Select project to add"><i class="search icon"></i></div><div class="results"></div></div></div>');
+                  $('.ui.search')
+  .search({
+   type: 'standard',
+        source: {{data|raw}},
+    searchFields: ['title'],
+    minCharacters : 1,
+  });
+              });
+  APP.modules.account.check_signup();
+
+
+</script>
+

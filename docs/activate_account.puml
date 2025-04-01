@@ -1,0 +1,24 @@
+@startuml GET
+actor Actor as a
+control Slim as s
+control UserConstroller as uc
+database MySQL as db
+
+a -> s : /activate_account
+activate s
+s -> uc : activateAccount
+activate uc
+uc -> db : Update user mail_validation à 1
+activate db
+db --> uc :data
+deactivate db
+uc --> s :boolean (erreur)
+deactivate uc
+alt #ffaaaa erreur
+s --> a : Redirection /
+else #ccffaa sans erreur
+s --> a : validation_mail.html.twig
+deactivate s
+end
+
+@enduml

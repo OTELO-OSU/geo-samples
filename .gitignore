@@ -1,0 +1,4 @@
+AuthDB.ini
+config.ini
+mongo-connector.log
+oplog.timestamp

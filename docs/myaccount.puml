@@ -1,0 +1,51 @@
+@startuml GET
+actor Actor as a
+control Slim as s
+control UserController as uc
+database MySQL as db
+
+a -> s : /myaccount
+activate s
+s -> uc :geUserInfo(session mail)
+activate uc
+uc -> db :select name, firstname where mail
+activate db
+db --> uc :user
+deactivate db
+uc -> uc :set name, firstname en session
+uc --> s :void
+deactivate uc
+s --> a : myaccount.html.twig (session data)
+deactivate s
+
+@enduml
+
+@startuml POST
+actor Actor as a
+control Slim as s
+control UserController as uc
+database MySQL as db
+
+a -> s : /myaccount (name, firstname)
+activate s
+s -> uc : setUserInfo(session mail, name, firstname)
+activate uc
+uc -> db :update user (name, firstname)
+activate db
+db --> uc :void
+deactivate db
+uc -> uc :set name, firstname en session
+uc --> s :void
+deactivate uc
+s -> uc :setUserInfo(session mail)
+activate uc
+uc -> db :select name, firstname where mail
+activate db
+db --> uc : user
+deactivate db
+uc -> uc :set name, firstname en session
+uc --> s :user
+deactivate uc
+s --> a : myaccount.html.twig (data)
+deactivate s
+@enduml

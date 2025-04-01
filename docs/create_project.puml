@@ -1,0 +1,36 @@
+@startuml POST
+actor Actor as a
+control Slim as s
+control UserConstroller as uc
+database MySQL as db
+
+a -> s :/create_project (project_name)
+activate s
+alt #88ff88 admin
+s -> uc :Create_project(project_name)
+activate uc
+uc -> db :select from project where project_name
+activate db
+uc <-- db :?project
+deactivate db
+alt #ff9999 project
+s <-- uc :"Project already exist"
+a <-- s :withStatus(403)
+else #99ff99 !project
+uc -> db :insert into project
+activate db
+uc <-- db
+deactivate db
+s <-- uc :true
+deactivate uc
+a <-- s:Redirection /listusers
+end
+else #ff8888 !admin
+s -->x a
+note right
+aucun retour
+end note
+deactivate s
+end
+
+@enduml

@@ -1,0 +1,38 @@
+@startuml POST
+actor Actor as a
+control Slim as s
+control UserConstroller as uc
+database MySQL as db
+control MailConstroller as mc
+
+a -> s :/removeuser (email)
+activate s
+alt  #ccffaa session admin
+s -> uc :deleteUser(mail)
+activate uc
+uc -> db :delete User where email
+activate db
+db --> uc
+deactivate db
+
+uc -> mc :Send_mail_account_remove(email)
+activate mc
+note right
+envoie de mail
+d'information
+end note
+mc --> uc
+deactivate mc
+
+uc --> s :true | false
+deactivate uc
+s --> a :Redirection /listusers
+else  #ffaaaa session !admin
+s -->x a
+note right
+aucun retour
+end note
+deactivate s
+end
+
+@enduml

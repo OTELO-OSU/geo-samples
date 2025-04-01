@@ -1,0 +1,10 @@
+@startuml GET
+actor Actor as a
+control Slim as s
+
+a -> s : /terms
+activate s
+s --> a : terms.html.twig
+deactivate s
+
+@enduml

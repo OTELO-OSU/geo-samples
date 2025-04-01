@@ -1,0 +1,24 @@
+{% include 'header.html.twig' %}
+<div class="ui grid">
+		<div class="row"></div>
+		<div class="ui sixteen wide centered column"></div>
+		<div class="ui sixteen wide centered column"></div>
+		<div class="ui sixteen wide centered column"></div>
+		<div class="ui sixteen wide centered column"></div>
+		<div class="ui sixteen wide centered column"></div>
+		<div class="ui sixteen wide centered column"></div>
+		<div class="ui nine wide centered column">
+			<div class="error ui center segment">
+				<div class="container">
+					<h1 class="ui dividing centered header"><i class="minus circle icon"></i>Forbidden</h1>
+					<p>You dont have permission to access to this ressource.</p>
+					{%if referents%}
+					{%for referent in referents%}
+					<p>Contact <a href='mailto:{{referent}}'>{{referent}}</a> to have access to this ressource</p>
+					{%endfor%}
+					{%endif%}
+				</div>
+			</div>
+		</div>
+	</div>
+{% include 'footer.html.twig' %}

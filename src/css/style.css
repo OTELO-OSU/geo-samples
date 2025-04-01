@@ -1,0 +1,112 @@
+
+
+#map {
+    height: 87vh;
+    width: 100%;
+}
+
+.ui.right.sidebar {
+    width: 380px!important;
+}
+
+.ui.left.sidebar {
+    width: 380px!important;
+}
+
+
+
+.control{ margin-left: 3%; margin-top: 20vh;}
+
+.ui.selection.dropdown{
+  width:100%; 
+  margin-bottom:  15px;
+}
+
+.control .input{
+  margin-top: 8%;
+  margin-bottom: 10%;
+}
+
+.message{
+  position: relative;
+}
+
+.picture{
+	cursor: pointer;
+}
+
+#preview iframe img{
+  overflow: auto;
+	height: 100%!important;
+	width: 100%!important;
+}
+
+#login{
+  max-width: 450px;
+}
+
+#signup{
+  max-width: 450px;
+}
+
+.sampling_point .title label:after{
+    margin: -.2em 0 0 .2em;
+    content: '*';
+    color: #DB2828;
+}
+.keywords .title label:after{
+    margin: -.2em 0 0 .2em;
+    content: '*';
+    color: #DB2828;
+}
+.institutions .title label:after{
+    margin: -.2em 0 0 .2em;
+    content: '*';
+    color: #DB2828;
+}
+.scientific_fields .title label:after{
+    margin: -.2em 0 0 .2em;
+    content: '*';
+    color: #DB2828;
+}
+.supplementary_fields .title label:after{
+    margin: -.2em 0 0 .2em;
+    content: '*';
+    color: #DB2828;
+}
+
+.jsonform-error-sampling_date label:after{
+    margin: -.2em 0 0 .2em;
+    content: '*';
+    color: #DB2828;
+}
+
+.jsonform-error-core >label:first-child:after{
+    margin: -.2em 0 0 .2em;
+    content: '*';
+    color: #DB2828;
+}
+.jsonform-error-pulp >label:first-child:after{
+    margin: -.2em 0 0 .2em;
+    content: '*';
+    color: #DB2828;
+}
+.jsonform-error-block >label:first-child:after{
+    margin: -.2em 0 0 .2em;
+    content: '*';
+    color: #DB2828;
+}
+.jsonform-error-measurements{
+    margin: -.2em 0 0 .2em;
+    content: '*';
+    color: #DB2828;
+}
+
+#footer{
+    background-color: #00B5AD;
+}
+
+
+
+
+
