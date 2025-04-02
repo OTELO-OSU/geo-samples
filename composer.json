@@ -10,9 +10,9 @@
     "phpoffice/phpexcel" : ">=1.8.1"
     },
   "autoload": {
-
-  	"psr-0":  {
-  		"geosamples" : "src"		
-  }
+    "psr-4": {
+        "geosamples\\": "src/geosamples/"
+    }
 }
+
 }
