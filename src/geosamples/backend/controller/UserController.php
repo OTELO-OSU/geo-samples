@@ -11,6 +11,7 @@ use \geosamples\model\Projects as Projects;
 use \geosamples\model\ProjectsAccessRight as Projects_access_right;
 use \geosamples\model\ProjectsRequest as ProjectsRequest;
 use \geosamples\backend\controller\FileController as File;
+use \geosamples\backend\DTO\Project_access_rightDTO;
 
 class UserController
 {
@@ -71,14 +72,19 @@ class UserController
 
     public function giveRight($id_user)
     {
+        $array = [];
+        $array2 = [];
         $Projects = Projects_access_right::select('id_project', 'name', 'user_type')->where('id_user', '=', $id_user->id_user)
             ->join('Projects', 'id_project', '=', 'Projects.id')
-            ->get(); // Recuperation projets de l'utilisateurs
+            ->get();
+
         foreach ($Projects as $key => $value) {
-            $array[$value->id_project] = $value;
-            $array2[$value
-                ->id_project] = $value->name;
+            $array[] = new Project_access_rightDTO($value->id_project, $value->name, $value->user_type);
+            //$array[$value->id_project] = $value;
+
+            $array2[$value->id_project] = $value->name;
         }
+
         $_SESSION['projects_access_right'] = $array;
         $_SESSION['projects_access_right_name'] = $array2;
     }
@@ -444,10 +450,11 @@ class UserController
 
     public function getNotReferentProject()
     {
-        foreach ($_SESSION['projects_access_right'] as $key => $value) {
-            if (($value->user_type != 2)) {
-                $array[$value
-                    ->user_type] = $value->name;
+        $array = [];
+
+        foreach ($_SESSION['projects_access_right'] as $pro) {
+            if (($pro->user_type != 2)) {
+                $array[$pro->user_type][] = $pro->name;
             }
         }
         return $array;

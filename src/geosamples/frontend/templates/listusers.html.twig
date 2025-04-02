@@ -204,14 +204,17 @@
                     {%endif%} {%if admin!=1%}
                     <h2>Others projects</h2> {%endif%}
                     <div class="ui relaxed divided list userapprovedlist">
-                        {%for key,value in readonlyproject%}
-                        <div class="item">
-                            <div class="content">
-                                <h3>{{value}}:</h3> You are {%if key == 0%}
-                                <div class="ui green horizontal label">User</div>
-                                {%elseif key == 3%}
-                                <div class="ui orange horizontal label">User Feeder</div>
-                                {%endif%} in this project {%endfor%}
+                        {% for keypro,valuepro in readonlyproject %}
+                            {%for keyp,valuep in valuepro%}
+                            <div class="item">
+                                <div class="content">
+                                    <h3>{{valuep}}:</h3> You are {%if keypro == 0%}
+                                    <div class="ui green horizontal label">User</div>
+                                    {%elseif keypro == 3%}
+                                    <div class="ui orange horizontal label">User Feeder</div>
+                                    {%endif%} in this project 
+                            {%endfor%}
+                        {%endfor%}
                             </div>
 
                         </div>

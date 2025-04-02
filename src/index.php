@@ -713,21 +713,22 @@ $app->get('/listusers', function (Request $req, Response $responseSlim) {
 		$namecsrf      = $req->getAttribute($nameKey);
 		$valuecsrf     = $req->getAttribute($valueKey);
 		$user          = new User();
+
+		//null
 		$usersreferents = $user->getReferentProjectsUSERS();
-		var_dump("user referents");
-		var_dump($usersreferents);
+
+		//null
 		$Allprojects  = $user->getReferentProject();
-		var_dump("all projects");
-		var_dump($Allprojects);
+
+		//Projets
 		$readonlyproject = $user->getNotReferentProject();
-		var_dump("readonly projets");
-		var_dump($readonlyproject);
+
+		//false
 		$usersawaitingvalidation = $user->getUserAwaitingValidationFromReferent($Allprojects);
-		var_dump("userawaitingvalidation");
-		var_dump($usersawaitingvalidation);
+
+		//"null" mdrr
 		$allusers = json_encode($user->getAllUsersApprovedAutocomplete());
-		var_dump("all users");
-		var_dump($allusers);
+
 		$file   = new File();
 		$config = $file->ConfigFile();
 		$feeder = $user->is_feeder($_SESSION['mail'], $config['COLLECTION_NAME']);
