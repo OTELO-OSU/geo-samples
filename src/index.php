@@ -207,8 +207,8 @@ $app->get('/signup', function (Request $req, Response $responseSlim) {
 		$user = new User();
 		$project = $user->getAllProject();
 		$response = array();
-		foreach ($project as $key => $value) {
-			$array['title'] = $value;
+		foreach ($project as $pro) {
+			$array['title'] = $pro->name;
 			$response[] = $array;
 		}
 		$loader    = new Twig_Loader_Filesystem('geosamples/frontend/templates');
@@ -244,8 +244,8 @@ $app->post('/signup', function (Request $req, Response $responseSlim) {
 		$user = new User();
 		$project = $user->getAllProject();
 		$response = array();
-		foreach ($project as $key => $value) {
-			$array['title'] = $value;
+		foreach ($project as $pro) {
+			$array['title'] = $pro->name;
 			$response[] = $array;
 		}
 		echo $twig->render('signup.html.twig', ['error' => $error, 'name_CSRF' => $nameKey, 'value_CSRF' => $valueKey, 'data' => json_encode($response)]);
@@ -327,37 +327,37 @@ $app->get('/activate_account', function (Request $req, Response $responseSlim) {
 })->add($mw);
 
 // ! Non utilisé
-$app->get('/upload', function (Request $req, Response $responseSlim) {
-	$nameKey = $this
-		->csrf
-		->getTokenNameKey();
-	$valueKey = $this
-		->csrf
-		->getTokenValueKey();
-	$namecsrf  = $req->getAttribute($nameKey);
-	$valuecsrf = $req->getAttribute($valueKey);
-	$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-	$twig   = new Twig_Environment($loader);
-	$user      = new User();
-	$file   = new File();
-	$config = $file->ConfigFile();
-	$feeder = $user->is_feeder($_SESSION['mail'], $config['COLLECTION_NAME']);
-	$referent = $user->is_referent($_SESSION['mail'], $config['COLLECTION_NAME']);
-	if ($feeder == true) {
-		$access = 2;
-	}
-	if ($referent == true) {
-		$access = 1;
-	}
-	if ($_SESSION['admin'] == 1) {
-		$access = 1;
-	}
-	if (($feeder === true) or ($referent === true) or $_SESSION['admin'] == 1) {
-		echo $twig->render('upload.html.twig', ['title' => "Upload", 'collection_name' => $config['COLLECTION_NAME'], 'route' => 'upload', 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'], 'admin' => $_SESSION['admin'], 'access' => $access, 'project_name' => $config['COLLECTION_NAME']]);
-	} else {
-		return $responseSlim->withRedirect('accueil');
-	}
-})->add($container->get('csrf'));
+//// $app->get('/upload', function (Request $req, Response $responseSlim) {
+//// 	$nameKey = $this
+//// 		->csrf
+//// 		->getTokenNameKey();
+//// 	$valueKey = $this
+//// 		->csrf
+//// 		->getTokenValueKey();
+//// 	$namecsrf  = $req->getAttribute($nameKey);
+//// 	$valuecsrf = $req->getAttribute($valueKey);
+//// 	$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
+//// 	$twig   = new Twig_Environment($loader);
+//// 	$user      = new User();
+//// 	$file   = new File();
+//// 	$config = $file->ConfigFile();
+//// 	$feeder = $user->is_feeder($_SESSION['mail'], $config['COLLECTION_NAME']);
+//// 	$referent = $user->is_referent($_SESSION['mail'], $config['COLLECTION_NAME']);
+//// 	if ($feeder == true) {
+//// 		$access = 2;
+//// 	}
+//// 	if ($referent == true) {
+//// 		$access = 1;
+//// 	}
+//// 	if ($_SESSION['admin'] == 1) {
+//// 		$access = 1;
+//// 	}
+//// 	if (($feeder === true) or ($referent === true) or $_SESSION['admin'] == 1) {
+//// 		echo $twig->render('upload.html.twig', ['title' => "Upload", 'collection_name' => $config['COLLECTION_NAME'], 'route' => 'upload', 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'], 'admin' => $_SESSION['admin'], 'access' => $access, 'project_name' => $config['COLLECTION_NAME']]);
+//// 	} else {
+//// 		return $responseSlim->withRedirect('accueil');
+//// 	}
+//// })->add($container->get('csrf'));
 
 //Route permettant d'acceder a la page terms of use
 $app->get('/terms', function (Request $req, Response $responseSlim) {
@@ -685,22 +685,20 @@ $app->get('/listusers', function (Request $req, Response $responseSlim) {
 		$config = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . '/../config.ini');
 		$loader  = new Twig_Loader_Filesystem('geosamples/frontend/templates');
 		$twig    = new Twig_Environment($loader);
-		$nameKey = $this
-			->csrf
-			->getTokenNameKey();
-		$valueKey = $this
-			->csrf
-			->getTokenValueKey();
+		$nameKey = $this->csrf->getTokenNameKey();
+		$valueKey = $this->csrf->getTokenValueKey();
 		$namecsrf      = $req->getAttribute($nameKey);
 		$valuecsrf     = $req->getAttribute($valueKey);
 		$user          = new User();
-		$usersreferents = $user->getReferentProjectsUSERS();
-		$usersapproved = $user->getAllUsersApproved();
+
+		$usersReferents = $user->getReferentProjectsUsers();
+
+		$usersApproved = $user->getAllUsersApproved();
 		$userswaiting  = $user->getAllUsersWaiting();
-		$Allprojects  = $user->getAllProject();
-		$usersawaitingvalidation = $user->getUserAwaitingValidationFromReferent($Allprojects);
-		$allusers = json_encode($user->getAllUsersApprovedAutocomplete());
-		echo $twig->render('listusers.html.twig', ['title' => "Administration panel", 'usersapproved' => $usersapproved, 'userswaiting' => $userswaiting, 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'], 'allprojects' => $Allprojects, 'UsersAwaitingValidation' => $usersawaitingvalidation, 'usersreferentsadmin' => $usersreferents, 'admin' => '1', 'alluser' => $allusers, 'access' => $_SESSION['admin'], 'project_name' => $config['COLLECTION_NAME']]);
+		$allProjects  = $user->getAllProject();
+		$userAwaitingValidation = $user->getUserAwaitingValidationFromReferent($allProjects);
+		$allUsers = json_encode($user->getAllUsersApprovedAutocomplete());
+		echo $twig->render('listusers.html.twig', ['title' => "Administration panel", 'usersapproved' => $usersApproved, 'userswaiting' => $userswaiting, 'name_CSRF' => $namecsrf, 'value_CSRF' => $valuecsrf, 'mail' => $_SESSION['mail'], 'allprojects' => $allProjects, 'UsersAwaitingValidation' => $userAwaitingValidation, 'usersreferentsadmin' => $usersReferents, 'admin' => '1', 'alluser' => $allUsers, 'access' => $_SESSION['admin'], 'project_name' => $config['COLLECTION_NAME']]);
 	} else {
 		$loader  = new Twig_Loader_Filesystem('geosamples/frontend/templates');
 		$twig    = new Twig_Environment($loader);
@@ -714,19 +712,10 @@ $app->get('/listusers', function (Request $req, Response $responseSlim) {
 		$valuecsrf     = $req->getAttribute($valueKey);
 		$user          = new User();
 
-		//null
-		$usersreferents = $user->getReferentProjectsUSERS();
-
-		//null
+		$usersreferents = $user->getReferentProjectsUsers();
 		$Allprojects  = $user->getReferentProject();
-
-		//Projets
 		$readonlyproject = $user->getNotReferentProject();
-
-		//false
 		$usersawaitingvalidation = $user->getUserAwaitingValidationFromReferent($Allprojects);
-
-		//"null" mdrr
 		$allusers = json_encode($user->getAllUsersApprovedAutocomplete());
 
 		$file   = new File();
@@ -777,17 +766,16 @@ $app->post('/modifyuser', function (Request $req, Response $responseSlim) {
 		$email     = $req->getparam('email');
 		$name      = $req->getparam('name');
 		$firstname = $req->getparam('firstname');
-
+		$project_name      = $req->getparam('project_name_modify');
 		$type      = $req->getparam('type');
 
 		$user  = new User();
 
-		// ! Plus utilisé
-		////if (empty($name) && empty($firstname)) {
-		// $error = $user->SetRightUser($email, $type,$project_name);
-		////}else{
-		$error = $user->modifyUser($email, $name, $firstname, $type);
-		////}
+		if (empty($name) && empty($firstname)) {
+			$user->SetRightUser($email, $type, $project_name);
+		} else {
+			$user->modifyUser($email, $name, $firstname, $type);
+		}
 		return $responseSlim->withRedirect('listusers');
 	}
 
@@ -882,16 +870,15 @@ $app->post('/add_user_projects', function (Request $req, Response $responseSlim)
 		$error = $user->AddUserToProject($mail, $project_name);
 		return $responseSlim->withRedirect('listusers');
 	}
-	// ! Ne pas utiliser
-	////else {
-	////	foreach ($_SESSION['projects_access_right'] as $key => $value) {
-	////		if (($project_name == $value->name) and (($value->user_type == 2))) {
-	////			$user  = new User();
-	////			$error = $user->AddUserToProject($mail, $project_name);
-	////			return $responseSlim->withRedirect('listusers');
-	////		}
-	////	}
-	////}
+	else {
+		foreach ($_SESSION['projects_access_right'] as $value) {
+			if (($project_name == $value->name) and (($value->user_type == 2))) {
+				$user  = new User();
+				$error = $user->AddUserToProject($mail, $project_name);
+				return $responseSlim->withRedirect('listusers');
+			}
+		}
+	}
 });
 
 $app->post('/delete_user_projects', function (Request $req, Response $responseSlim) {
@@ -904,18 +891,17 @@ $app->post('/delete_user_projects', function (Request $req, Response $responseSl
 		$error = $user->DeleteUserFromProject($mail, $project_name);
 		return $responseSlim->withRedirect('listusers');
 	}
-	// ! Plus utilisé
-	////else {
-	////	foreach ($_SESSION['projects_access_right'] as $key => $value) {
-	////		if (($project_name == $value->name) and (($value->user_type == 2) || ($_SESSION['admin'] == 1))) {
-	////			$user  = new User();
-	////			if ($user->is_referent($mail, $project_name) == false) {
-	////				$error = $user->DeleteUserFromProject($mail, $project_name);
-	////			}
-	////			return $responseSlim->withRedirect('listusers');
-	////		}
-	////	}
-	////}
+	else {
+		foreach ($_SESSION['projects_access_right'] as $value) {
+			if (($project_name == $value->name) and (($value->user_type == 2) || ($_SESSION['admin'] == 1))) {
+				$user  = new User();
+				if ($user->is_referent($mail, $project_name) == false) {
+					$error = $user->DeleteUserFromProject($mail, $project_name);
+				}
+				return $responseSlim->withRedirect('listusers');
+			}
+		}
+	}
 });
 
 $app->get('/get_all_poi', function (Request $req, Response $responseSlim) {

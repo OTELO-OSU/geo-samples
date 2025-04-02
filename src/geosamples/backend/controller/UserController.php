@@ -12,6 +12,9 @@ use \geosamples\model\ProjectsAccessRight as Projects_access_right;
 use \geosamples\model\ProjectsRequest as ProjectsRequest;
 use \geosamples\backend\controller\FileController as File;
 use \geosamples\backend\DTO\Project_access_rightDTO;
+use geosamples\backend\DTO\ProjectDTO;
+use geosamples\backend\DTO\TripleCroisementDTO;
+use geosamples\backend\DTO\UserDTO;
 
 class UserController
 {
@@ -80,8 +83,6 @@ class UserController
 
         foreach ($Projects as $key => $value) {
             $array[] = new Project_access_rightDTO($value->id_project, $value->name, $value->user_type);
-            //$array[$value->id_project] = $value;
-
             $array2[$value->id_project] = $value->name;
         }
 
@@ -293,23 +294,41 @@ class UserController
         }
     }
 
+    /**
+     * Retourne tous les users dont le status est 1
+     * @return UserDTO[]
+     */
     public function getAllUsersApproved()
     {
-        $verif = Users::where('status', '=', "1")->get();
-        return $verif;
+        $array = [];
+        $users = Users::where('status', '=', "1")->get();
+        foreach ($users as $user) {
+            $array[] = new UserDTO($user->id_user, $user->name, $user->firstname, $user->mail, $user->mdp, $user->status, $user->mail_validation, $user->type);
+        }
+        return $array;
     }
 
-    public function getAllUsersWaiting()
+    /**
+     * Retourne tous les users dans le status = 0 et mail_validation = 1
+     * @return UserDTO[]
+     */
+    public function getAllUsersWaiting(): array
     {
-        $verif = Users::where('status', '=', "0")->where('mail_validation', '=', "1")
-            ->get();
-        if (count($verif) != 0) {
-            return $verif;
+        $array = [];
+        $users = Users::where('status', '=', "0")->where('mail_validation', '=', "1")->get();
+        if (count($users) != 0) {
+            foreach ($users as $user) {
+                $array[] = new UserDTO($user->id_user, $user->name, $user->firstname, $user->mail, $user->mdp, $user->status, $user->mail_validation, $user->type);
+            }
+            return $array;
         } else {
-            return false;
+            return [];
         }
     }
 
+    /**
+     * Permet l'auto complete lors de l'ajout d'un user dans un projet
+     */
     public function getAllUsersApprovedAutocomplete()
     {
         if ($_SESSION['admin'] == 1) {
@@ -337,87 +356,99 @@ class UserController
         }
     }
 
-    public function getAllProject()
+    /**
+     * Récupère tous les projets sous forme de array contenant des ProjectsDTO
+     * @return ProjectDTO[]
+     */
+    public function getAllProject(): array
     {
         $verif = Projects::all();
+        $array = [];
         if (count($verif) != 0) {
-            foreach ($verif as $key => $value) {
-                $array[$value
-                    ->id] = $value->name;
+            foreach ($verif as $pro) {
+                $array[] = new ProjectDTO($pro->id, $pro->name);
             }
             return $array;
         } else {
-            return false;
+            return [];
         }
     }
 
-    public function getUserAwaitingValidationFromReferent($project_name)
+    /**
+     * User qui attendent une validation pour rentrer dans un projet
+     * @return UserDTO[]
+     */
+    public function getUserAwaitingValidationFromReferent(array $project_array): array
     {
-        foreach ($project_name as $key => $value) {
-            $verif = ProjectsRequest::select('users.id_user', 'users.mail', 'users.name', 'users.firstname', 'users.type', 'Projects.name as project_name')->where('Projects.name', '=', $value)->where('users.mail_validation', '=', '1')
+        $array = [];
+        foreach ($project_array as $pro) {
+            $verif = ProjectsRequest::select('users.id_user', 'users.mail', 'users.name', 'users.firstname', 'users.type', 'Projects.name as project_name')->where('Projects.name', '=', $pro->name)->where('users.mail_validation', '=', '1')
                 ->join('Projects', 'id_project', '=', 'Projects.id')
                 ->join('users', 'users.id_user', '=', 'Projects_request.id_user')
                 ->get();
             if (count($verif) != 0) {
-                foreach ($verif as $key => $value) {
-                    $array[] = $value;
+                foreach ($verif as $row) {
+                    $array[] = new TripleCroisementDTO($row->id_user, $row->mail, $row->name, $row->firstname, $row->user_type, $row->project_name);
                 }
             }
         }
         if (count($array) != 0) {
             return $array;
         } else {
-            return false;
+            return [];
         }
     }
 
-    public function getReferentProjectsUSERS()
+    /**
+     * Retourne les projets avec sa liste de users pour les réferents
+     * @return array[nom_projet] => TripleCroisementDTO[]
+     */
+    public function getReferentProjectsUsers()
     {
+        $users = [];
+
+        //Admin
         if ($_SESSION['admin'] == 1) {
-            $Projects = $this->getAllProject();
-            foreach ($Projects as $key => $value) {
-                $users[$value] = $this->getUserInProjectForReferent($value);
+
+            //Récupère tous les projets
+            $projects = $this->getAllProject();
+
+            //Pour chaque projets
+            foreach ($projects as $pro) {
+                $users[$pro->name] = $this->getUserInProjectForReferent($pro->name);
             }
         } else {
-
-            foreach ($_SESSION['projects_access_right'] as $key => $value) {
-                if (($value->user_type == 2)) {
-                    $users[$value
-                        ->name] = $this->getUserInProjectForReferent($value->name);
+            foreach ($_SESSION['projects_access_right'] as $pro) {
+                if (($pro->user_type == 2)) {
+                    $users[$pro->name] = $this->getUserInProjectForReferent($pro->name);
                 }
             }
         }
 
-        /*foreach ($users as $key => $value) {
-        foreach ($value as $key => $value) {
-           $users2[]=$value;
-        }
-    }*/
         return $users;
     }
 
+    /**
+     * Récupère les users dans les projets pour l'ui du référent
+     * @return TripleCroisementDTO[]
+     *
+     */
     public function getUserInProjectForReferent($project_name)
     {
+        $array = [];
+        $verif = Projects_access_right::select('users.id_user', 'users.mail', 'users.name', 'users.firstname', 'Projects_access_right.user_type', 'Projects.name as project_name')
+            ->join('Projects', 'id_project', '=', 'Projects.id')
+            ->join('users', 'users.id_user', '=', 'Projects_access_right.id_user')
+            ->whereraw('(user_type = 0 or user_type = 3 or user_type = 2)')
+            ->where('Projects.name', '=', $project_name)->get();
 
-        if ($_SESSION['admin'] == 1) {
-            $verif = Projects_access_right::select('users.id_user', 'users.mail', 'users.name', 'users.firstname', 'Projects_access_right.user_type', 'Projects.name as project_name')->join('Projects', 'id_project', '=', 'Projects.id')
-                ->join('users', 'users.id_user', '=', 'Projects_access_right.id_user')
-                ->whereraw('(user_type = 0 or user_type = 3 or user_type = 2)')
-                ->where('Projects.name', '=', $project_name)->get();
-        } else {
-
-            $verif = Projects_access_right::select('users.id_user', 'users.mail', 'users.name', 'users.firstname', 'Projects_access_right.user_type', 'Projects.name as project_name')->join('Projects', 'id_project', '=', 'Projects.id')
-                ->join('users', 'users.id_user', '=', 'Projects_access_right.id_user')
-                ->whereraw('(user_type = 0 or user_type = 3 or user_type = 2)')
-                ->where('Projects.name', '=', $project_name)->get();
-        }
         if (count($verif) != 0) {
-            foreach ($verif as $key => $value) {
-                $array[] = $value;
+            foreach ($verif as $row) {
+                $array[] = new TripleCroisementDTO($row->id_user, $row->mail, $row->name, $row->firstname, $row->user_type, $row->project_name);
             }
             return $array;
         } else {
-            return false;
+            return [];
         }
     }
 
@@ -440,9 +471,13 @@ class UserController
 
     public function getReferentProject()
     {
-        foreach ($_SESSION['projects_access_right'] as $key => $value) {
-            if (($value->user_type == 2) || ($_SESSION['admin'] == 1)) {
-                $array[] = $value->name;
+        $array = [];
+        foreach ($_SESSION['projects_access_right'] as $pro) {
+            if (($pro->user_type == 2) || ($_SESSION['admin'] == 1)) {
+                $row = Projects::select("id", "name")
+                    ->where("name", $pro->name)
+                    ->first();
+                $array[] = new ProjectDTO($row->id, $row->name);
             }
         }
         return $array;
@@ -479,8 +514,10 @@ class UserController
     public function getUserInProject($project_name)
     {
         if ($_SESSION['admin'] == 1) {
-            $verif = Projects_access_right::select('users.id_user', 'users.mail', 'users.name', 'users.firstname', 'users.type')->where('Projects.name', '=', $project_name)->join('Projects', 'id_project', '=', 'Projects.id')
+            $verif = Projects_access_right::select('users.id_user', 'users.mail', 'users.name', 'users.firstname', 'users.type')
+                ->join('Projects', 'id_project', '=', 'Projects.id')
                 ->join('users', 'users.id_user', '=', 'Projects_access_right.id_user')
+                ->where('Projects.name', '=', $project_name)
                 ->get();
             if (count($verif) != 0) {
                 foreach ($verif as $key => $value) {
@@ -491,7 +528,6 @@ class UserController
                 return false;
             }
         } else {
-
             foreach ($_SESSION['projects_access_right'] as $key => $value) {
                 if ($project_name == $value->name and $value->user_type == 2) {
                     $verif = Projects_access_right::select('users.id_user', 'users.mail', 'users.name', 'users.firstname', 'users.type')->where('Projects.name', '=', $project_name)->join('Projects', 'id_project', '=', 'Projects.id')
@@ -634,41 +670,21 @@ class UserController
         }
     }
 
-    // ! Plus utilisé
-    //// public function SetRightUser($email, $type, $project_name)
-    //// {
-    ////     if ($_SESSION['admin'] == 1) {
-    ////         $verif = Projects::select('Projects_access_right.id')->join('Projects_access_right', 'id_project', '=', 'Projects.id')
-    ////             ->join('users', 'users.id_user', '=', 'Projects_access_right.id_user')
-    ////             ->where('Projects.name', '=', $project_name)->where('users.mail', '=', $email)->get();
-    ////         $verif = Projects_access_right::find($verif[0]->id);
-    ////         $verif->user_type = $type;
-    ////         if ($verif->save()) {
-    ////             return true;
-    ////         } else {
-    ////             return false;
-    ////         }
-    ////     } else {
-    ////         foreach ($_SESSION['projects_access_right'] as $key => $value) {
-    ////             if (($project_name == $value->name) and ($value->user_type == 2)) {
-    ////                 $verif = Projects::select('Projects_access_right.id')->join('Projects_access_right', 'id_project', '=', 'Projects.id')
-    ////                     ->join('users', 'users.id_user', '=', 'Projects_access_right.id_user')
-    ////                     ->where('Projects.name', '=', $project_name)->where('users.mail', '=', $email)->get();
-    ////                 $verif = Projects_access_right::find($verif[0]->id);
-    ////                 if ($verif->user_type == 3 or $verif->user_type == 0) {
-    ////                     $verif->user_type = $type;
-    ////                     if ($verif->save()) {
-    ////                         return true;
-    ////                     } else {
-    ////                         return false;
-    ////                     }
-    ////                 } else {
-    ////                     return false;
-    ////                 }
-    ////             }
-    ////         }
-    ////     }
-    //// }
+    public function SetRightUser($email, $type, $project_name)
+    {
+        if ($_SESSION['admin'] == 1) {
+            $verif = Projects::select('Projects_access_right.id')->join('Projects_access_right', 'id_project', '=', 'Projects.id')
+                ->join('users', 'users.id_user', '=', 'Projects_access_right.id_user')
+                ->where('Projects.name', '=', $project_name)->where('users.mail', '=', $email)->get();
+            $verif = Projects_access_right::find($verif[0]->id);
+            $verif->user_type = $type;
+            if ($verif->save()) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
 
     public function modifyUser($email, $name, $firstname, $type)
     {

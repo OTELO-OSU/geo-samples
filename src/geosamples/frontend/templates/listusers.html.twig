@@ -3,12 +3,18 @@
 <body>
     {%if error%} {{error}} {%endif%}
 
+    {# Tout le monde #}
     <div class="ui grid container">
         <div class="row"></div>
         <div class="row">
             <h1 class="ui dividing header">Administration panel </h1>
         </div>
+
+        
         <div class="ui twelve wide column centered">
+
+            {# Que Admin #}
+    
             {%if userswaiting%}
             <h2>Users waiting for account approvement</h2>
             <div class="ui relaxed divided list waitinglist">
@@ -36,6 +42,11 @@
 
             </div>
             {%endif%}
+
+            {# Fin que Admin #}
+
+            {# Que Admin et Referent #}
+
             <div class="ui twelve wide column centered">
                 {%if UsersAwaitingValidation%}
                 <h2>Users want to access to your projects</h2>
@@ -54,12 +65,11 @@
 
                             <a class="header"><i class="large user middle aligned icon"></i>       {{user.name}}  {{user.firstname}} want access to {{user.project_name}}
             </a>
-                            <div class="description"> {%if user.type==1%}
+                            <div class="description">
+                                {%if user.type==1%}
                                 <div class="ui red horizontal label">Administrator</div>
                                 {%elseif user.type==2%}
-                                <div class="ui blue horizontal label">Referent</div>
-                                {%elseif user.type==3%}
-                                <div class="ui orange horizontal label">User Feeder</div>
+                                <div class="ui pink horizontal label">Referent</div>
                                 {%else%}
                                 <div class="ui green horizontal label">User</div>
                                 {%endif%} {{user.mail}} </div>
@@ -68,7 +78,12 @@
                     {%endfor%}
                 </div>
             </div>
-            {%endif%} {%if usersapproved%}
+            {%endif%}
+            
+            {# Fin que Admin et référent#}
+            
+            {# Que Admin #}
+            {%if usersapproved%}
             <h2>All users</h2>
             <div class="ui relaxed divided list userapprovedlist">
                 {%for user in usersapproved%}
@@ -95,7 +110,14 @@
                             {%endif%}{{user.mail}} </div>
                     </div>
                 </div>
-                {%endfor%} {%endif%} {%if usersreferents%}
+                {%endfor%}
+                {%endif%}
+                
+                {# Fin que Admin #}
+                
+
+                {# Que référent #}
+                {%if usersreferents%}
                 <h2>Manage right in your projects (only user and feeder)</h2>
                 <div class="ui relaxed divided list userapprovedlist">
                     {%for key,project in usersreferents%} {%if project|length >= 1 %}
@@ -124,16 +146,17 @@
 
            </a>
                             <div class="description">
-                                {%if user.user_type==3%}
-                                <div class="ui orange horizontal label">User Feeder</div>
-                                {%elseif user.user_type==0%}
+                                {%if user.user_type==0%}
                                 <div class="ui green horizontal label">User</div>
                                 {%elseif user.user_type==2%}
-                                <div class="ui blue horizontal label">Referent</div>
+                                <div class="ui pink horizontal label">Referent</div>
                                 {%endif%}{{user.mail}} </div>
                         </div>
                     </div>
-                    {%endfor%} {%endfor%}
+                    {%endfor%}
+                    
+                    
+                    {%endfor%}
                     <script>
                         $('.ui.search')
                             .search({
@@ -142,13 +165,19 @@
                                     
                                         {{alluser | raw}}
                                     
-                                
+                                ,
                                 searchFields: ['title'],
                                 minCharacters: 1,
                             });
                     </script>
                     {%endif%}
+
+                    {# Fin Que référent #}
+
                 </div>
+
+                {# Que Admin #}
+
                 {%if usersreferentsadmin%}
                 <h2>Manage rights on projects</h2>
                 <div class="ui relaxed divided list userapprovedlist">
@@ -165,6 +194,7 @@
                     <br> {%for user in project%}
                     <div class="item">
                         <div class="right floated content">
+                            <button class="ui green button" name="modify_referent_admin">Modify right</button>
                             <button class="ui red button" onclick="APP.modules.account.delete_user_from_project('{{user.mail}}','{{key}}')">Remove</button>
                         </div>
                         <div class="content">
@@ -176,12 +206,10 @@
 
            </a>
                             <div class="description">
-                                {%if user.user_type==3%}
-                                <div class="ui orange horizontal label">User Feeder</div>
-                                {%elseif user.user_type==0%}
+                                {%if user.user_type==0%}
                                 <div class="ui green horizontal label">User</div>
                                 {%elseif user.user_type==2%}
-                                <div class="ui blue horizontal label">Referent</div>
+                                <div class="ui pink horizontal label">Referent</div>
                                 {%endif%}{{user.mail}} </div>
                         </div>
                     </div>
@@ -199,10 +227,27 @@
                                 minCharacters: 1,
                             });
                     </script>
-                    {%endif%} {%if admin==1%}
+                    {%endif%}
+                    
+                    {# Fin que admin #}
+                    
+
+                    {# Que admin #}
+
+                    {%if admin==1%}
                     <button class="ui blue button" onclick="APP.modules.account.add_project('{{name_CSRF}}','{{value_CSRF}}')" name="createproject">Add a new project</button>
-                    {%endif%} {%if admin!=1%}
-                    <h2>Others projects</h2> {%endif%}
+                    {%endif%}
+                    
+                    {# Fin que admin #}
+
+                    {# Que non admin #}
+                    
+                    {%if admin!=1%}
+                    <h2>Others projects</h2>
+                    {%endif%}
+
+                    {# Fin que non admin #}      
+
                     <div class="ui relaxed divided list userapprovedlist">
                         {% for keypro,valuepro in readonlyproject %}
                             {%for keyp,valuep in valuepro%}
