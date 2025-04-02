@@ -521,79 +521,79 @@ $app->get('/terms', function (Request $req, Response $responseSlim) {
 //// })->add($container->get('csrf'));
 
 // ! Non utilisé
-// $app->post('/modify', function (Request $req, Response $responseSlim) {
-// 		$nameKey = $this
-// 		->csrf
-// 		->getTokenNameKey();
-// 		$valueKey = $this
-// 		->csrf
-// 		->getTokenValueKey();
-// 		$namecsrf  = $req->getAttribute($nameKey);
-// 		$valuecsrf = $req->getAttribute($valueKey);
-// 		$user      = new User();
-// 		$file   = new File();
-// 		$config = $file->ConfigFile();
-// 		$referent= $user->is_referent($_SESSION['mail'],$config['COLLECTION_NAME']);
-// 		if (($referent===true) OR $_SESSION['admin']==1) {
-// 		$request      = new RequestApi();
-// 		$response=$request->Post_Processing($_POST,'modify');
-// 		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
-// 		$twig   = new Twig_Environment($loader);
-// 		if ($response === true) {
-// 					echo $twig->render('display_actions.html.twig',['message'=>'Data approved','mail' => $_SESSION['mail'], 'admin' => $_SESSION['admin'],'access'=>$_SESSION['admin']]);
-// 		}else{
-// 			echo $twig->render('upload.html.twig',[ 
-// 				'collection_name'=>$config['COLLECTION_NAME'],
-// 			'edit'=>true,'name_CSRF' => $namecsrf,
-// 			'route'=>'modify',
-// 			 'value_CSRF' => $valuecsrf, 
-// 			 'mail' => $_SESSION['mail'],
-// 			  'admin' => $_SESSION['admin'],
-// 			  'access'=>$_SESSION['admin'],
-// 			  'error'=>$response['error'],
-// 			  'title'=>$response['dataform']['TITLE'],
-// 			  'description'=>$response['dataform']['DATA_DESCRIPTION'],
-// 			  'sample_name'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME'],
-// 			  'language'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['LANGUAGE'],
-// 			  'block'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['BLOCK'],
-// 			  'pulp'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['PULP'],
-// 			  'core'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][0]['CORE'],
-// 			  'ANTHROPOGENIC_MATERIAL'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['ANTHROPOGENIC_MATERIAL'],
-// 			  'language'=>$response['dataform']['LANGUAGE'],
-// 			  'keywords'=>$response['dataform']['KEYWORDS'],
-// 			  'institutions'=>$response['dataform']['INSTITUTION'],
-// 			  'scientific_fields'=>$response['dataform']['SCIENTIFIC_FIELD'],
-// 			   'measurement_abbv'=>$response['dataform']['MEASUREMENT'][0]['ABBREVIATION'],
-// 			    'measurement_unit'=>$response['dataform']['MEASUREMENT'][0]['UNIT'],
-// 			   'sampling_date'=>$response['dataform']['SAMPLING_DATE'][0],
-// 			   'lithology1'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['LITHOLOGY'],
-// 			   	'lithology2'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['LITHOLOGY_2'],
-// 			   'lithology3'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['LITHOLOGY_3'],
-// 			   'oretype1'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['ORE_TYPE_1'],
-// 			   	'oretype2'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['ORE_TYPE_2'],
-// 			   'oretype3'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['ORE_TYPE_3'],
-// 			   'texture1'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['TEXTURE_STRUCTURE_1'],
-// 			   	'texture2'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['TEXTURE_STRUCTURE_2'],
-// 			   'texture3'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['TEXTURE_STRUCTURE_3'],
-// 			    'sample_location_facility'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['SAMPLE_LOCATION_FACILITY'],
-// 			    'safety_constraints'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['SAFETY_CONSTRAINTS'],
-// 			    'storage_details'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['STORAGE_DETAILS'],
-// 			    'substance'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['SUBSTANCE'],
-// 			    'host_age'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['HOST_AGE'],
-// 			    'main_event_age'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['MAIN_EVENT_AGE'],
-// 			    'other_event_age'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['OTHER_EVENT_AGE'],
-// 			    'alteration_degree'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['ALTERATION_DEGREE'],
-// 			    'host_lithology_or_protolith'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['HOST_LITHOLOGY_OR_PROTOLITH'],
-// 			    'methodology_sampling'=>$response['dataform']['METHODOLOGY'][0]['DESCRIPTION'],
-// 			     'methodology_conditionning'=>$response['dataform']['METHODOLOGY'][1]['DESCRIPTION'],
-// 			      'methodology_sample_storage'=>$response['dataform']['METHODOLOGY'][2]['DESCRIPTION'],
-// 			       'sampling_points'=>$response['dataform']['SAMPLING_POINT'],
-// 			]);
-// 		}
-// 		}else{
-// 			return $responseSlim->withRedirect('accueil');
-// 		}
-// })->add($container->get('csrf'));
+//// $app->post('/modify', function (Request $req, Response $responseSlim) {
+//// 		$nameKey = $this
+//// 		->csrf
+//// 		->getTokenNameKey();
+//// 		$valueKey = $this
+//// 		->csrf
+//// 		->getTokenValueKey();
+//// 		$namecsrf  = $req->getAttribute($nameKey);
+//// 		$valuecsrf = $req->getAttribute($valueKey);
+//// 		$user      = new User();
+//// 		$file   = new File();
+//// 		$config = $file->ConfigFile();
+//// 		$referent= $user->is_referent($_SESSION['mail'],$config['COLLECTION_NAME']);
+//// 		if (($referent===true) OR $_SESSION['admin']==1) {
+//// 		$request      = new RequestApi();
+//// 		$response=$request->Post_Processing($_POST,'modify');
+//// 		$loader = new Twig_Loader_Filesystem('geosamples/frontend/templates');
+//// 		$twig   = new Twig_Environment($loader);
+//// 		if ($response === true) {
+//// 					echo $twig->render('display_actions.html.twig',['message'=>'Data approved','mail' => $_SESSION['mail'], 'admin' => $_SESSION['admin'],'access'=>$_SESSION['admin']]);
+//// 		}else{
+//// 			echo $twig->render('upload.html.twig',[ 
+//// 				'collection_name'=>$config['COLLECTION_NAME'],
+//// 			'edit'=>true,'name_CSRF' => $namecsrf,
+//// 			'route'=>'modify',
+//// 			 'value_CSRF' => $valuecsrf, 
+//// 			 'mail' => $_SESSION['mail'],
+//// 			  'admin' => $_SESSION['admin'],
+//// 			  'access'=>$_SESSION['admin'],
+//// 			  'error'=>$response['error'],
+//// 			  'title'=>$response['dataform']['TITLE'],
+//// 			  'description'=>$response['dataform']['DATA_DESCRIPTION'],
+//// 			  'sample_name'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['SAMPLE_NAME'],
+//// 			  'language'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['LANGUAGE'],
+//// 			  'block'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['BLOCK'],
+//// 			  'pulp'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['PULP'],
+//// 			  'core'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['CORE_DETAILS'][0]['CORE'],
+//// 			  'ANTHROPOGENIC_MATERIAL'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['ANTHROPOGENIC_MATERIAL'],
+//// 			  'language'=>$response['dataform']['LANGUAGE'],
+//// 			  'keywords'=>$response['dataform']['KEYWORDS'],
+//// 			  'institutions'=>$response['dataform']['INSTITUTION'],
+//// 			  'scientific_fields'=>$response['dataform']['SCIENTIFIC_FIELD'],
+//// 			   'measurement_abbv'=>$response['dataform']['MEASUREMENT'][0]['ABBREVIATION'],
+//// 			    'measurement_unit'=>$response['dataform']['MEASUREMENT'][0]['UNIT'],
+//// 			   'sampling_date'=>$response['dataform']['SAMPLING_DATE'][0],
+//// 			   'lithology1'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['LITHOLOGY'],
+//// 			   	'lithology2'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['LITHOLOGY_2'],
+//// 			   'lithology3'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['LITHOLOGY_3'],
+//// 			   'oretype1'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['ORE_TYPE_1'],
+//// 			   	'oretype2'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['ORE_TYPE_2'],
+//// 			   'oretype3'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['ORE_TYPE_3'],
+//// 			   'texture1'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['TEXTURE_STRUCTURE_1'],
+//// 			   	'texture2'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['TEXTURE_STRUCTURE_2'],
+//// 			   'texture3'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['TEXTURE_STRUCTURE_3'],
+//// 			    'sample_location_facility'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['SAMPLE_LOCATION_FACILITY'],
+//// 			    'safety_constraints'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['SAFETY_CONSTRAINTS'],
+//// 			    'storage_details'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['STORAGE_DETAILS'],
+//// 			    'substance'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['SUBSTANCE'],
+//// 			    'host_age'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['HOST_AGE'],
+//// 			    'main_event_age'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['MAIN_EVENT_AGE'],
+//// 			    'other_event_age'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['OTHER_EVENT_AGE'],
+//// 			    'alteration_degree'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['ALTERATION_DEGREE'],
+//// 			    'host_lithology_or_protolith'=>$response['dataform']['SUPPLEMENTARY_FIELDS']['HOST_LITHOLOGY_OR_PROTOLITH'],
+//// 			    'methodology_sampling'=>$response['dataform']['METHODOLOGY'][0]['DESCRIPTION'],
+//// 			     'methodology_conditionning'=>$response['dataform']['METHODOLOGY'][1]['DESCRIPTION'],
+//// 			      'methodology_sample_storage'=>$response['dataform']['METHODOLOGY'][2]['DESCRIPTION'],
+//// 			       'sampling_points'=>$response['dataform']['SAMPLING_POINT'],
+//// 			]);
+//// 		}
+//// 		}else{
+//// 			return $responseSlim->withRedirect('accueil');
+//// 		}
+//// })->add($container->get('csrf'));
 
 
 
@@ -714,10 +714,20 @@ $app->get('/listusers', function (Request $req, Response $responseSlim) {
 		$valuecsrf     = $req->getAttribute($valueKey);
 		$user          = new User();
 		$usersreferents = $user->getReferentProjectsUSERS();
+		var_dump("user referents");
+		var_dump($usersreferents);
 		$Allprojects  = $user->getReferentProject();
+		var_dump("all projects");
+		var_dump($Allprojects);
 		$readonlyproject = $user->getNotReferentProject();
+		var_dump("readonly projets");
+		var_dump($readonlyproject);
 		$usersawaitingvalidation = $user->getUserAwaitingValidationFromReferent($Allprojects);
+		var_dump("userawaitingvalidation");
+		var_dump($usersawaitingvalidation);
 		$allusers = json_encode($user->getAllUsersApprovedAutocomplete());
+		var_dump("all users");
+		var_dump($allusers);
 		$file   = new File();
 		$config = $file->ConfigFile();
 		$feeder = $user->is_feeder($_SESSION['mail'], $config['COLLECTION_NAME']);
